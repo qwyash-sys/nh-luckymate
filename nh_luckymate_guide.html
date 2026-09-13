@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 당첨자 행동요령 가이드</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --primary-light2: #F0FBF4;
+    --primary-border: #CDEEDA;
+    --danger: #FF7272;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+    --text-faint: #aaa;
+    --bg-page: #EDEFF1;
+    --bg-content: #F7F8FA;
+    --bg-card: #fff;
+    --border-light: #eee;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
+  }
+  a { text-decoration:none; color:inherit; }
+  .phone {
+    width: 390px;
+    background: var(--bg-card);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+    position: relative;
+  }
+  button { all:unset; box-sizing:border-box; cursor:pointer; }
+  .statusbar {
+    height: 30px; background: var(--bg-card);
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px; font-size: 12px; font-weight:600; color:var(--text-main);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff; padding: 14px 18px 18px;
+  }
+  .header .top {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .header .top .back { font-size:18px; }
+  .header .top .title { font-size:16px; font-weight:700; }
+  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
+  .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
+
+  .content { padding: 16px; background:var(--bg-content); }
+
+  .rank-tabs { display:flex; gap:8px; margin-bottom:14px; }
+  .rank-tabs div {
+    flex:1; text-align:center; padding:10px 0; border-radius:12px;
+    font-size:13px; font-weight:700; background:var(--bg-card); color:var(--text-mute);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .rank-tabs .active { background:var(--primary); color:#fff; }
+
+  .card {
+    background:var(--bg-card); border-radius:16px; padding:16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 14px;
+  }
+  .card-title { font-size: 13px; font-weight:700; color:var(--text-sub); margin-bottom:12px; }
+
+  .step-row {
+    display:flex; gap:12px; padding:10px 0;
+  }
+  .step-row:not(:last-child) { border-bottom:1px solid var(--border-light); }
+  .step-num {
+    width:24px; height:24px; border-radius:50%; background:var(--primary-light);
+    color:var(--primary-dark); font-size:12px; font-weight:800; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step-body .title { font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:3px; }
+  .step-body .desc { font-size:11.5px; color:var(--text-mute); line-height:1.4; }
+
+  .branch-card {
+    background: linear-gradient(135deg,var(--primary-light2),var(--primary-light));
+    border:1px solid var(--primary-border); border-radius:16px; padding:16px; margin-bottom:14px;
+  }
+  .branch-card .label { font-size:11.5px; color:var(--primary-dark); font-weight:700; margin-bottom:4px; }
+  .branch-card .name { font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
+  .branch-card .addr { font-size:11.5px; color:var(--text-mute); margin-bottom:12px; }
+  .branch-card .btn-row { display:flex; gap:8px; }
+  .branch-card .btn {
+    flex:1; text-align:center; font-size:12px; font-weight:700; padding:9px 0;
+    border-radius:10px; background:#fff; color:var(--primary-dark); border:1px solid var(--primary-border);
+  }
+  .branch-card .btn.solid { background:var(--primary); color:#fff; border:none; }
+
+  .product-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0;
+  }
+  .product-row:not(:last-child) { border-bottom:1px solid var(--border-light); }
+  .product-row .pname { font-size:12.5px; font-weight:700; color:var(--text-main); }
+  .product-row .pdesc { font-size:10.5px; color:var(--text-mute); margin-top:2px; }
+  .product-row .prate { font-size:13px; font-weight:800; color:var(--primary-dark); }
+
+  .cta { display:block; background:var(--primary); color:#fff; text-align:center;
+    padding:13px; border-radius:12px; font-size:14px; font-weight:700; }
+  .badge-note { font-size:10.5px; color:var(--text-faint); text-align:center; margin-top:8px; }
+
+  .modal-overlay {
+    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:0 30px;
+  }
+  .modal-overlay.show { display:flex; }
+  .modal-box { width:100%; background:#fff; border-radius:16px; padding:22px 18px; text-align:center; }
+  .modal-msg { font-size:13.5px; color:var(--text-main); line-height:1.5; margin-bottom:18px; }
+  .modal-btns { display:flex; gap:8px; }
+  .modal-btn { flex:1; padding:11px 0; border-radius:10px; font-size:13px; font-weight:700; text-align:center; }
+  .modal-btn.cancel { background:var(--bg-content); color:var(--text-sub); }
+  .modal-btn.confirm { background:var(--primary); color:#fff; }
+
+  .tabbar {
+    display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
+  }
+  .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
+  .tabbar .tab.active { color:var(--primary); font-weight:700; }
+  .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+  </div>
+
+  <div class="header">
+    <div class="top">
+      <a class="back" href="nh_luckymate_mockup.html">‹</a>
+      <span class="title" data-i18n="hdrPageTitle">당첨자 행동요령 가이드</span>
+      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+    </div>
+    <div class="sub">
+      <span data-i18n="hdrTitle">당첨금 규모별로 다르게 안내해드려요</span>
+      <span data-i18n="hdrSub">등수를 선택하면 절차가 달라집니다</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="rank-tabs">
+      <div class="active" data-i18n="rank1">1등</div>
+      <div data-i18n="rank2">2등</div>
+      <div data-i18n="rank3plus">3등 이하</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="stepsTitle">지급 절차 4단계</div>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="title" data-i18n="step1Title">복권 원본 보관</div>
+          <div class="desc" data-i18n="step1Desc">복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="title" data-i18n="step2Title">신분증 지참</div>
+          <div class="desc" data-i18n="step2Desc">주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="title" data-i18n="step3Title">올원뱅크 방문 예약</div>
+          <div class="desc" data-i18n="step3Desc">앱에서 방문 예약 시 대기 없이 우선 상담을 받을 수 있어요.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="title" data-i18n="step4Title">본점 방문 · 지급 신청</div>
+          <div class="desc" data-i18n="step4Desc">1등 당첨금은 서대문 본점에서만 지급 신청이 가능합니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <div class="label" data-i18n="branchLabel">1등 전용 지급처</div>
+      <div class="name">NH농협은행 서대문 본점</div>
+      <div class="addr">서울 중구 새문안로 16 · 평일 09:00~16:00</div>
+      <div class="btn-row">
+        <a class="btn" id="btnMap" data-i18n="btnMap" target="_blank" rel="noopener">카카오맵 길찾기</a>
+        <button class="btn solid" id="btnReserve" data-i18n="btnReserve">방문 예약하기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="productsTitle">당첨금 규모별 금융상품 연계</div>
+      <div class="product-row">
+        <div>
+          <div class="pname">NH왈츠회전예금Ⅱ</div>
+          <div class="pdesc" data-i18n="prod1Desc">거액 자금 단기 예치에 적합</div>
+        </div>
+        <div class="prate">3.10%</div>
+      </div>
+      <div class="product-row">
+        <div>
+          <div class="pname">NH퇴직연금 IRP</div>
+          <div class="pdesc" data-i18n="prod2Desc">세제 혜택으로 목돈 절세 설계</div>
+        </div>
+        <div class="prate" data-i18n="prod2Rate">절세형</div>
+      </div>
+      <div class="product-row">
+        <div>
+          <div class="pname">NH올원e예금</div>
+          <div class="pdesc" data-i18n="prod3Desc">비대면 가입, 자유로운 예치기간</div>
+        </div>
+        <div class="prate">3.20%</div>
+      </div>
+    </div>
+
+    <a class="cta" href="nh_luckymate_bonus.html" data-i18n="ctaBonus">낙첨이어도 괜찮아요, 우대금리 받기 ›</a>
+    <div class="badge-note" data-i18n="badgeNote">* 방문 예약 실연동은 개발 예정 기능입니다</div>
+  </div>
+
+  <div class="tabbar">
+    <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
+    <a class="tab active" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
+    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-msg" id="modalMsg" data-i18n="modalReserveMsg">올원뱅크 방문하기 페이지로 이동합니다</div>
+      <div class="modal-btns">
+        <button class="modal-btn cancel" id="modalCancelBtn" data-i18n="modalCancel">취소</button>
+        <button class="modal-btn confirm" id="modalConfirmBtn" data-i18n="modalConfirm">확인</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ko: { hdrPageTitle:"당첨자 행동요령 가이드", hdrTitle:"당첨금 규모별로 다르게 안내해드려요", hdrSub:"등수를 선택하면 절차가 달라집니다", rank1:"1등", rank2:"2등", rank3plus:"3등 이하", stepsTitle:"지급 절차 4단계", step1Title:"복권 원본 보관", step1Desc:"복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요.", step2Title:"신분증 지참", step2Desc:"주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요.", step3Title:"올원뱅크 방문 예약", step3Desc:"앱에서 방문 예약 시 대기 없이 우선 상담을 받을 수 있어요.", step4Title:"본점 방문 · 지급 신청", step4Desc:"1등 당첨금은 서대문 본점에서만 지급 신청이 가능합니다.", branchLabel:"1등 전용 지급처", btnMap:"카카오맵 길찾기", btnReserve:"방문 예약하기", productsTitle:"당첨금 규모별 금융상품 연계", prod1Desc:"거액 자금 단기 예치에 적합", prod2Desc:"세제 혜택으로 목돈 절세 설계", prod2Rate:"절세형", prod3Desc:"비대면 가입, 자유로운 예치기간", ctaBonus:"낙첨이어도 괜찮아요, 우대금리 받기 ›", badgeNote:"* 방문 예약 실연동은 개발 예정 기능입니다", modalReserveMsg:"올원뱅크 방문하기 페이지로 이동합니다", modalCancel:"취소", modalConfirm:"확인", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"Winner's Action Guide", hdrTitle:"Guidance differs by prize size", hdrSub:"Steps change based on the prize tier you select", rank1:"1st Prize", rank2:"2nd Prize", rank3plus:"3rd Prize & Below", stepsTitle:"4 Steps to Claim Your Prize", step1Title:"Keep the Original Ticket", step1Desc:"Sign the back and keep it safe from loss or damage.", step2Title:"Bring Your ID", step2Desc:"Prepare an ID such as a resident card or driver's license.", step3Title:"Book a Branch Visit in AllOne Bank", step3Desc:"Booking in the app gets you priority consultation with no wait.", step4Title:"Visit Head Office · Claim Payment", step4Desc:"1st-prize payments can only be claimed at the Seodaemun Head Office.", branchLabel:"Exclusive 1st-Prize Payment Location", btnMap:"Kakao Maps Directions", btnReserve:"Book a Visit", productsTitle:"Financial Products by Prize Size", prod1Desc:"Suited for short-term deposit of large sums", prod2Desc:"Tax-advantaged planning for lump sums", prod2Rate:"Tax-saving", prod3Desc:"Sign up online, flexible deposit period", ctaBonus:"Even if you didn't win, get a bonus rate ›", badgeNote:"* Real-time visit booking is an upcoming feature.", modalReserveMsg:"You'll be taken to the AllOne Bank branch-visit page", modalCancel:"Cancel", modalConfirm:"OK", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"中奖者行动指南", hdrTitle:"根据奖金规模提供不同指引", hdrSub:"选择等级后流程会有所不同", rank1:"1等奖", rank2:"2等奖", rank3plus:"3等奖及以下", stepsTitle:"领奖4大步骤", step1Title:"保管彩票原件", step1Desc:"在彩票背面签名后妥善保管，避免遗失或损坏。", step2Title:"携带身份证", step2Desc:"请准备身份证、驾照等身份证明文件。", step3Title:"在AllOne Bank预约到访", step3Desc:"在应用内预约可优先咨询，无需排队等候。", step4Title:"前往总行 · 申请领奖", step4Desc:"一等奖奖金仅可在西大门总行申请领取。", branchLabel:"一等奖专属领奖处", btnMap:"Kakao地图导航", btnReserve:"预约到访", productsTitle:"按奖金规模推荐金融产品", prod1Desc:"适合大额资金短期存放", prod2Desc:"通过税收优惠为大额资金节税规划", prod2Rate:"节税型", prod3Desc:"非面对面开户，存款期限自由", ctaBonus:"没中奖也没关系，领取优惠利率 ›", badgeNote:"* 预约到访实际联动为开发中功能", modalReserveMsg:"即将前往AllOne Bank到访预约页面", modalCancel:"取消", modalConfirm:"确认", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Hướng dẫn hành động cho người trúng thưởng", hdrTitle:"Hướng dẫn khác nhau theo mức giải thưởng", hdrSub:"Chọn hạng giải để xem quy trình phù hợp", rank1:"Giải Nhất", rank2:"Giải Nhì", rank3plus:"Giải Ba trở xuống", stepsTitle:"4 bước nhận thưởng", step1Title:"Giữ vé gốc", step1Desc:"Ký tên mặt sau và giữ cẩn thận tránh mất hoặc hư hỏng.", step2Title:"Mang theo giấy tờ tùy thân", step2Desc:"Chuẩn bị CMND/CCCD, bằng lái xe để xác minh danh tính.", step3Title:"Đặt lịch hẹn qua AllOne Bank", step3Desc:"Đặt lịch qua ứng dụng để được tư vấn ưu tiên, không cần chờ đợi.", step4Title:"Đến trụ sở chính · Nộp đơn nhận thưởng", step4Desc:"Giải nhất chỉ được nhận tại trụ sở chính Seodaemun.", branchLabel:"Nơi nhận riêng cho Giải Nhất", btnMap:"Chỉ đường Kakao Maps", btnReserve:"Đặt lịch hẹn", productsTitle:"Sản phẩm tài chính theo mức giải thưởng", prod1Desc:"Phù hợp gửi ngắn hạn số tiền lớn", prod2Desc:"Thiết kế tiết kiệm thuế cho khoản tiền lớn", prod2Rate:"Tiết kiệm thuế", prod3Desc:"Đăng ký trực tuyến, kỳ hạn linh hoạt", ctaBonus:"Không trúng cũng không sao, nhận lãi suất ưu đãi ›", badgeNote:"* Đặt lịch hẹn thời gian thực là tính năng sắp ra mắt", modalReserveMsg:"Bạn sẽ được chuyển đến trang đặt lịch hẹn của AllOne Bank", modalCancel:"Hủy", modalConfirm:"Xác nhận", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"คู่มือปฏิบัติสำหรับผู้ถูกรางวัล", hdrTitle:"คำแนะนำแตกต่างกันตามขนาดเงินรางวัล", hdrSub:"เลือกระดับรางวัลเพื่อดูขั้นตอนที่เหมาะสม", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3plus:"รางวัลที่ 3 ลงไป", stepsTitle:"4 ขั้นตอนรับรางวัล", step1Title:"เก็บสลากตัวจริง", step1Desc:"เซ็นชื่อด้านหลังสลากและเก็บรักษาอย่างดีไม่ให้สูญหายหรือเสียหาย", step2Title:"เตรียมบัตรประชาชน", step2Desc:"เตรียมบัตรประชาชนหรือใบขับขี่เพื่อยืนยันตัวตน", step3Title:"จองเข้าใช้บริการผ่านแอป AllOne Bank", step3Desc:"จองผ่านแอปเพื่อรับคำปรึกษาก่อนโดยไม่ต้องรอคิว", step4Title:"ไปสำนักงานใหญ่ · ยื่นขอรับเงินรางวัล", step4Desc:"รางวัลที่ 1 ยื่นขอรับได้ที่สำนักงานใหญ่ซอแดมุนเท่านั้น", branchLabel:"สถานที่รับรางวัลที่ 1 โดยเฉพาะ", btnMap:"นำทางด้วย Kakao Maps", btnReserve:"จองเข้าใช้บริการ", productsTitle:"ผลิตภัณฑ์ทางการเงินตามขนาดเงินรางวัล", prod1Desc:"เหมาะสำหรับฝากเงินก้อนใหญ่ระยะสั้น", prod2Desc:"วางแผนประหยัดภาษีสำหรับเงินก้อนใหญ่", prod2Rate:"ประหยัดภาษี", prod3Desc:"สมัครออนไลน์ ระยะเวลาฝากยืดหยุ่น", ctaBonus:"ถ้าไม่ถูกรางวัลก็ไม่เป็นไร รับดอกเบี้ยพิเศษ ›", badgeNote:"* ฟีเจอร์จองเข้าใช้บริการแบบเรียลไทม์อยู่ระหว่างพัฒนา", modalReserveMsg:"คุณจะถูกนำไปยังหน้าจองเข้าใช้บริการของ AllOne Bank", modalCancel:"ยกเลิก", modalConfirm:"ยืนยัน", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"Gʻolib uchun harakat qoʻllanmasi", hdrTitle:"Yutuq miqdoriga qarab yoʻriqnoma farqlanadi", hdrSub:"Tanlangan mukofot darajasiga qarab tartib oʻzgaradi", rank1:"1-mukofot", rank2:"2-mukofot", rank3plus:"3-mukofot va undan quyi", stepsTitle:"Yutuqni olishning 4 bosqichi", step1Title:"Chiptaning asl nusxasini saqlang", step1Desc:"Orqa tomoniga imzo qoʻying va yoʻqotib qoʻymang yoki shikastlantirmang.", step2Title:"Shaxsingizni tasdiqlovchi hujjatni oling", step2Desc:"Fuqarolik guvohnomasi yoki haydovchilik guvohnomasi kabi hujjat tayyorlang.", step3Title:"AllOne Bank orqali filialga tashrifni bron qiling", step3Desc:"Ilova orqali bron qilsangiz navbatsiz ustuvor maslahat olasiz.", step4Title:"Bosh ofisga boring · Toʻlovni talab qiling", step4Desc:"1-mukofot faqat Seodaemun bosh ofisida olinadi.", branchLabel:"Faqat 1-mukofot uchun toʻlov joyi", btnMap:"Kakao Maps orqali yoʻnalish", btnReserve:"Tashrifni bron qilish", productsTitle:"Yutuq miqdoriga mos moliyaviy mahsulotlar", prod1Desc:"Katta mablagʻlarni qisqa muddatga saqlash uchun mos", prod2Desc:"Katta mablagʻ uchun soliq imtiyozli reja", prod2Rate:"Soliq tejovchi", prod3Desc:"Onlayn ochish, moslashuvchan muddat", ctaBonus:"Yutmagan boʻlsangiz ham imtiyozli foiz oling ›", badgeNote:"* Real vaqtli tashrif broni ishlab chiqilmoqda", modalReserveMsg:"Siz AllOne Bank tashrif bron qilish sahifasiga o'tasiz", modalCancel:"Bekor qilish", modalConfirm:"Tasdiqlash", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+};
+(function(){
+  const lang = localStorage.getItem('nh_lang') || 'ko';
+  const dict = I18N[lang] || I18N.ko;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] !== undefined) el.textContent = dict[k];
+  });
+})();
+
+/* ---- 카카오맵 길찾기: 별도 API 키 없이 카카오맵 웹 검색으로 실제 연결 ---- */
+document.getElementById('btnMap').href = 'https://map.kakao.com/link/search/' + encodeURIComponent('서울 중구 새문안로 16');
+
+/* ---- 방문 예약하기: 실제 예약 페이지 연동 전까지 확인 팝업만 표시 ---- */
+const modalOverlay = document.getElementById('modalOverlay');
+document.getElementById('btnReserve').addEventListener('click', () => {
+  modalOverlay.classList.add('show');
+});
+document.getElementById('modalCancelBtn').addEventListener('click', () => {
+  modalOverlay.classList.remove('show');
+});
+document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+  modalOverlay.classList.remove('show');
+});
+</script>
+
+</body>
+</html>

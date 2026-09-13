@@ -1,0 +1,27 @@
+name: Weekly Lottery Shop Crawl
+
+# 로또 추첨은 매주 토요일 저녁. 다음날(일요일)에도 API 반영이 안 됐을 수 있어
+# 여유를 두고 매주 월요일 오전 10시(KST, UTC 01:00)에 실행한다.
+# workflow_dispatch로 언제든 수동 실행도 가능.
+on:
+  schedule:
+    - cron: '0 1 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run winning-shop crawler (writes to Supabase)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/crawl_winning_shops.mjs --count 100

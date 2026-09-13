@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 언어 설정</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --primary-light2: #F0FBF4;
+    --primary-border: #CDEEDA;
+    --danger: #FF7272;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+    --text-faint: #aaa;
+    --bg-page: #EDEFF1;
+    --bg-content: #F7F8FA;
+    --bg-card: #fff;
+    --border-light: #eee;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
+  }
+  a { text-decoration:none; color:inherit; }
+  button { font-family:inherit; }
+  .phone {
+    width: 390px;
+    background: var(--bg-card);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+  }
+  .statusbar {
+    height: 30px; background: var(--bg-card);
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px; font-size: 12px; font-weight:600; color:var(--text-main);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff; padding: 14px 18px 18px;
+  }
+  .header .top {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .header .top .back { font-size:18px; }
+  .header .top .title { font-size:16px; font-weight:700; }
+  .header .top .spacer { width:18px; }
+  .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
+  .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
+
+  .content { padding: 16px; background:var(--bg-content); min-height: 480px; }
+
+  .card {
+    background:var(--bg-card); border-radius:16px; padding:6px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 14px;
+  }
+  .lang-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 0; cursor:pointer; background:none; border:none; width:100%; text-align:left;
+  }
+  .lang-row:not(:last-child) { border-bottom:1px solid var(--border-light); }
+  .lang-row .flag { font-size:20px; width:30px; }
+  .lang-row .info { flex:1; display:flex; align-items:center; gap:10px; }
+  .lang-row .name { font-size:13.5px; font-weight:700; color:var(--text-main); }
+  .lang-row .native { font-size:11px; color:var(--text-mute); margin-top:2px; }
+  .lang-row .check {
+    width:20px; height:20px; border-radius:50%; border:2px solid #ddd;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:12px; color:transparent;
+  }
+  .lang-row.selected .check { border-color:var(--primary); background:var(--primary); color:#fff; }
+
+  .note-card {
+    background:var(--primary-light2); border:1px solid var(--primary-border); border-radius:14px;
+    padding:14px; font-size:11.5px; color:var(--primary-dark); line-height:1.6; margin-bottom:14px;
+  }
+
+  .cta { display:block; background:var(--primary); color:#fff; text-align:center;
+    padding:13px; border-radius:12px; font-size:14px; font-weight:700; border:none; width:100%; }
+
+  .tabbar {
+    display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
+  }
+  .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
+  .tabbar .tab.active { color:var(--primary); font-weight:700; }
+  .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+  </div>
+
+  <div class="header">
+    <div class="top">
+      <a class="back" href="nh_luckymate_mockup.html">‹</a>
+      <span class="title">언어 설정 · Language</span>
+      <span class="spacer"></span>
+    </div>
+    <div class="sub">
+      <span data-i18n="hdrTitle">원하는 언어를 선택해주세요</span>
+      <span data-i18n="hdrSub">농어촌 지역 다문화 비중 상위 5개 언어 지원</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="card" id="langList">
+      <button class="lang-row" data-lang="ko">
+        <div class="info">
+          <span class="flag">🇰🇷</span>
+          <div>
+            <div class="name">한국어</div>
+            <div class="native">Korean (기본값)</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+      <button class="lang-row" data-lang="en">
+        <div class="info">
+          <span class="flag">🇺🇸</span>
+          <div>
+            <div class="name">English</div>
+            <div class="native">영어</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+      <button class="lang-row" data-lang="zh">
+        <div class="info">
+          <span class="flag">🇨🇳</span>
+          <div>
+            <div class="name">中文</div>
+            <div class="native">중국어</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+      <button class="lang-row" data-lang="vi">
+        <div class="info">
+          <span class="flag">🇻🇳</span>
+          <div>
+            <div class="name">Tiếng Việt</div>
+            <div class="native">베트남어</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+      <button class="lang-row" data-lang="th">
+        <div class="info">
+          <span class="flag">🇹🇭</span>
+          <div>
+            <div class="name">ภาษาไทย</div>
+            <div class="native">태국어</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+      <button class="lang-row" data-lang="uz">
+        <div class="info">
+          <span class="flag">🇺🇿</span>
+          <div>
+            <div class="name">Oʻzbekcha</div>
+            <div class="native">우즈베크어</div>
+          </div>
+        </div>
+        <div class="check">✓</div>
+      </button>
+    </div>
+
+    <div class="note-card" data-i18n="noteText">
+      농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.
+    </div>
+
+    <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaSave">저장하고 돌아가기</a>
+  </div>
+
+  <div class="tabbar">
+    <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
+    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ko: { hdrTitle:"원하는 언어를 선택해주세요", hdrSub:"농어촌 지역 다문화 비중 상위 5개 언어 지원", noteText:"농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.", ctaSave:"저장하고 돌아가기", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrTitle:"Please select your language", hdrSub:"Supporting the top 5 languages among multicultural rural residents", noteText:"These 5 languages were selected for foreign workers and international students living in rural areas. Selecting one translates all screen text.", ctaSave:"Save and Go Back", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrTitle:"请选择您想使用的语言", hdrSub:"支持农渔村地区多元文化人口占比最高的5种语言", noteText:"这5种语言是为居住在农渔村地区的外国劳动者、留学生用户而选定的。选择后画面全部文字将被翻译显示。", ctaSave:"保存并返回", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrTitle:"Vui lòng chọn ngôn ngữ", hdrSub:"Hỗ trợ 5 ngôn ngữ phổ biến nhất tại vùng nông ngư thôn đa văn hóa", noteText:"5 ngôn ngữ này được chọn dành cho lao động nước ngoài và du học sinh sống ở vùng nông thôn. Khi chọn, toàn bộ văn bản trên màn hình sẽ được dịch.", ctaSave:"Lưu và quay lại", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrTitle:"กรุณาเลือกภาษาที่ต้องการ", hdrSub:"รองรับ 5 ภาษาที่มีสัดส่วนสูงสุดในพื้นที่ชนบทที่มีความหลากหลายทางวัฒนธรรม", noteText:"5 ภาษานี้ถูกเลือกมาสำหรับแรงงานต่างชาติและนักเรียนต่างชาติที่อาศัยในพื้นที่ชนบท เมื่อเลือกแล้วข้อความทั้งหมดบนหน้าจอจะถูกแปล", ctaSave:"บันทึกและย้อนกลับ", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrTitle:"Kerakli tilni tanlang", hdrSub:"Qishloq xoʻjaligi hududlaridagi koʻp millatli aholi orasida eng koʻp tarqalgan 5 til", noteText:"Ushbu 5 til qishloq hududlarida yashovchi xorijiy ishchilar va xalqaro talabalar uchun tanlangan. Tanlanganda ekrandagi barcha matn tarjima qilinadi.", ctaSave:"Saqlash va ortga qaytish", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+};
+const LANG_KEY = 'nh_lang';
+
+function applyI18n(){
+  const lang = localStorage.getItem(LANG_KEY) || 'ko';
+  const dict = I18N[lang] || I18N.ko;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] !== undefined) el.textContent = dict[k];
+  });
+}
+
+function renderSelection(){
+  const lang = localStorage.getItem(LANG_KEY) || 'ko';
+  document.querySelectorAll('.lang-row').forEach(row=>{
+    row.classList.toggle('selected', row.getAttribute('data-lang') === lang);
+  });
+}
+
+document.querySelectorAll('.lang-row').forEach(row=>{
+  row.addEventListener('click', ()=>{
+    localStorage.setItem(LANG_KEY, row.getAttribute('data-lang'));
+    renderSelection();
+    applyI18n();
+  });
+});
+
+renderSelection();
+applyI18n();
+</script>
+
+</body>
+</html>

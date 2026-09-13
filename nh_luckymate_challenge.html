@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 3등 당첨 챌린지</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --primary-light2: #F0FBF4;
+    --primary-border: #CDEEDA;
+    --danger: #FF7272;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+    --text-faint: #aaa;
+    --bg-page: #EDEFF1;
+    --bg-content: #F7F8FA;
+    --bg-card: #fff;
+    --border-light: #eee;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
+  }
+  a { text-decoration:none; color:inherit; }
+  .phone {
+    width: 390px;
+    background: var(--bg-card);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+  }
+  .statusbar {
+    height: 30px; background: var(--bg-card);
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px; font-size: 12px; font-weight:600; color:var(--text-main);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff; padding: 14px 18px 18px;
+  }
+  .header .top {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .header .top .back { font-size:18px; }
+  .header .top .title { font-size:16px; font-weight:700; }
+  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
+  .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
+
+  .content { padding: 16px; background:var(--bg-content); }
+
+  .hero-card {
+    background: linear-gradient(135deg,var(--primary-light2),var(--primary-light));
+    border:1px solid var(--primary-border); border-radius:16px; padding:18px; margin-bottom:14px;
+  }
+  .hero-card .label { font-size:11.5px; color:var(--primary-dark); font-weight:700; margin-bottom:6px; }
+  .hero-card .title { font-size:17px; font-weight:800; color:var(--text-main); margin-bottom:6px; line-height:1.35; }
+  .hero-card .sub { font-size:11.5px; color:var(--text-sub); }
+  .hero-card .sub b { color:var(--primary-dark); }
+  button { all:unset; box-sizing:border-box; cursor:pointer; }
+
+  .card {
+    background:var(--bg-card); border-radius:16px; padding:16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 13px; font-weight:700; color:var(--text-sub);
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;
+  }
+  .card-sub { font-size:10.5px; color:var(--text-faint); margin-bottom:12px; }
+
+  .chart-wrap { height: 150px; display:flex; align-items:flex-end; gap:8px; padding:4px 2px 0; }
+  .chart-wrap .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .chart-wrap .bar { width: 16px; border-radius: 4px 4px 0 0; background:var(--primary-border); }
+  .chart-wrap .bar.now { background:var(--primary); }
+  .chart-wrap .num { font-size:9px; color:var(--text-faint); margin-top:4px; }
+
+  .stat-row { display:flex; justify-content:space-between; margin-top:12px; }
+  .stat-item { text-align:center; flex:1; }
+  .stat-item .num { font-size:15px; font-weight:800; color:var(--text-main); }
+  .stat-item .label { font-size:10.5px; color:var(--text-mute); margin-top:2px; }
+
+  .product-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0;
+  }
+  .product-row:not(:last-child) { border-bottom:1px solid var(--border-light); }
+  .product-row .pname { font-size:12.5px; font-weight:700; color:var(--text-main); }
+  .product-row .pdesc { font-size:10.5px; color:var(--text-mute); margin-top:2px; }
+  .product-row .prate { font-size:13px; font-weight:800; color:var(--primary-dark); }
+
+  .cta { display:block; background:var(--primary); color:#fff; text-align:center;
+    padding:13px; border-radius:12px; font-size:14px; font-weight:700; }
+  .badge-note { font-size:10.5px; color:var(--text-faint); text-align:center; margin-top:8px; }
+
+  .tabbar {
+    display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
+  }
+  .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
+  .tabbar .tab.active { color:var(--primary); font-weight:700; }
+  .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+  </div>
+
+  <div class="header">
+    <div class="top">
+      <a class="back" href="nh_luckymate_mockup.html">‹</a>
+      <span class="title" data-i18n="hdrPageTitle">3등 당첨 챌린지</span>
+      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+    </div>
+    <div class="sub">
+      <span data-i18n="hdrTitle">1등보다 현실적인 목표, 3등 도전!</span>
+      <span data-i18n="hdrSub">815만분의 1이 아닌, 4만분의 1의 확률</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="hero-card">
+      <div class="label" data-i18n="heroLabel">현재 회차</div>
+      <div class="title" id="heroTitle">불러오는 중...</div>
+      <div class="sub" id="heroSub"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span data-i18n="chartTitle">최근 12주 3등 당첨자 수</span>
+      </div>
+      <div class="card-sub" data-i18n="chartSub">회차별 3등 당첨 인원 (동행복권 실시간 데이터 기준)</div>
+      <div class="chart-wrap" id="challengeChart"></div>
+      <div class="stat-row">
+        <div class="stat-item"><div class="num" id="statAvgPrize">-</div><div class="label" data-i18n="statLabel1">3등 평균 당첨금</div></div>
+        <div class="stat-item"><div class="num">1/41,404</div><div class="label" data-i18n="statLabel2">당첨 확률</div></div>
+        <div class="stat-item"><div class="num" id="statAvgWinners">-</div><div class="label" data-i18n="statLabel3">3등 당첨자 수</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="productsTitle">3등 당첨금 상당 재테크 상품</div>
+      <div class="product-row">
+        <div>
+          <div class="pname">NH직장인든든적금</div>
+          <div class="pdesc" data-i18n="prod1Desc">월 50만원씩 2년 납입 시 목표 도달</div>
+        </div>
+        <div class="prate">3.50%</div>
+      </div>
+      <div class="product-row">
+        <div>
+          <div class="pname">NH올원e예금</div>
+          <div class="pdesc" data-i18n="prod2Desc">1,500만원 목돈 비대면 예치</div>
+        </div>
+        <div class="prate">3.20%</div>
+      </div>
+    </div>
+
+    <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaJoin">이번 회차 내 번호 확인하러 가기 ›</a>
+    <div class="badge-note" data-i18n="badgeNote">* 동행복권 데이터를 실시간으로 불러와 계산해요</div>
+  </div>
+
+  <div class="tabbar">
+    <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
+    <a class="tab active" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ko: { hdrPageTitle:"3등 당첨 챌린지", hdrTitle:"1등보다 현실적인 목표, 3등 도전!", hdrSub:"815만분의 1이 아닌, 4만분의 1의 확률", heroLabel:"현재 회차", heroTitleTemplate:"제 {round}회 3등 당첨 도전", heroSubTemplate:"다음 추첨 {date} · D-{days}", loadingText:"불러오는 중...", chartTitle:"최근 12주 3등 당첨자 수", chartSub:"회차별 3등 당첨 인원 (동행복권 실시간 데이터 기준)", statLabel1:"3등 평균 당첨금", statLabel2:"당첨 확률", statLabel3:"3등 당첨자 수", productsTitle:"3등 당첨금 상당 재테크 상품", prod1Desc:"월 50만원씩 2년 납입 시 목표 도달", prod2Desc:"1,500만원 목돈 비대면 예치", ctaJoin:"이번 회차 내 번호 확인하러 가기 ›", badgeNote:"* 동행복권 데이터를 실시간으로 불러와 계산해요", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"3rd Prize Challenge", hdrTitle:"A more realistic goal than 1st prize — go for 3rd!", hdrSub:"Not 1-in-8.15M, but 1-in-41K odds", heroLabel:"Current Round", heroTitleTemplate:"Round {round} · 3rd Prize Challenge", heroSubTemplate:"Next draw {date} · D-{days}", loadingText:"Loading...", chartTitle:"3rd-Prize Winners (Last 12 Weeks)", chartSub:"Number of 3rd-prize winners per round (live lottery data)", statLabel1:"Average 3rd Prize", statLabel2:"Winning Odds", statLabel3:"Number of 3rd-Prize Winners", productsTitle:"Investment Products Matching 3rd Prize", prod1Desc:"Reach the goal by saving ₩500K/month for 2 years", prod2Desc:"Deposit ₩15M online, lump sum", ctaJoin:"Check This Round's Numbers ›", badgeNote:"* Calculated from live Lottery data", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"三等奖挑战", hdrTitle:"比一等奖更现实的目标，挑战三等奖!", hdrSub:"不是815万分之一，而是4万分之一的概率", heroLabel:"本期", heroTitleTemplate:"第{round}期 三等奖挑战", heroSubTemplate:"下次开奖 {date} · D-{days}", loadingText:"加载中...", chartTitle:"近12周三等奖中奖人数", chartSub:"各期三等奖中奖人数(实时彩票数据)", statLabel1:"三等奖平均奖金", statLabel2:"中奖概率", statLabel3:"三等奖中奖人数", productsTitle:"相当于三等奖金额的理财产品", prod1Desc:"每月存50万韩元，2年内达成目标", prod2Desc:"1500万韩元资金非面对面存款", ctaJoin:"查询本期我的号码 ›", badgeNote:"* 基于实时彩票数据计算", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Thử thách giải Ba", hdrTitle:"Mục tiêu thực tế hơn giải nhất, thử sức giải ba!", hdrSub:"Không phải 1/8,15 triệu mà là 1/41 nghìn", heroLabel:"Kỳ hiện tại", heroTitleTemplate:"Thử thách giải Ba kỳ {round}", heroSubTemplate:"Quay số tiếp theo {date} · D-{days}", loadingText:"Đang tải...", chartTitle:"Số người trúng giải Ba (12 tuần gần nhất)", chartSub:"Số người trúng giải Ba theo kỳ (dữ liệu xổ số thời gian thực)", statLabel1:"Giải Ba trung bình", statLabel2:"Tỷ lệ trúng thưởng", statLabel3:"Số người trúng giải Ba", productsTitle:"Sản phẩm đầu tư tương đương giải Ba", prod1Desc:"Đạt mục tiêu khi gửi 500.000 won/tháng trong 2 năm", prod2Desc:"Gửi trực tuyến khoản 15 triệu won", ctaJoin:"Kiểm tra số của tôi kỳ này ›", badgeNote:"* Tính toán từ dữ liệu xổ số thời gian thực", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"ท้าทายรางวัลที่ 3", hdrTitle:"เป้าหมายที่เป็นจริงกว่ารางวัลที่ 1 ลองรางวัลที่ 3!", hdrSub:"ไม่ใช่ 1 ใน 8.15 ล้าน แต่เป็น 1 ใน 41,000", heroLabel:"งวดปัจจุบัน", heroTitleTemplate:"ท้าทายรางวัลที่ 3 งวดที่ {round}", heroSubTemplate:"จับรางวัลครั้งถัดไป {date} · D-{days}", loadingText:"กำลังโหลด...", chartTitle:"จำนวนผู้ถูกรางวัลที่ 3 (12 สัปดาห์ล่าสุด)", chartSub:"จำนวนผู้ถูกรางวัลที่ 3 ต่อรอบ (ข้อมูลสลากแบบเรียลไทม์)", statLabel1:"รางวัลที่ 3 เฉลี่ย", statLabel2:"อัตราการถูกรางวัล", statLabel3:"จำนวนผู้ถูกรางวัลที่ 3", productsTitle:"ผลิตภัณฑ์การลงทุนเทียบเท่ารางวัลที่ 3", prod1Desc:"บรรลุเป้าหมายด้วยการฝาก 500,000 วอน/เดือน เป็นเวลา 2 ปี", prod2Desc:"ฝากเงินก้อน 15 ล้านวอนออนไลน์", ctaJoin:"ตรวจเลขของฉันงวดนี้ ›", badgeNote:"* คำนวณจากข้อมูลสลากแบบเรียลไทม์", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"3-mukofot chellenji", hdrTitle:"1-mukofotdan koʻra real maqsad — 3-mukofotga urinib koʻring!", hdrSub:"8,15 milliondan bir emas, 41 mingdan bir ehtimollik", heroLabel:"Joriy tur", heroTitleTemplate:"{round}-tur 3-mukofot chellenji", heroSubTemplate:"Keyingi qur'a {date} · D-{days}", loadingText:"Yuklanmoqda...", chartTitle:"3-mukofot gʻoliblari soni (oxirgi 12 hafta)", chartSub:"Har bir tur boʻyicha 3-mukofot gʻoliblari soni (jonli lotereya maʼlumotlari)", statLabel1:"Oʻrtacha 3-mukofot", statLabel2:"Yutish ehtimoli", statLabel3:"3-mukofot gʻoliblari soni", productsTitle:"3-mukofotga teng investitsiya mahsulotlari", prod1Desc:"Oyiga 500 ming so'm, 2 yil davomida maqsadga yetish", prod2Desc:"15 mln so'mlik mablag'ni onlayn joylashtirish", ctaJoin:"Ushbu tur raqamlarimni tekshirish ›", badgeNote:"* Jonli lotereya maʼlumotlari asosida hisoblangan", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+};
+(function(){
+  const lang = localStorage.getItem('nh_lang') || 'ko';
+  const dict = I18N[lang] || I18N.ko;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] !== undefined) el.textContent = dict[k];
+  });
+})();
+</script>
+
+<script>
+/* ===== 동행복권 실시간 데이터 기반 3등 통계 (mockup.html과 같은 캐시 공유) ===== */
+const DH_API_URL = 'https://www.dhlottery.co.kr/lt645/selectPstLt645Info.do?srchLtEpsd=all';
+const CACHE_KEY = 'nh_dh645_cache_v2';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const FALLBACK_DRAWS = [
+  { r: 1180, d: '20260815', n: [3,11,19,27,33,41], b: 18, amt: [2000000000,60000000,1500000,50000,5000], cnt: [1,2,45,2200,35000] }
+];
+
+async function loadDrawData(){
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if(cached && Array.isArray(cached.list) && cached.list.length && (Date.now() - cached.t < CACHE_TTL_MS)){
+      return { list: cached.list, live: true };
+    }
+  } catch(e) {}
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(DH_API_URL, { signal: controller.signal });
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const raw = (json.data && json.data.list) || [];
+    const list = raw.map(d => ({
+      r: d.ltEpsd, d: d.ltRflYmd,
+      n: [d.tm1WnNo, d.tm2WnNo, d.tm3WnNo, d.tm4WnNo, d.tm5WnNo, d.tm6WnNo],
+      b: d.bnsWnNo,
+      amt: [d.rnk1WnAmt, d.rnk2WnAmt, d.rnk3WnAmt, d.rnk4WnAmt, d.rnk5WnAmt],
+      cnt: [d.rnk1WnNope, d.rnk2WnNope, d.rnk3WnNope, d.rnk4WnNope, d.rnk5WnNope],
+    })).sort((a, b) => a.r - b.r);
+    if(!list.length) throw new Error('empty list');
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), list })); } catch(e) {}
+    return { list, live: true };
+  } catch(e) {
+    console.warn('동행복권 API 연동 실패, 데모 데이터로 대체합니다:', e);
+    return { list: FALLBACK_DRAWS, live: false };
+  }
+}
+
+const LOCALE_MAP = { ko:'ko-KR', en:'en-US', zh:'zh-CN', vi:'vi-VN', th:'th-TH', uz:'uz-UZ' };
+function formatDrawDate(ymd, lang){
+  const y = +ymd.slice(0,4), m = +ymd.slice(4,6) - 1, d = +ymd.slice(6,8);
+  const dt = new Date(y, m, d);
+  try {
+    return new Intl.DateTimeFormat(LOCALE_MAP[lang] || 'ko-KR', { year:'numeric', month:'long', day:'numeric', weekday:'short' }).format(dt);
+  } catch(e) { return ymd; }
+}
+
+async function initChallenge(){
+  let currentLang = 'ko';
+  try { currentLang = localStorage.getItem('nh_lang') || 'ko'; } catch(e) {}
+  const dict = I18N[currentLang] || I18N.ko;
+
+  document.getElementById('heroTitle').textContent = dict.loadingText;
+
+  const { list } = await loadDrawData();
+  const recent12 = list.slice(-12);
+
+  const wrap = document.getElementById('challengeChart');
+  wrap.innerHTML = '';
+  const max = Math.max(...recent12.map(d => d.cnt[2]));
+  recent12.forEach((d, i) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const bar = document.createElement('div');
+    bar.className = 'bar' + (i === recent12.length - 1 ? ' now' : '');
+    bar.style.height = (max ? d.cnt[2] / max * 100 : 0) + '%';
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = d.r;
+    col.appendChild(bar);
+    col.appendChild(num);
+    wrap.appendChild(col);
+  });
+
+  const avgPrize = Math.round(recent12.reduce((a, d) => a + d.amt[2], 0) / recent12.length);
+  const avgWinners = Math.round(recent12.reduce((a, d) => a + d.cnt[2], 0) / recent12.length);
+  document.getElementById('statAvgPrize').textContent = Math.round(avgPrize / 10000).toLocaleString() + '만원';
+  document.getElementById('statAvgWinners').textContent = avgWinners.toLocaleString() + '명';
+
+  const latest = list[list.length - 1];
+  const latestDate = new Date(+latest.d.slice(0, 4), +latest.d.slice(4, 6) - 1, +latest.d.slice(6, 8));
+  const nextDraw = new Date(latestDate.getTime() + 7 * 86400000);
+  const daysLeft = Math.max(0, Math.ceil((nextDraw - new Date()) / 86400000));
+  const nextYmd = nextDraw.getFullYear() + String(nextDraw.getMonth() + 1).padStart(2, '0') + String(nextDraw.getDate()).padStart(2, '0');
+
+  document.getElementById('heroTitle').textContent = dict.heroTitleTemplate.replace('{round}', latest.r + 1);
+  document.getElementById('heroSub').innerHTML = dict.heroSubTemplate
+    .replace('{date}', formatDrawDate(nextYmd, currentLang))
+    .replace('{days}', '<b>' + daysLeft + '</b>');
+}
+
+initChallenge();
+</script>
+
+</body>
+</html>

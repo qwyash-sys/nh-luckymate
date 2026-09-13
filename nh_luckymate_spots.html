@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 로또 명당 찾기</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --primary-light2: #F0FBF4;
+    --primary-border: #CDEEDA;
+    --danger: #FF7272;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+    --text-faint: #aaa;
+    --bg-page: #EDEFF1;
+    --bg-content: #F7F8FA;
+    --bg-card: #fff;
+    --border-light: #eee;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
+  }
+  a { text-decoration:none; color:inherit; }
+  .phone {
+    width: 390px;
+    background: var(--bg-card);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+  }
+  .statusbar {
+    height: 30px; background: var(--bg-card);
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px; font-size: 12px; font-weight:600; color:var(--text-main);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff; padding: 14px 18px 18px;
+  }
+  .header .top {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .header .top .back { font-size:18px; }
+  .header .top .title { font-size:16px; font-weight:700; }
+  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
+  .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
+
+  .content { padding: 16px; background:var(--bg-content); }
+
+  .map-box {
+    position:relative;
+    height:150px; border-radius:16px; overflow:hidden; margin-bottom:14px;
+    background:
+      linear-gradient(#dfe7e2 1px, transparent 1px) 0 0/20px 20px,
+      linear-gradient(90deg, #dfe7e2 1px, transparent 1px) 0 0/20px 20px,
+      #EAF3EE;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .map-box .me {
+    position:absolute; width:14px; height:14px; border-radius:50%;
+    background:#1c8cff; border:3px solid #fff; box-shadow:0 0 0 4px rgba(28,140,255,0.25);
+    top:50%; left:50%; transform:translate(-50%,-50%);
+  }
+  .map-box .pin {
+    position:absolute; width:22px; height:22px; border-radius:50% 50% 50% 0;
+    background:var(--primary); transform:translate(-50%,-100%) rotate(-45deg);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 4px rgba(0,0,0,0.25);
+  }
+  .map-box .pin span { transform:rotate(45deg); font-size:10px; color:#fff; font-weight:800; }
+  .map-box .badge {
+    position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.9);
+    font-size:10px; color:var(--text-mute); padding:4px 8px; border-radius:20px; font-weight:600;
+  }
+
+  .segment {
+    display:flex; background:var(--bg-card); border-radius:12px; padding:4px;
+    margin-bottom:14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .segment div {
+    flex:1; text-align:center; padding:9px 0; font-size:12.5px; font-weight:700;
+    border-radius:9px; color:var(--text-mute); cursor:pointer;
+  }
+  .segment .active { background:var(--primary); color:#fff; }
+
+  .shop-card {
+    background:var(--bg-card); border-radius:16px; padding:14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .shop-card .rank-num {
+    width:26px; height:26px; border-radius:50%; background:var(--primary-light);
+    color:var(--primary-dark); font-size:12px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .shop-info { flex:1; min-width:0; }
+  .shop-info .name { font-size:14px; font-weight:800; color:var(--text-main); margin-bottom:3px; }
+  .shop-info .addr { font-size:11px; color:var(--text-mute); margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .shop-info .tags { display:flex; gap:5px; flex-wrap:wrap; }
+  .tag { font-size:10px; font-weight:700; padding:3px 7px; border-radius:20px; white-space:nowrap; }
+  .tag.win1 { background:#FFF1CE; color:#9A6B00; }
+  .tag.win2 { background:var(--primary-light); color:var(--primary-dark); }
+  .shop-side { text-align:right; flex-shrink:0; }
+  .shop-side .dist { font-size:12px; font-weight:800; color:var(--primary-dark); white-space:nowrap; }
+  .shop-side .go { display:block; font-size:10.5px; color:var(--text-mute); margin-top:6px; }
+
+  .status-text { text-align:center; font-size:12px; color:var(--text-mute); padding:20px 0; }
+
+  .cta {
+    display:block;
+    margin-top: 4px; background:var(--primary); color:#fff; text-align:center;
+    padding:13px; border-radius:12px; font-size:14px; font-weight:700;
+  }
+  .badge-note { font-size:10.5px; color:var(--text-faint); text-align:center; margin-top:8px; line-height:1.5; }
+
+  .tabbar {
+    display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
+  }
+  .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
+  .tabbar .tab.active { color:var(--primary); font-weight:700; }
+  .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+  </div>
+
+  <div class="header">
+    <div class="top">
+      <a class="back" href="nh_luckymate_mockup.html">‹</a>
+      <span class="title" data-i18n="hdrPageTitle">내 근처 로또 명당</span>
+      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+    </div>
+    <div class="sub">
+      <span data-i18n="hdrTitle">1등 당첨 판매점이 여기 있어요</span>
+      <span id="hdrSub">불러오는 중...</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="map-box">
+      <div class="badge" id="mapBadge">📍 위치 확인 중...</div>
+      <div class="pin" style="top:38%; left:30%;"><span>1</span></div>
+      <div class="pin" style="top:28%; left:62%;"><span>2</span></div>
+      <div class="pin" style="top:62%; left:70%;"><span>3</span></div>
+      <div class="me"></div>
+    </div>
+
+    <div class="segment">
+      <div class="active" data-mode="dist" data-i18n="segDist">거리순</div>
+      <div data-mode="count" data-i18n="segCount">당첨횟수순</div>
+      <div data-mode="amount" data-i18n="segAmount">당첨금액순</div>
+    </div>
+
+    <div id="shopList"><div class="status-text" id="statusText">불러오는 중...</div></div>
+
+    <a class="cta" href="nh_luckymate_guide.html" data-i18n="ctaGuide">당첨되면 어떻게 하나요? ›</a>
+    <div class="badge-note" id="badgeNote">* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다</div>
+  </div>
+
+  <div class="tabbar">
+    <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab active" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
+    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ko: { hdrPageTitle:"내 근처 로또 명당", hdrTitle:"1등 당첨 판매점이 여기 있어요", hdrSubTpl:"내 근처 판매점 {n}곳 찾음", hdrSubLoading:"내 근처 판매점 찾는 중...", hdrSubEmpty:"근처에서 판매점을 찾지 못했어요", mapBadgeGeo:"📍 내 위치 기준", mapBadgeFallback:"📍 서울 기준(위치 권한 없음)", segDist:"거리순", segCount:"당첨횟수순", segAmount:"당첨금액순", navLink:"길찾기 ›", ctaGuide:"당첨되면 어떻게 하나요? ›", badgeNote:"* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다", rank1Tag:"1등 {n}회", rank2Tag:"2등 {n}회", amountTag:"추정 누적 {n}", emptyText:"근처에 데이터가 있는 판매점이 없어요", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"Lucky Spots Near Me", hdrTitle:"1st-prize winning stores are here", hdrSubTpl:"Found {n} nearby stores", hdrSubLoading:"Finding nearby stores...", hdrSubEmpty:"No nearby stores found", mapBadgeGeo:"📍 Based on my location", mapBadgeFallback:"📍 Based on Seoul (no location access)", segDist:"By Distance", segCount:"By Win Count", segAmount:"By Prize Amount", navLink:"Directions ›", ctaGuide:"What to do if I win? ›", badgeNote:"* Based on official winning-store data (last 100 draws). Prize amounts are estimated using average per-rank prize.", rank1Tag:"1st x{n}", rank2Tag:"2nd x{n}", amountTag:"Est. total {n}", emptyText:"No stores with data found nearby", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"我附近的幸运网点", hdrTitle:"这里有中过一等奖的销售点", hdrSubTpl:"找到附近{n}家网点", hdrSubLoading:"正在查找附近网点...", hdrSubEmpty:"附近未找到网点", mapBadgeGeo:"📍 基于我的位置", mapBadgeFallback:"📍 基于首尔(无位置权限)", segDist:"按距离", segCount:"按中奖次数", segAmount:"按中奖金额", navLink:"导航 ›", ctaGuide:"中奖了该怎么办? ›", badgeNote:"* 基于官方当选销售点数据(近100期)。中奖金额为按等级平均奖金估算值", rank1Tag:"1等x{n}", rank2Tag:"2等x{n}", amountTag:"预估累计{n}", emptyText:"附近没有找到有数据的网点", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Điểm may mắn gần tôi", hdrTitle:"Có cửa hàng từng trúng giải nhất ở đây", hdrSubTpl:"Tìm thấy {n} cửa hàng gần đây", hdrSubLoading:"Đang tìm cửa hàng gần đây...", hdrSubEmpty:"Không tìm thấy cửa hàng gần đây", mapBadgeGeo:"📍 Dựa trên vị trí của tôi", mapBadgeFallback:"📍 Dựa trên Seoul (không có quyền vị trí)", segDist:"Theo khoảng cách", segCount:"Theo số lần trúng", segAmount:"Theo số tiền trúng", navLink:"Chỉ đường ›", ctaGuide:"Nếu trúng thưởng thì làm gì? ›", badgeNote:"* Dựa trên dữ liệu cửa hàng trúng thưởng chính thức (100 kỳ gần nhất). Số tiền trúng thưởng là ước tính theo giải trung bình", rank1Tag:"Giải 1 x{n}", rank2Tag:"Giải 2 x{n}", amountTag:"Ước tính {n}", emptyText:"Không tìm thấy cửa hàng có dữ liệu gần đây", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"จุดขายมงคลใกล้ฉัน", hdrTitle:"มีร้านที่เคยถูกรางวัลที่ 1 อยู่ตรงนี้", hdrSubTpl:"พบร้านใกล้เคียง {n} ร้าน", hdrSubLoading:"กำลังค้นหาร้านใกล้เคียง...", hdrSubEmpty:"ไม่พบร้านใกล้เคียง", mapBadgeGeo:"📍 อ้างอิงตำแหน่งของฉัน", mapBadgeFallback:"📍 อ้างอิงกรุงโซล (ไม่ได้รับอนุญาตตำแหน่ง)", segDist:"ตามระยะทาง", segCount:"ตามจำนวนครั้งที่ถูกรางวัล", segAmount:"ตามจำนวนเงินรางวัล", navLink:"นำทาง ›", ctaGuide:"ถ้าถูกรางวัลต้องทำอย่างไร? ›", badgeNote:"* อ้างอิงข้อมูลร้านถูกรางวัลจริง (100 งวดล่าสุด) ยอดเงินรางวัลเป็นค่าประมาณจากรางวัลเฉลี่ยแต่ละอันดับ", rank1Tag:"รางวัลที่1 x{n}", rank2Tag:"รางวัลที่2 x{n}", amountTag:"ประมาณรวม {n}", emptyText:"ไม่พบร้านที่มีข้อมูลใกล้เคียง", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"Yaqin atrofdagi baxtli joylar", hdrTitle:"Bu yerda 1-mukofot yutgan doʻkonlar bor", hdrSubTpl:"Yaqin atrofda {n} ta doʻkon topildi", hdrSubLoading:"Yaqin atrofdagi doʻkonlar qidirilmoqda...", hdrSubEmpty:"Yaqin atrofda doʻkon topilmadi", mapBadgeGeo:"📍 Mening joylashuvim asosida", mapBadgeFallback:"📍 Seul asosida (joylashuv ruxsati yoʻq)", segDist:"Masofa boʻyicha", segCount:"Yutuq soni boʻyicha", segAmount:"Yutuq summasi boʻyicha", navLink:"Yoʻnalish ›", ctaGuide:"Yutib olsam nima qilaman? ›", badgeNote:"* Rasmiy yutuq doʻkonlari maʼlumotlariga asoslangan (oxirgi 100 tur). Yutuq summasi daraja boʻyicha oʻrtacha mukofot asosida taxminiy", rank1Tag:"1-mukofot x{n}", rank2Tag:"2-mukofot x{n}", amountTag:"Taxminiy jami {n}", emptyText:"Yaqin atrofda maʼlumotli doʻkon topilmadi", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+};
+
+function currentLang(){
+  try { return localStorage.getItem('nh_lang') || 'ko'; } catch(e) { return 'ko'; }
+}
+function currentDict(){
+  return I18N[currentLang()] || I18N.ko;
+}
+function t(key, vars){
+  const dict = currentDict();
+  let str = dict[key] !== undefined ? dict[key] : (I18N.ko[key] || key);
+  if(vars) Object.keys(vars).forEach(k => { str = str.split('{' + k + '}').join(vars[k]); });
+  return str;
+}
+function applyStaticI18n(){
+  const lang = currentLang();
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    const dict = currentDict();
+    if(dict[k] !== undefined) el.textContent = dict[k];
+  });
+}
+applyStaticI18n();
+
+/* ===== Supabase: 로또 명당(당첨판매점) 실데이터 조회 (읽기 전용 anon key) ===== */
+const SUPABASE_URL = 'https://lljawlsujuxssvvktcxt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsamF3bHN1anV4c3N2dmt0Y3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMTExODYsImV4cCI6MjEwNDg4NzE4Nn0.IaV883xDEWoWokIRUbR_2SOH8v0C_EcVOdwVX_ZGJSs';
+
+// 위치 권한이 없을 때 쓰는 기본 위치: 서울시청
+const FALLBACK_LAT = 37.5665;
+const FALLBACK_LON = 126.9780;
+const SEARCH_DELTA = 0.5; // 위경도 ±0.5도 (대략 반경 50~100km권) 바운딩 박스로 1차 조회
+
+async function fetchNearbyShops(lat, lon){
+  const url = `${SUPABASE_URL}/rest/v1/winning_shops?select=lt_shp_id,shp_nm,addr,region,lat,lon,rank1_count,rank2_count` +
+    `&lat=gte.${lat - SEARCH_DELTA}&lat=lte.${lat + SEARCH_DELTA}` +
+    `&lon=gte.${lon - SEARCH_DELTA}&lon=lte.${lon + SEARCH_DELTA}` +
+    `&limit=300`;
+  const res = await fetch(url, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function getUserLocation(){
+  return new Promise((resolve) => {
+    if(!navigator.geolocation){
+      resolve({ lat: FALLBACK_LAT, lon: FALLBACK_LON, isFallback: true });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude, isFallback: false }),
+      () => resolve({ lat: FALLBACK_LAT, lon: FALLBACK_LON, isFallback: true }),
+      { timeout: 5000, maximumAge: 300000 }
+    );
+  });
+}
+
+function haversineKm(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDist(km){
+  if(km < 1) return Math.round(km * 1000) + 'm';
+  return km.toFixed(1) + 'km';
+}
+
+/* ===== 등수별 평균 당첨금 (당첨금액순 추정용) — mockup.html과 같은 캐시 재사용 ===== */
+const DH_API_URL = 'https://www.dhlottery.co.kr/lt645/selectPstLt645Info.do?srchLtEpsd=all';
+const CACHE_KEY = 'nh_dh645_cache_v2';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+// API 연동 실패 시 폴백용 대략적인 평균 당첨금(과거 관측치 기준)
+const FALLBACK_AVG = { rank1: 1800000000, rank2: 65000000 };
+
+async function loadAvgPrizeAmounts(){
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if(cached && Array.isArray(cached.list) && cached.list.length && (Date.now() - cached.t < CACHE_TTL_MS)){
+      return computeAvg(cached.list);
+    }
+  } catch(e) {}
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(DH_API_URL, { signal: controller.signal });
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const raw = (json.data && json.data.list) || [];
+    const list = raw.map(d => ({
+      r: d.ltEpsd,
+      amt: [d.rnk1WnAmt, d.rnk2WnAmt, d.rnk3WnAmt, d.rnk4WnAmt, d.rnk5WnAmt],
+    })).sort((a, b) => a.r - b.r);
+    if(!list.length) throw new Error('empty list');
+    return computeAvg(list);
+  } catch(e) {
+    console.warn('평균 당첨금 계산용 API 연동 실패, 기본값 사용:', e);
+    return FALLBACK_AVG;
+  }
+}
+function computeAvg(list){
+  const recent = list.slice(-100);
+  const avg1 = recent.reduce((a, d) => a + d.amt[0], 0) / recent.length;
+  const avg2 = recent.reduce((a, d) => a + d.amt[1], 0) / recent.length;
+  return { rank1: avg1, rank2: avg2 };
+}
+function formatWon(amount){
+  const eok = amount / 100000000; // 억 단위
+  if(eok >= 1) return eok.toFixed(1) + '억원';
+  return Math.round(amount / 10000) + '만원';
+}
+
+let ALL_SHOPS = [];
+let AVG_PRIZE = FALLBACK_AVG;
+let currentMode = 'dist';
+
+function renderShops(mode){
+  currentMode = mode;
+  const wrap = document.getElementById('shopList');
+  if(ALL_SHOPS.length === 0){
+    wrap.innerHTML = `<div class="status-text">${t('emptyText')}</div>`;
+    return;
+  }
+
+  const sorted = ALL_SHOPS.slice().sort((a, b) => {
+    if(mode === 'count') {
+      if(b.rank1_count !== a.rank1_count) return b.rank1_count - a.rank1_count;
+      return b.rank2_count - a.rank2_count;
+    }
+    if(mode === 'amount') return b.estAmount - a.estAmount;
+    return a.distKm - b.distKm;
+  }).slice(0, 15);
+
+  wrap.innerHTML = sorted.map((shop, i) => {
+    const tags = [];
+    if(shop.rank1_count > 0) tags.push(`<span class="tag win1">${t('rank1Tag', { n: shop.rank1_count })}</span>`);
+    if(shop.rank2_count > 0) tags.push(`<span class="tag win2">${t('rank2Tag', { n: shop.rank2_count })}</span>`);
+    if(mode === 'amount') tags.push(`<span class="tag win2">${t('amountTag', { n: formatWon(shop.estAmount) })}</span>`);
+    return `
+      <div class="shop-card">
+        <div class="rank-num">${i + 1}</div>
+        <div class="shop-info">
+          <div class="name">${shop.shp_nm}</div>
+          <div class="addr">${shop.addr || ''}</div>
+          <div class="tags">${tags.join('')}</div>
+        </div>
+        <div class="shop-side">
+          <div class="dist">${formatDist(shop.distKm)}</div>
+          <a class="go" target="_blank" rel="noopener" href="https://map.kakao.com/link/search/${encodeURIComponent(shop.addr || shop.shp_nm)}">${t('navLink')}</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('.segment div').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.segment div').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    renderShops(el.getAttribute('data-mode'));
+  });
+});
+
+async function init(){
+  const [{ lat, lon, isFallback }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
+  AVG_PRIZE = avg;
+
+  document.getElementById('mapBadge').textContent = isFallback ? t('mapBadgeFallback') : t('mapBadgeGeo');
+
+  try {
+    const rows = await fetchNearbyShops(lat, lon);
+    ALL_SHOPS = rows
+      .filter(s => s.lat != null && s.lon != null)
+      .map(s => ({
+        ...s,
+        distKm: haversineKm(lat, lon, s.lat, s.lon),
+        estAmount: s.rank1_count * AVG_PRIZE.rank1 + s.rank2_count * AVG_PRIZE.rank2,
+      }));
+    document.getElementById('hdrSub').textContent = ALL_SHOPS.length
+      ? t('hdrSubTpl', { n: ALL_SHOPS.length })
+      : t('hdrSubEmpty');
+  } catch(e) {
+    console.warn('명당 데이터 조회 실패:', e);
+    document.getElementById('hdrSub').textContent = t('hdrSubEmpty');
+  }
+
+  renderShops(currentMode);
+}
+
+init();
+</script>
+
+</body>
+</html>

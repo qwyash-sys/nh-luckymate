@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 번호 통계 분석</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --primary-light2: #F0FBF4;
+    --primary-border: #CDEEDA;
+    --danger: #FF7272;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+    --text-faint: #aaa;
+    --bg-page: #EDEFF1;
+    --bg-content: #F7F8FA;
+    --bg-card: #fff;
+    --border-light: #eee;
+    --ball-yellow: #FBC400;
+    --ball-blue: #69C8F2;
+    --ball-red: #FF7272;
+    --ball-gray: #AAAAAA;
+    --ball-green: #B0D840;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  button { all:unset; box-sizing:border-box; cursor:pointer; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
+  }
+  a { text-decoration:none; color:inherit; }
+  .phone {
+    width: 390px;
+    background: var(--bg-card);
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+    position: relative;
+  }
+  .statusbar {
+    height: 30px; background: var(--bg-card);
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px; font-size: 12px; font-weight:600; color:var(--text-main);
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color:#fff; padding: 14px 18px 18px;
+  }
+  .header .top {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .header .top .back { font-size:18px; }
+  .header .top .title { font-size:16px; font-weight:700; }
+  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
+  .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
+
+  .content { padding: 16px; background:var(--bg-content); }
+
+  .segment {
+    display:flex; background:var(--bg-card); border-radius:12px; padding:4px;
+    margin-bottom:14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .segment div {
+    flex:1; text-align:center; padding:9px 0; font-size:12.5px; font-weight:700;
+    border-radius:9px; color:var(--text-mute); cursor:pointer;
+  }
+  .segment .active { background:var(--primary); color:#fff; }
+
+  .card {
+    background:var(--bg-card); border-radius:16px; padding:16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 13px; font-weight:700; color:var(--text-sub);
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 4px;
+  }
+  .card-sub { font-size:10.5px; color:var(--text-faint); margin-bottom:12px; }
+
+  .range-select-wrap { position:relative; display:inline-flex; align-items:center; }
+  select.range-select {
+    appearance:none; -webkit-appearance:none; border:none;
+    font-size:11.5px; color:var(--primary); font-weight:700;
+    background:var(--primary-light); padding:4px 20px 4px 10px; border-radius:20px;
+    cursor:pointer;
+  }
+  .range-select-wrap .range-arrow {
+    position:absolute; right:8px; pointer-events:none;
+    font-size:9px; color:var(--primary);
+  }
+
+  .chart-wrap { height: 210px; display:flex; align-items:flex-end; gap:2px; padding:4px 2px 0; }
+  .chart-wrap .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; position:relative; }
+  .chart-wrap .bar { width: 5px; border-radius: 2px 2px 0 0; background:#D9DEE2; }
+  .chart-wrap .bar.hot { background:var(--primary); }
+  .chart-wrap .bar.cold { background:var(--danger); }
+  .chart-wrap.dist-mode .bar-col { flex:none; width:15%; }
+  .chart-wrap.dist-mode .bar { width:34px; border-radius:6px 6px 0 0; }
+  .bucket-label { font-size:9.5px; color:var(--text-mute); margin-top:6px; font-weight:700; }
+
+  .legend-row { display:flex; gap:14px; margin-top:10px; justify-content:center; }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--text-mute); }
+  .dot { width:8px; height:8px; border-radius:50%; }
+  .dot.hot { background:var(--primary); }
+  .dot.cold { background:var(--danger); }
+  .dot.normal { background:#D9DEE2; }
+
+  .bar-tooltip {
+    position:absolute; left:0; top:0; transform:translate(-50%, calc(-100% - 8px));
+    background:rgba(20,20,20,0.92); color:#fff; font-size:10.5px; font-weight:700;
+    padding:5px 9px; border-radius:7px; white-space:nowrap; pointer-events:none;
+    opacity:0; transition:opacity 0.12s ease; z-index:80;
+  }
+  .bar-tooltip.show { opacity:1; }
+
+  .divider { height:1px; background:var(--border-light); margin:14px 0; }
+
+  .num-grid { display:flex; justify-content:space-between; }
+  .num-chip {
+    width:42px; display:flex; flex-direction:column; align-items:center;
+  }
+  .num-chip .circle {
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; color:#fff; margin-bottom:3px;
+  }
+  .num-chip .cnt { font-size:9.5px; color:var(--text-mute); }
+  .b-yellow{background:var(--ball-yellow);color:#4a3900}
+  .b-blue{background:var(--ball-blue);color:#04324d}
+  .b-red{background:var(--ball-red);color:#4a0000}
+  .b-gray{background:var(--ball-gray);color:#2b2b2b}
+  .b-green{background:var(--ball-green);color:#2b3900}
+
+  .cta {
+    display:block;
+    margin-top: 4px; background:var(--primary); color:#fff; text-align:center;
+    padding:13px; border-radius:12px; font-size:14px; font-weight:700;
+  }
+
+  .tabbar {
+    display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
+  }
+  .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
+  .tabbar .tab.active { color:var(--primary); font-weight:700; }
+  .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="statusbar">
+    <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+  </div>
+
+  <div class="header">
+    <div class="top">
+      <a class="back" href="nh_luckymate_mockup.html">‹</a>
+      <span class="title" data-i18n="hdrPageTitle">번호 통계 분석</span>
+      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+    </div>
+    <div class="sub">
+      <span id="hdrTitle">최근 50회차 출현·미출현 통계</span>
+      <span id="hdrSub">불러오는 중...</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="segment" id="segmentTabs">
+      <div class="active" data-mode="freq" data-i18n="segFreq">출현 빈도</div>
+      <div data-mode="gap" data-i18n="segMiss">미출현 기간</div>
+      <div data-mode="dist" data-i18n="segDist">구간별 분포</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span id="cardTitleText">번호별 출현 횟수</span>
+        <div class="range-select-wrap">
+          <select id="rangeSelect" class="range-select"></select>
+          <span class="range-arrow">▾</span>
+        </div>
+      </div>
+      <div class="card-sub" id="cardSubText">1~45번 전체 번호 기준 출현 횟수</div>
+      <div class="chart-wrap" id="mainChart"></div>
+      <div class="legend-row" id="legendRow"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="topHotTitle">최다 출현 번호 TOP 5</span></div>
+      <div class="num-grid" id="hotGrid"></div>
+      <div class="divider"></div>
+      <div class="card-title"><span data-i18n="topColdTitle">장기 미출현 번호 TOP 5</span></div>
+      <div class="num-grid" id="coldGrid"></div>
+    </div>
+
+    <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaCompare">내 번호 입력하고 당첨 확인하기 ›</a>
+  </div>
+
+  <div class="tabbar">
+    <a class="tab active" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
+    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+  </div>
+
+  <div class="bar-tooltip" id="barTooltip"></div>
+</div>
+
+<script>
+const I18N = {
+  ko: { hdrPageTitle:"번호 통계 분석", hdrTitleTpl:"최근 {n}회차 출현·미출현 통계", hdrTitleTplAll:"전체 회차 출현·미출현 통계", hdrSubTpl:"제 {start}회 ~ {end}회 기준 · 동행복권 실시간 데이터", segFreq:"출현 빈도", segMiss:"미출현 기간", segDist:"구간별 분포", cardFreqTitle:"번호별 출현 횟수", cardFreqSub:"1~45번 전체 번호 기준 출현 횟수", cardGapTitle:"번호별 미출현 기간", cardGapSub:"선택한 범위 안에서 마지막 출현 이후 지난 회차 수", cardDistTitle:"구간별 출현 분포", cardDistSub:"1~45번을 5구간으로 나눈 출현 횟수 합계", legendHot:"최다 출현 TOP5", legendCold:"장기 미출현 TOP5", legendNormal:"평균 범위", topHotTitle:"최다 출현 번호 TOP 5", topColdTitle:"장기 미출현 번호 TOP 5", ctaCompare:"내 번호 입력하고 당첨 확인하기 ›", rangeOption:"최근 {n}회", rangeOptionAll:"전체", tooltipFreq:"{n}번 · {v}회", tooltipGap:"{n}번 · {v}회째 미출현", tooltipDist:"{label} · {v}회", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"Number Statistics", hdrTitleTpl:"Appearance Stats (Last {n} Draws)", hdrTitleTplAll:"Appearance Stats (All Draws)", hdrSubTpl:"Based on Rounds {start}–{end} · Live Lottery data", segFreq:"Frequency", segMiss:"Missing Streak", segDist:"Range Distribution", cardFreqTitle:"Appearance Count by Number", cardFreqSub:"Appearance count for all numbers 1–45", cardGapTitle:"Missing Streak by Number", cardGapSub:"Draws passed since last appearance, within the selected range", cardDistTitle:"Appearance by Number Range", cardDistSub:"Numbers 1–45 grouped into 5 ranges", legendHot:"Top 5 Most Frequent", legendCold:"Top 5 Longest Missing", legendNormal:"Average Range", topHotTitle:"Top 5 Most Frequent Numbers", topColdTitle:"Top 5 Longest Missing Numbers", ctaCompare:"Enter My Numbers to Check ›", rangeOption:"Last {n}", rangeOptionAll:"All", tooltipFreq:"No.{n} · {v} times", tooltipGap:"No.{n} · missing {v} draws", tooltipDist:"{label} · {v} times", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"号码统计分析", hdrTitleTpl:"近{n}期 出现·未出现统计", hdrTitleTplAll:"全部期数 出现·未出现统计", hdrSubTpl:"以第{start}期至{end}期为准 · 实时彩票数据", segFreq:"出现频率", segMiss:"未出现周期", segDist:"区间分布", cardFreqTitle:"各号码出现次数", cardFreqSub:"1~45号全号码出现次数统计", cardGapTitle:"各号码未出现周期", cardGapSub:"所选范围内自最后一次出现以来经过的期数", cardDistTitle:"区间出现分布", cardDistSub:"将1~45号分为5个区间统计出现次数", legendHot:"最多出现TOP5", legendCold:"长期未出现TOP5", legendNormal:"平均区间", topHotTitle:"最多出现号码TOP5", topColdTitle:"长期未出现号码TOP5", ctaCompare:"输入我的号码查询 ›", rangeOption:"近{n}期", rangeOptionAll:"全部", tooltipFreq:"{n}号 · {v}次", tooltipGap:"{n}号 · 已{v}期未出现", tooltipDist:"{label} · {v}次", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Phân tích thống kê số", hdrTitleTpl:"Thống kê xuất hiện/chưa ra ({n} kỳ gần nhất)", hdrTitleTplAll:"Thống kê xuất hiện/chưa ra (toàn bộ kỳ)", hdrSubTpl:"Dựa trên kỳ {start}–{end} · Dữ liệu xổ số thời gian thực", segFreq:"Tần suất xuất hiện", segMiss:"Kỳ chưa ra", segDist:"Phân bố theo khoảng", cardFreqTitle:"Số lần xuất hiện theo số", cardFreqSub:"Số lần xuất hiện của tất cả số 1–45", cardGapTitle:"Số kỳ chưa ra theo số", cardGapSub:"Số kỳ đã trôi qua kể từ lần xuất hiện gần nhất, trong phạm vi đã chọn", cardDistTitle:"Phân bố theo khoảng số", cardDistSub:"Số 1–45 chia thành 5 khoảng", legendHot:"Top 5 xuất hiện nhiều nhất", legendCold:"Top 5 lâu chưa ra nhất", legendNormal:"Khoảng trung bình", topHotTitle:"Top 5 số xuất hiện nhiều nhất", topColdTitle:"Top 5 số lâu chưa ra nhất", ctaCompare:"Nhập số của tôi để kiểm tra ›", rangeOption:"{n} kỳ gần nhất", rangeOptionAll:"Tất cả", tooltipFreq:"Số {n} · {v} lần", tooltipGap:"Số {n} · chưa ra {v} kỳ", tooltipDist:"{label} · {v} lần", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"วิเคราะห์สถิติเลข", hdrTitleTpl:"สถิติออก/ไม่ออก ({n} งวดล่าสุด)", hdrTitleTplAll:"สถิติออก/ไม่ออก (ทุกงวด)", hdrSubTpl:"อ้างอิงงวดที่ {start}–{end} · ข้อมูลสลากแบบเรียลไทม์", segFreq:"ความถี่", segMiss:"ช่วงไม่ออก", segDist:"การกระจายตามช่วง", cardFreqTitle:"จำนวนครั้งที่ออกตามเลข", cardFreqSub:"จำนวนครั้งที่ออกของเลข 1–45 ทั้งหมด", cardGapTitle:"ช่วงไม่ออกตามเลข", cardGapSub:"จำนวนงวดที่ผ่านไปนับจากออกครั้งล่าสุด ภายในช่วงที่เลือก", cardDistTitle:"การกระจายตามช่วงเลข", cardDistSub:"แบ่งเลข 1–45 ออกเป็น 5 ช่วง", legendHot:"ออกบ่อยที่สุด 5 อันดับ", legendCold:"ไม่ออกนานที่สุด 5 อันดับ", legendNormal:"ช่วงเฉลี่ย", topHotTitle:"เลขออกบ่อยที่สุด 5 อันดับ", topColdTitle:"เลขไม่ออกนานที่สุด 5 อันดับ", ctaCompare:"กรอกเลขของฉันเพื่อตรวจสอบ ›", rangeOption:"{n} งวดล่าสุด", rangeOptionAll:"ทั้งหมด", tooltipFreq:"เลข {n} · {v} ครั้ง", tooltipGap:"เลข {n} · ไม่ออกมา {v} งวด", tooltipDist:"{label} · {v} ครั้ง", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"Raqam statistikasi tahlili", hdrTitleTpl:"Chiqish/chiqmaslik statistikasi (oxirgi {n} tur)", hdrTitleTplAll:"Chiqish/chiqmaslik statistikasi (barcha turlar)", hdrSubTpl:"{start}–{end} turlar asosida · Jonli lotereya maʼlumotlari", segFreq:"Chiqish chastotasi", segMiss:"Chiqmagan davr", segDist:"Diapazon boʻyicha taqsimot", cardFreqTitle:"Raqam boʻyicha chiqish soni", cardFreqSub:"1–45 gacha barcha raqamlar chiqish soni", cardGapTitle:"Raqam boʻyicha chiqmagan davr", cardGapSub:"Tanlangan oraliqda oxirgi chiqishdan beri oʻtgan turlar soni", cardDistTitle:"Diapazon boʻyicha chiqish taqsimoti", cardDistSub:"1–45 raqamlari 5 diapazonga boʻlingan", legendHot:"Eng koʻp chiqqan TOP5", legendCold:"Eng uzoq chiqmagan TOP5", legendNormal:"Oʻrtacha diapazon", topHotTitle:"Eng koʻp chiqqan TOP 5 raqam", topColdTitle:"Eng uzoq chiqmagan TOP 5 raqam", ctaCompare:"Raqamlarimni kiritib tekshirish ›", rangeOption:"Oxirgi {n}", rangeOptionAll:"Barchasi", tooltipFreq:"{n}-raqam · {v} marta", tooltipGap:"{n}-raqam · {v} turdan beri chiqmagan", tooltipDist:"{label} · {v} marta", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+};
+
+function currentLang(){
+  try { return localStorage.getItem('nh_lang') || 'ko'; } catch(e) { return 'ko'; }
+}
+function currentDict(){
+  return I18N[currentLang()] || I18N.ko;
+}
+function t(key, vars){
+  const dict = currentDict();
+  let str = dict[key] !== undefined ? dict[key] : (I18N.ko[key] || key);
+  if(vars) Object.keys(vars).forEach(k => { str = str.split('{' + k + '}').join(vars[k]); });
+  return str;
+}
+function applyStaticI18n(){
+  const lang = currentLang();
+  const dict = currentDict();
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] !== undefined) el.textContent = dict[k];
+  });
+}
+applyStaticI18n();
+
+/* ===== 동행복권 실시간 데이터 기반 번호 통계 (mockup.html과 캐시 공유) ===== */
+const DH_API_URL = 'https://www.dhlottery.co.kr/lt645/selectPstLt645Info.do?srchLtEpsd=all';
+const CACHE_KEY = 'nh_dh645_cache_v2';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const FALLBACK_DRAWS = [
+  { r: 1180, d: '20260815', n: [3,11,19,27,33,41], b: 18, amt: [2000000000,60000000,1500000,50000,5000], cnt: [1,2,45,2200,35000] }
+];
+
+async function loadDrawData(){
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if(cached && Array.isArray(cached.list) && cached.list.length && (Date.now() - cached.t < CACHE_TTL_MS)){
+      return { list: cached.list };
+    }
+  } catch(e) {}
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(DH_API_URL, { signal: controller.signal });
+    clearTimeout(timer);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const raw = (json.data && json.data.list) || [];
+    const list = raw.map(d => ({
+      r: d.ltEpsd, d: d.ltRflYmd,
+      n: [d.tm1WnNo, d.tm2WnNo, d.tm3WnNo, d.tm4WnNo, d.tm5WnNo, d.tm6WnNo],
+      b: d.bnsWnNo,
+      amt: [d.rnk1WnAmt, d.rnk2WnAmt, d.rnk3WnAmt, d.rnk4WnAmt, d.rnk5WnAmt],
+      cnt: [d.rnk1WnNope, d.rnk2WnNope, d.rnk3WnNope, d.rnk4WnNope, d.rnk5WnNope],
+    })).sort((a, b) => a.r - b.r);
+    if(!list.length) throw new Error('empty list');
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), list })); } catch(e) {}
+    return { list };
+  } catch(e) {
+    console.warn('동행복권 API 연동 실패, 데모 데이터로 대체합니다:', e);
+    return { list: FALLBACK_DRAWS };
+  }
+}
+
+function ballColorClass(n){
+  if(n<=10) return 'b-yellow';
+  if(n<=20) return 'b-blue';
+  if(n<=30) return 'b-red';
+  if(n<=40) return 'b-gray';
+  return 'b-green';
+}
+
+const NUMS = Array.from({ length: 45 }, (_, i) => i + 1);
+const BUCKETS = [
+  { label: '1-10', from: 1, to: 10, cls: 'b-yellow', varName: '--ball-yellow' },
+  { label: '11-20', from: 11, to: 20, cls: 'b-blue', varName: '--ball-blue' },
+  { label: '21-30', from: 21, to: 30, cls: 'b-red', varName: '--ball-red' },
+  { label: '31-40', from: 31, to: 40, cls: 'b-gray', varName: '--ball-gray' },
+  { label: '41-45', from: 41, to: 45, cls: 'b-green', varName: '--ball-green' },
+];
+
+let ALL_DRAWS = [];
+let currentWindow = 50;
+let currentMode = 'freq';
+
+function getWindowDraws(){
+  return currentWindow === 'all' ? ALL_DRAWS : ALL_DRAWS.slice(-currentWindow);
+}
+
+function computeCounts(draws){
+  const counts = new Array(46).fill(0);
+  draws.forEach(d => d.n.forEach(n => counts[n]++));
+  return counts;
+}
+
+function computeGaps(draws){
+  const gaps = {};
+  NUMS.forEach(n => {
+    let gap = 0;
+    for(let i = draws.length - 1; i >= 0; i--){
+      if(draws[i].n.includes(n)) break;
+      gap++;
+    }
+    gaps[n] = gap;
+  });
+  return gaps;
+}
+
+const tooltipEl = document.getElementById('barTooltip');
+function showTooltip(barEl, text){
+  const phoneRect = document.querySelector('.phone').getBoundingClientRect();
+  const barRect = barEl.getBoundingClientRect();
+  tooltipEl.textContent = text;
+  let x = barRect.left + barRect.width / 2 - phoneRect.left;
+  x = Math.max(24, Math.min(phoneRect.width - 24, x));
+  tooltipEl.style.left = x + 'px';
+  tooltipEl.style.top = (barRect.top - phoneRect.top) + 'px';
+  tooltipEl.classList.add('show');
+}
+function hideTooltip(){
+  tooltipEl.classList.remove('show');
+}
+
+function renderChips(containerId, nums, valueFn){
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = nums.map(n => `
+    <div class="num-chip"><div class="circle ${ballColorClass(n)}">${n}</div><div class="cnt">${valueFn(n)}</div></div>
+  `).join('');
+}
+
+function renderLegend(kind){
+  const legend = document.getElementById('legendRow');
+  if(kind === 'freq'){
+    legend.style.display = '';
+    legend.innerHTML = `
+      <div class="legend-item"><span class="dot hot"></span><span>${t('legendHot')}</span></div>
+      <div class="legend-item"><span class="dot cold"></span><span>${t('legendCold')}</span></div>
+      <div class="legend-item"><span class="dot normal"></span><span>${t('legendNormal')}</span></div>
+    `;
+  } else if(kind === 'gap'){
+    legend.style.display = '';
+    legend.innerHTML = `
+      <div class="legend-item"><span class="dot cold"></span><span>${t('legendCold')}</span></div>
+      <div class="legend-item"><span class="dot normal"></span><span>${t('legendNormal')}</span></div>
+    `;
+  } else {
+    legend.style.display = 'none';
+    legend.innerHTML = '';
+  }
+}
+
+function updateHeaderTexts(){
+  document.getElementById('hdrTitle').textContent = currentWindow === 'all'
+    ? t('hdrTitleTplAll') : t('hdrTitleTpl', { n: currentWindow });
+  const windowDraws = getWindowDraws();
+  document.getElementById('hdrSub').textContent = t('hdrSubTpl', {
+    start: windowDraws[0].r, end: ALL_DRAWS[ALL_DRAWS.length - 1].r,
+  });
+}
+
+function renderFreqMode(){
+  document.getElementById('cardTitleText').textContent = t('cardFreqTitle');
+  document.getElementById('cardSubText').textContent = t('cardFreqSub');
+  renderLegend('freq');
+
+  const windowDraws = getWindowDraws();
+  const counts = computeCounts(windowDraws);
+  const gaps = computeGaps(windowDraws);
+
+  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
+  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
+  const top5Hot = byFreqDesc.slice(0, 5);
+  const top5Cold = byGapDesc.slice(0, 5);
+  const hotSet = new Set(top5Hot);
+  const coldSet = new Set(top5Cold);
+  const maxCount = Math.max(...NUMS.map(n => counts[n]));
+
+  const wrap = document.getElementById('mainChart');
+  wrap.className = 'chart-wrap';
+  wrap.innerHTML = '';
+  NUMS.forEach(n => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const bar = document.createElement('div');
+    bar.className = 'bar' + (hotSet.has(n) ? ' hot' : coldSet.has(n) ? ' cold' : '');
+    bar.style.height = (maxCount ? counts[n] / maxCount * 100 : 0) + '%';
+    bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipFreq', { n, v: counts[n] })));
+    bar.addEventListener('mouseleave', hideTooltip);
+    col.appendChild(bar);
+    wrap.appendChild(col);
+  });
+
+  renderChips('hotGrid', top5Hot, n => counts[n] + '회');
+  renderChips('coldGrid', top5Cold, n => gaps[n] + '회↑');
+}
+
+function renderGapMode(){
+  document.getElementById('cardTitleText').textContent = t('cardGapTitle');
+  document.getElementById('cardSubText').textContent = t('cardGapSub');
+  renderLegend('gap');
+
+  const windowDraws = getWindowDraws();
+  const gaps = computeGaps(windowDraws);
+  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
+  const top5Cold = byGapDesc.slice(0, 5);
+  const coldSet = new Set(top5Cold);
+  const maxGap = Math.max(...NUMS.map(n => gaps[n]));
+
+  const wrap = document.getElementById('mainChart');
+  wrap.className = 'chart-wrap';
+  wrap.innerHTML = '';
+  NUMS.forEach(n => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const bar = document.createElement('div');
+    bar.className = 'bar' + (coldSet.has(n) ? ' cold' : '');
+    bar.style.height = (maxGap ? gaps[n] / maxGap * 100 : 0) + '%';
+    bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipGap', { n, v: gaps[n] })));
+    bar.addEventListener('mouseleave', hideTooltip);
+    col.appendChild(bar);
+    wrap.appendChild(col);
+  });
+
+  const counts = computeCounts(windowDraws);
+  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
+  renderChips('hotGrid', byFreqDesc.slice(0, 5), n => counts[n] + '회');
+  renderChips('coldGrid', top5Cold, n => gaps[n] + '회↑');
+}
+
+function renderDistMode(){
+  document.getElementById('cardTitleText').textContent = t('cardDistTitle');
+  document.getElementById('cardSubText').textContent = t('cardDistSub');
+  renderLegend('dist');
+
+  const windowDraws = getWindowDraws();
+  const counts = computeCounts(windowDraws);
+  const bucketSums = BUCKETS.map(b => {
+    let sum = 0;
+    for(let n = b.from; n <= b.to; n++) sum += counts[n];
+    return sum;
+  });
+  const maxSum = Math.max(...bucketSums);
+
+  const wrap = document.getElementById('mainChart');
+  wrap.className = 'chart-wrap dist-mode';
+  wrap.innerHTML = '';
+  BUCKETS.forEach((b, i) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.background = `var(${b.varName})`;
+    bar.style.height = (maxSum ? bucketSums[i] / maxSum * 100 : 0) + '%';
+    bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipDist', { label: b.label, v: bucketSums[i] })));
+    bar.addEventListener('mouseleave', hideTooltip);
+    const label = document.createElement('div');
+    label.className = 'bucket-label';
+    label.textContent = b.label;
+    col.appendChild(bar);
+    col.appendChild(label);
+    wrap.appendChild(col);
+  });
+
+  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
+  const gaps = computeGaps(windowDraws);
+  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
+  renderChips('hotGrid', byFreqDesc.slice(0, 5), n => counts[n] + '회');
+  renderChips('coldGrid', byGapDesc.slice(0, 5), n => gaps[n] + '회↑');
+}
+
+function render(){
+  updateHeaderTexts();
+  if(currentMode === 'freq') renderFreqMode();
+  else if(currentMode === 'gap') renderGapMode();
+  else renderDistMode();
+}
+
+function renderRangeOptions(){
+  const sel = document.getElementById('rangeSelect');
+  const options = [30, 50, 100, 'all'];
+  sel.innerHTML = options.map(v => `<option value="${v}">${v === 'all' ? t('rangeOptionAll') : t('rangeOption', { n: v })}</option>`).join('');
+  sel.value = String(currentWindow);
+}
+
+document.getElementById('rangeSelect').addEventListener('change', e => {
+  currentWindow = e.target.value === 'all' ? 'all' : Number(e.target.value);
+  render();
+});
+
+document.querySelectorAll('#segmentTabs div').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#segmentTabs div').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    currentMode = el.getAttribute('data-mode');
+    render();
+  });
+});
+
+async function initStats(){
+  const { list } = await loadDrawData();
+  ALL_DRAWS = list;
+  renderRangeOptions();
+  render();
+}
+
+initStats();
+</script>
+
+</body>
+</html>

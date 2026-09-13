@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NH행운메이트 - 화면 목록</title>
+<style>
+  :root {
+    --primary: #00A651;
+    --primary-dark: #007A3D;
+    --primary-light: #E7F7EE;
+    --bg-page: #EDEFF1;
+    --text-main: #111;
+    --text-sub: #555;
+    --text-mute: #999;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    background: var(--bg-page);
+    padding: 40px 20px 60px;
+  }
+  a { text-decoration:none; color:inherit; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .top-title { font-size:22px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
+  .top-sub { font-size:13px; color:var(--text-mute); margin-bottom:28px; }
+  .top-sub b { color:var(--primary-dark); }
+
+  .grid {
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap:14px;
+  }
+  .screen-card {
+    background:#fff; border-radius:16px; padding:18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border:1px solid #eee;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .screen-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+  .screen-card .num {
+    display:inline-flex; width:26px; height:26px; border-radius:50%;
+    background:var(--primary-light); color:var(--primary-dark);
+    font-size:12px; font-weight:800; align-items:center; justify-content:center;
+    margin-bottom:10px;
+  }
+  .screen-card .name { font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
+  .screen-card .desc { font-size:12px; color:var(--text-sub); line-height:1.5; margin-bottom:10px; }
+  .screen-card .file { font-size:10.5px; color:var(--text-mute); font-family:monospace; }
+  .tag-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+  .tag { font-size:10px; font-weight:700; background:var(--primary-light); color:var(--primary-dark); padding:3px 8px; border-radius:20px; }
+  .tag.sub { background:#f2f2f2; color:var(--text-mute); }
+
+  .section-title { font-size:13px; font-weight:700; color:var(--text-mute); margin:28px 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-title">NH행운메이트 프로토타입</div>
+  <div class="top-sub"><b>AX Build-up Challenge</b> 제출용 화면 목록 · 각 카드를 클릭하면 실제 화면으로 이동합니다</div>
+
+  <div class="section-title">메인 화면 (하단 탭 5개)</div>
+  <div class="grid">
+    <a class="screen-card" href="nh_luckymate_mockup.html">
+      <div class="num">1</div>
+      <div class="name">🏠 당첨번호 조회</div>
+      <div class="desc">회차별 당첨번호 확인, 내 번호 자동 채점, 최근 출현 빈도 그래프</div>
+      <div class="file">nh_luckymate_mockup.html</div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_spots.html">
+      <div class="num">2</div>
+      <div class="name">📍 내 근처 로또 명당</div>
+      <div class="desc">위치기반 판매점 지도, 거리·당첨횟수·당첨금액 순 필터링</div>
+      <div class="file">nh_luckymate_spots.html</div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_guide.html">
+      <div class="num">3</div>
+      <div class="name">🎯 당첨자 행동요령 가이드</div>
+      <div class="desc">등수별 지급 절차, 서대문 본점·근처 영업점 안내, 상품 연계</div>
+      <div class="file">nh_luckymate_guide.html</div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_bonus.html">
+      <div class="num">4</div>
+      <div class="name">💳 낙첨복권 우대금리</div>
+      <div class="desc">낙첨복권 QR 스캔·보관함, 예·적금 우대금리 프로그램</div>
+      <div class="file">nh_luckymate_bonus.html</div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_challenge.html">
+      <div class="num">5</div>
+      <div class="name">🏆 3등 당첨 챌린지</div>
+      <div class="desc">현실적 목표 제시, 3등 당첨 통계 시각화, 재테크 상품 연계</div>
+      <div class="file">nh_luckymate_challenge.html</div>
+    </a>
+  </div>
+
+  <div class="section-title">서브 화면 (당첨조회 흐름 내)</div>
+  <div class="grid">
+    <a class="screen-card" href="nh_luckymate_stats.html">
+      <div class="num">1-1</div>
+      <div class="name">📊 번호 통계 분석</div>
+      <div class="desc">45개 번호 전체 출현빈도, 최다출현·미출현 TOP5</div>
+      <div class="file">nh_luckymate_stats.html</div>
+      <div class="tag-row"><span class="tag sub">당첨조회 하위</span></div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_payout.html">
+      <div class="num">1-2</div>
+      <div class="name">💰 실수령액 계산기</div>
+      <div class="desc">등수별 탭, 세금 공제 내역, 예금 이자 연계 계산</div>
+      <div class="file">nh_luckymate_payout.html</div>
+      <div class="tag-row"><span class="tag sub">당첨조회 하위</span></div>
+    </a>
+    <a class="screen-card" href="nh_luckymate_language.html">
+      <div class="num">6</div>
+      <div class="name">🌐 다국어 지원 (언어 설정)</div>
+      <div class="desc">한국어 기본 + 영어·중국어·베트남어·태국어·우즈베크어 5개국어</div>
+      <div class="file">nh_luckymate_language.html</div>
+      <div class="tag-row"><span class="tag">전 화면 공통</span></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

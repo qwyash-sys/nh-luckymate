@@ -604,9 +604,23 @@ function setEditing(on){
     document.getElementById('digitInput').focus();
   } else {
     renderMyNumView();
+    saveLastCheckResult();
     histShown = HIST_PAGE;
     renderHistory();
   }
+}
+
+// 여기서 번호를 고치는 것도 "채점을 다시 한 것"이므로, 실수령액 계산기가 참조하는
+// 최신 채점 결과를 함께 갱신한다. 갱신하지 않으면 계산기에 이전 번호의 등수가 남는다.
+function saveLastCheckResult(){
+  if(myNumbers.length !== 6 || !ALL_DRAWS.length) return;
+  const latest = ALL_DRAWS[ALL_DRAWS.length - 1];
+  const { cnt, rank, amount } = computeRank(myNumbers, latest);
+  try {
+    localStorage.setItem('nh_last_check_result', JSON.stringify({
+      round: latest.r, rank, amount, matchedCount: cnt, checkedAt: Date.now(),
+    }));
+  } catch(e) {}
 }
 
 /* ===== 1. 과거 당첨 이력 ===== */

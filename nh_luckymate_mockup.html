@@ -177,18 +177,18 @@
   .result-box .amount { font-size:15px; color:var(--text-main); font-weight:800; white-space:nowrap; }
   .result-box .desc { font-size:11px; color:var(--text-faint); margin-top:2px; }
 
-  .chart-wrap { height: 190px; display:flex; align-items:flex-end; gap:2px; padding:4px 2px 0; }
-  .chart-wrap .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
-  .chart-wrap .bar { width: 5px; border-radius: 4px 4px 0 0; background:var(--primary-border); }
-  .chart-wrap .bar.hi { background:var(--primary); }
-
-  .stat-row { display:flex; justify-content:space-between; margin-top:10px; }
-  .stat-item { text-align:center; flex:1; }
-  .stat-item .num { font-size:15px; font-weight:800; color:var(--text-main); }
-  .stat-item .label { font-size:10.5px; color:var(--text-mute); margin-top:2px; }
+  .link-grid { display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:1fr; gap:10px; margin-bottom:14px; }
+  .link-card {
+    background:var(--bg-card); border-radius:14px; padding:13px 12px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display:flex; flex-direction:column; justify-content:space-between; min-height:92px;
+  }
+  .link-card .lc-icon { font-size:19px; line-height:1; margin-bottom:8px; }
+  .link-card .lc-text { font-size:12px; font-weight:700; color:var(--text-main); line-height:1.4; }
+  .link-card .lc-go { font-size:10.5px; color:var(--primary); font-weight:700; margin-top:6px; }
 
   .cta {
-    display:block;
+    display:block; width:100%;
     margin-top: 4px;
     background:var(--primary); color:#fff; text-align:center;
     padding:13px; border-radius:12px; font-size:14px; font-weight:700;
@@ -283,37 +283,53 @@
         </div>
         <div class="amount" id="resultAmountVal"></div>
       </div>
+
+      <a class="cta wide" href="nh_luckymate_payout.html" data-i18n="ctaPayout">당첨금 실수령액 계산하기 ›</a>
     </div>
 
     <div class="toast" id="scanToast"></div>
 
-    <div class="card">
-      <div class="card-title">
-        <span data-i18n="freqTitle">최근 50회차 번호별 출현 빈도</span>
-        <a class="round-select" href="nh_luckymate_stats.html" data-i18n="statsLink">통계 ›</a>
-      </div>
-      <div class="chart-wrap" id="freqChart"></div>
-      <div class="stat-row">
-        <div class="stat-item"><div class="num" id="statMaxVal">-</div><div class="label" data-i18n="statMax">최다출현</div></div>
-        <div class="stat-item"><div class="num" id="statRecentMissVal">-</div><div class="label" data-i18n="statRecentMiss">최근미출현</div></div>
-        <div class="stat-item"><div class="num" id="statAvgVal">-</div><div class="label" data-i18n="statAvg">평균출현</div></div>
-      </div>
+    <div class="link-grid">
+      <a class="link-card" href="nh_luckymate_stats.html#secMyHistory">
+        <div>
+          <div class="lc-icon">🕰️</div>
+          <div class="lc-text" data-i18n="linkMyHistory">나의 번호, 과거엔 혹시 당첨?</div>
+        </div>
+        <div class="lc-go" data-i18n="linkGo">보러가기 ›</div>
+      </a>
+      <a class="link-card" href="nh_luckymate_stats.html#secHot">
+        <div>
+          <div class="lc-icon">🔥</div>
+          <div class="lc-text" data-i18n="linkHot">최근 많이 뽑힌 번호는?</div>
+        </div>
+        <div class="lc-go" data-i18n="linkGo">보러가기 ›</div>
+      </a>
+      <a class="link-card" href="nh_luckymate_stats.html#secCold">
+        <div>
+          <div class="lc-icon">❄️</div>
+          <div class="lc-text" data-i18n="linkCold">최근 오랫동안 안 보인 번호는?</div>
+        </div>
+        <div class="lc-go" data-i18n="linkGo">보러가기 ›</div>
+      </a>
+      <a class="link-card" href="nh_luckymate_stats.html#secChallenge">
+        <div>
+          <div class="lc-icon">🏆</div>
+          <div class="lc-text" data-i18n="linkChallenge">3등 챌린지 도전하기</div>
+        </div>
+        <div class="lc-go" data-i18n="linkGo">보러가기 ›</div>
+      </a>
     </div>
 
-    <a class="cta wide" href="nh_luckymate_payout.html" data-i18n="ctaPayout">당첨금 실수령액 계산하기 ›</a>
-    <div class="cta-row">
-      <a class="cta outline" href="nh_luckymate_bonus.html" data-i18n="ctaScan">QR로 낙첨 확인</a>
-      <a class="cta" href="nh_luckymate_bonus.html" data-i18n="ctaBonus">우대금리 신청 ›</a>
-    </div>
+    <a class="cta" href="nh_luckymate_bonus.html" data-i18n="ctaBonus">낙첨복권 우대금리 신청 ›</a>
     <div class="badge-note" data-i18n="badgeNote">낙첨 복권도 NH예적금 우대금리로 교환할 수 있어요</div>
   </div>
 
   <div class="tabbar">
     <a class="tab active" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_stats.html"><span class="icon">📊</span><span data-i18n="tabStats">재미로보는통계</span></a>
     <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
-    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
     <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
-    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
   </div>
 </div>
 
@@ -10479,12 +10495,12 @@ async function loadDrawData(){
 }
 
 const I18N = {
-  ko: { hdrTitle:"제 {round}회 당첨번호", hdrSub:"{date} 추첨 · 동행복권 연동", roundOption:"{round}회", drawInfoLive:"보너스 번호 포함 · 동행복권 실시간 연동", drawInfoOffline:"보너스 번호 포함 · 네트워크 연결 실패로 데모 데이터 표시", resultLabel:"내 번호 결과", resultPlaceholder:"번호를 입력하고 확인해보세요", invalidInput:"1~45 사이 숫자 6개를 입력해주세요", matchFmt:"{n}개 일치 ({nums})", rank0:"낙첨", rank1:"1등", rank2:"2등", rank3:"3등", rank4:"4등", rank5:"5등", noPrize:"당첨금 없음", myNumPlaceholder:"번호 6개 입력 (예: 3, 11, 19, 27, 33, 41)", myNumCheck:"확인", loadingText:"당첨번호 불러오는 중...", modeQr:"QR코드로 확인", modeManual:"직접 번호 입력하기", scanMsgDefault:"복권 뒷면 QR코드를 카메라에 비춰주세요", scanMsgActive:"QR코드를 스캔하는 중이에요...", btnCamera:"카메라로 스캔", btnCameraStop:"스캔 중지", btnDemoScan:"데모: 최신 회차 당첨 QR 스캔", formatNote:"* 실제 동행복권 QR 규격은 비공개입니다. 데모는 자체 정의 포맷(LOTTO|회차|번호6개)으로 인식·판정을 시연합니다.", digitPlaceholder:"번호를 입력하세요 (1~45)", allSixSelected:"6개를 모두 선택했어요. 확인을 눌러주세요", alreadySelected:"이미 선택한 번호예요", noMatch:"해당하는 번호가 없어요", needMoreBalls:"{n}개 더 선택해주세요", toastCameraUnavailable:"이 기기에서는 카메라를 사용할 수 없어요", toastCameraDenied:"카메라 접근 권한이 필요해요", toastFormatWarn:"인식할 수 없는 QR 형식이에요", toastParseFail:"QR 코드를 읽는 데 실패했어요", toastUnsupportedRound:"{round}회차 데이터를 찾을 수 없어요", toastScanned:"QR 스캔 완료! {round}회 번호를 불러왔어요", cardDrawTitle:"당첨번호 조회", freqTitle:"최근 50회차 번호별 출현 빈도", statsLink:"통계 ›", statMax:"최다출현", statRecentMiss:"최근미출현", statAvg:"평균출현", ctaPayout:"당첨금 실수령액 계산하기 ›", ctaScan:"QR로 낙첨 확인", ctaBonus:"우대금리 신청 ›", badgeNote:"낙첨 복권도 NH예적금 우대금리로 교환할 수 있어요", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrTitle:"Round {round} Winning Numbers", hdrSub:"Drawn {date} · Linked with Lottery data", roundOption:"Round {round}", drawInfoLive:"Bonus number included · Live-linked with Lottery data", drawInfoOffline:"Bonus number included · Network failed, showing demo data", resultLabel:"My Ticket Result", resultPlaceholder:"Enter your numbers to check", invalidInput:"Enter 6 numbers between 1 and 45", matchFmt:"{n} numbers matched ({nums})", rank0:"Not a Winner", rank1:"1st Prize", rank2:"2nd Prize", rank3:"3rd Prize", rank4:"4th Prize", rank5:"5th Prize", noPrize:"No Prize", myNumPlaceholder:"Enter 6 numbers (e.g. 3, 11, 19, 27, 33, 41)", myNumCheck:"Check", loadingText:"Loading winning numbers...", modeQr:"Scan QR Code", modeManual:"Enter Numbers Manually", scanMsgDefault:"Point your camera at the QR code on the ticket", scanMsgActive:"Scanning QR code...", btnCamera:"Scan with Camera", btnCameraStop:"Stop Scanning", btnDemoScan:"Demo: Scan Latest Winning QR", formatNote:"* The real Lottery QR spec is not public. This demo uses a custom format (LOTTO|round|6 numbers) to demonstrate recognition.", digitPlaceholder:"Enter a number (1-45)", allSixSelected:"All 6 numbers selected. Tap Check.", alreadySelected:"Already selected", noMatch:"No matching number", needMoreBalls:"Select {n} more number(s)", toastCameraUnavailable:"Camera is not available on this device", toastCameraDenied:"Camera access is required", toastFormatWarn:"Unrecognized QR format", toastParseFail:"Failed to read the QR code", toastUnsupportedRound:"Round {round} data not found", toastScanned:"Scan complete! Loaded round {round} numbers", cardDrawTitle:"Check Winning Numbers", freqTitle:"Number Frequency (Last 50 Draws)", statsLink:"Stats ›", statMax:"Most Frequent", statRecentMiss:"Recently Missing", statAvg:"Average", ctaPayout:"Calculate Take-Home Prize ›", ctaScan:"Scan Losing Ticket", ctaBonus:"Apply for Bonus Rate ›", badgeNote:"Even losing tickets can be exchanged for NH deposit rate bonuses", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrTitle:"第{round}期 中奖号码", hdrSub:"{date} 开奖 · 与彩票数据联动", roundOption:"第{round}期", drawInfoLive:"含奖金号码 · 与彩票数据实时联动", drawInfoOffline:"含奖金号码 · 网络连接失败，显示演示数据", resultLabel:"我的号码结果", resultPlaceholder:"请输入号码进行查询", invalidInput:"请输入1~45之间的6个数字", matchFmt:"命中{n}个号码 ({nums})", rank0:"未中奖", rank1:"1等奖", rank2:"2等奖", rank3:"3等奖", rank4:"4等奖", rank5:"5等奖", noPrize:"无奖金", myNumPlaceholder:"输入6个号码 (例: 3, 11, 19, 27, 33, 41)", myNumCheck:"查询", loadingText:"正在加载中奖号码...", modeQr:"扫码确认", modeManual:"手动输入号码", scanMsgDefault:"请将彩票QR码对准摄像头", scanMsgActive:"正在扫描QR码...", btnCamera:"扫码", btnCameraStop:"停止扫描", btnDemoScan:"演示：扫描最新一期中奖QR", formatNote:"* 实际彩票QR规格未公开。演示使用自定义格式(LOTTO|期号|6个号码)进行识别演示。", digitPlaceholder:"请输入号码 (1~45)", allSixSelected:"已选择全部6个号码，请点击查询", alreadySelected:"已选择该号码", noMatch:"没有匹配的号码", needMoreBalls:"还需选择{n}个号码", toastCameraUnavailable:"此设备无法使用摄像头", toastCameraDenied:"需要摄像头权限", toastFormatWarn:"无法识别的QR格式", toastParseFail:"读取QR码失败", toastUnsupportedRound:"未找到第{round}期数据", toastScanned:"扫描完成！已载入第{round}期号码", cardDrawTitle:"查询中奖号码", freqTitle:"近50期号码出现频率", statsLink:"统计 ›", statMax:"最多出现", statRecentMiss:"近期未出现", statAvg:"平均出现", ctaPayout:"计算实际到手奖金 ›", ctaScan:"扫码确认未中奖", ctaBonus:"申请优惠利率 ›", badgeNote:"未中奖彩票也可兑换NH存款优惠利率", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrTitle:"Kỳ quay số {round}", hdrSub:"Quay số {date} · Liên kết dữ liệu xổ số", roundOption:"Kỳ {round}", drawInfoLive:"Bao gồm số thưởng · Liên kết trực tiếp với dữ liệu xổ số", drawInfoOffline:"Bao gồm số thưởng · Kết nối mạng thất bại, hiển thị dữ liệu demo", resultLabel:"Kết quả vé của tôi", resultPlaceholder:"Nhập số của bạn để kiểm tra", invalidInput:"Vui lòng nhập 6 số từ 1 đến 45", matchFmt:"Trùng {n} số ({nums})", rank0:"Không trúng", rank1:"Giải 1", rank2:"Giải 2", rank3:"Giải 3", rank4:"Giải 4", rank5:"Giải 5", noPrize:"Không có tiền thưởng", myNumPlaceholder:"Nhập 6 số (vd: 3, 11, 19, 27, 33, 41)", myNumCheck:"Kiểm tra", loadingText:"Đang tải số trúng thưởng...", modeQr:"Quét mã QR", modeManual:"Nhập số thủ công", scanMsgDefault:"Hướng camera vào mã QR trên vé", scanMsgActive:"Đang quét mã QR...", btnCamera:"Quét bằng camera", btnCameraStop:"Dừng quét", btnDemoScan:"Demo: Quét QR trúng thưởng kỳ mới nhất", formatNote:"* Quy cách QR thực tế của xổ số không công khai. Demo dùng định dạng riêng (LOTTO|kỳ|6 số) để minh họa.", digitPlaceholder:"Nhập số (1~45)", allSixSelected:"Đã chọn đủ 6 số. Nhấn Kiểm tra.", alreadySelected:"Số này đã được chọn", noMatch:"Không có số phù hợp", needMoreBalls:"Chọn thêm {n} số nữa", toastCameraUnavailable:"Thiết bị này không hỗ trợ camera", toastCameraDenied:"Cần quyền truy cập camera", toastFormatWarn:"Định dạng QR không nhận dạng được", toastParseFail:"Không đọc được mã QR", toastUnsupportedRound:"Không tìm thấy dữ liệu kỳ {round}", toastScanned:"Quét xong! Đã tải số của kỳ {round}", cardDrawTitle:"Tra cứu số trúng thưởng", freqTitle:"Tần suất số (50 kỳ gần nhất)", statsLink:"Thống kê ›", statMax:"Xuất hiện nhiều nhất", statRecentMiss:"Gần đây chưa ra", statAvg:"Trung bình", ctaPayout:"Tính số tiền thực nhận ›", ctaScan:"Quét mã QR vé không trúng", ctaBonus:"Đăng ký lãi suất ưu đãi ›", badgeNote:"Vé không trúng cũng có thể đổi lấy lãi suất ưu đãi tiền gửi NH", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrTitle:"งวดที่ {round} ผลรางวัล", hdrSub:"จับรางวัล{date} · เชื่อมข้อมูลสลาก", roundOption:"งวดที่ {round}", drawInfoLive:"รวมเลขโบนัส · เชื่อมข้อมูลสลากแบบเรียลไทม์", drawInfoOffline:"รวมเลขโบนัส · การเชื่อมต่อล้มเหลว แสดงข้อมูลตัวอย่าง", resultLabel:"ผลตรวจของฉัน", resultPlaceholder:"กรอกเลขของคุณเพื่อตรวจสอบ", invalidInput:"กรุณากรอกตัวเลข 6 ตัวระหว่าง 1 ถึง 45", matchFmt:"ตรง {n} ตัว ({nums})", rank0:"ไม่ถูกรางวัล", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3:"รางวัลที่ 3", rank4:"รางวัลที่ 4", rank5:"รางวัลที่ 5", noPrize:"ไม่มีเงินรางวัล", myNumPlaceholder:"กรอกเลข 6 ตัว (เช่น 3, 11, 19, 27, 33, 41)", myNumCheck:"ตรวจสอบ", loadingText:"กำลังโหลดผลรางวัล...", modeQr:"สแกน QR ตรวจสอบ", modeManual:"กรอกเลขด้วยตนเอง", scanMsgDefault:"ส่องกล้องไปที่ QR โค้ดบนสลาก", scanMsgActive:"กำลังสแกน QR โค้ด...", btnCamera:"สแกนด้วยกล้อง", btnCameraStop:"หยุดสแกน", btnDemoScan:"เดโม: สแกน QR ถูกรางวัลงวดล่าสุด", formatNote:"* รูปแบบ QR จริงของสลากไม่เปิดเผยต่อสาธารณะ เดโมนี้ใช้รูปแบบกำหนดเอง (LOTTO|งวด|เลข 6 ตัว) เพื่อสาธิตการรู้จำ", digitPlaceholder:"กรอกเลข (1~45)", allSixSelected:"เลือกครบ 6 ตัวแล้ว กดตรวจสอบได้เลย", alreadySelected:"เลขนี้ถูกเลือกแล้ว", noMatch:"ไม่มีเลขที่ตรงกัน", needMoreBalls:"เลือกเพิ่มอีก {n} ตัว", toastCameraUnavailable:"อุปกรณ์นี้ไม่รองรับกล้อง", toastCameraDenied:"ต้องได้รับอนุญาตให้ใช้กล้อง", toastFormatWarn:"รูปแบบ QR ไม่ถูกต้อง", toastParseFail:"อ่าน QR โค้ดไม่สำเร็จ", toastUnsupportedRound:"ไม่พบข้อมูลงวดที่ {round}", toastScanned:"สแกนสำเร็จ! โหลดเลขงวดที่ {round} แล้ว", cardDrawTitle:"ตรวจสอบเลขที่ถูกรางวัล", freqTitle:"ความถี่เลข (50 งวดล่าสุด)", statsLink:"สถิติ ›", statMax:"ออกบ่อยที่สุด", statRecentMiss:"ไม่ออกล่าสุด", statAvg:"เฉลี่ย", ctaPayout:"คำนวณเงินรางวัลสุทธิ ›", ctaScan:"สแกน QR ตรวจสลากไม่ถูกรางวัล", ctaBonus:"สมัครรับดอกเบี้ยพิเศษ ›", badgeNote:"สลากไม่ถูกรางวัลก็แลกดอกเบี้ยพิเศษเงินฝาก NH ได้", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrTitle:"{round}-son g'olib raqamlari", hdrSub:"{date} qur'a · Lotereya ma'lumotlari bilan bog'langan", roundOption:"{round}-son", drawInfoLive:"Bonus raqami bilan · Lotereya ma'lumotlari bilan jonli bog'langan", drawInfoOffline:"Bonus raqami bilan · Tarmoq xatosi, namunaviy ma'lumot ko'rsatilmoqda", resultLabel:"Mening natijam", resultPlaceholder:"Tekshirish uchun raqamlaringizni kiriting", invalidInput:"1 dan 45 gacha 6 ta raqam kiriting", matchFmt:"{n} ta raqam mos ({nums})", rank0:"Yutuq yo'q", rank1:"1-mukofot", rank2:"2-mukofot", rank3:"3-mukofot", rank4:"4-mukofot", rank5:"5-mukofot", noPrize:"Mukofot yo'q", myNumPlaceholder:"6 ta raqam kiriting (masalan: 3, 11, 19, 27, 33, 41)", myNumCheck:"Tekshirish", loadingText:"G'olib raqamlar yuklanmoqda...", modeQr:"QR orqali tekshirish", modeManual:"Raqamlarni qo'lda kiriting", scanMsgDefault:"Kamerani chipta ustidagi QR kodga tuting", scanMsgActive:"QR kod skanerlanmoqda...", btnCamera:"Kamera bilan skanerlash", btnCameraStop:"Skanerlashni to'xtatish", btnDemoScan:"Demo: So'nggi tur yutuq QR skanerlash", formatNote:"* Lotereyaning haqiqiy QR formati ochiq emas. Demo o'z formatidan (LOTTO|tur|6 raqam) foydalanadi.", digitPlaceholder:"Raqam kiriting (1~45)", allSixSelected:"6 ta raqam tanlandi. Tekshirishni bosing.", alreadySelected:"Bu raqam allaqachon tanlangan", noMatch:"Mos raqam yo'q", needMoreBalls:"Yana {n} ta raqam tanlang", toastCameraUnavailable:"Bu qurilmada kamera mavjud emas", toastCameraDenied:"Kameraga ruxsat kerak", toastFormatWarn:"QR formati tanilmadi", toastParseFail:"QR kodni o'qib bo'lmadi", toastUnsupportedRound:"{round}-tur ma'lumoti topilmadi", toastScanned:"Skanerlash tugadi! {round}-tur raqamlari yuklandi", cardDrawTitle:"G'olib raqamlarni tekshirish", freqTitle:"Raqam chastotasi (oxirgi 50 tur)", statsLink:"Statistika ›", statMax:"Eng ko'p chiqqan", statRecentMiss:"Yaqinda chiqmagan", statAvg:"O'rtacha", ctaPayout:"Sof yutuq summasini hisoblash ›", ctaScan:"Yutmagan chipta QR skanerlash", ctaBonus:"Imtiyozli stavkaga ariza ›", badgeNote:"Yutmagan chipta ham NH omonat imtiyozli foiziga almashtiriladi", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qo'llanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { hdrTitle:"제 {round}회 당첨번호", hdrSub:"{date} 추첨 · 동행복권 연동", roundOption:"{round}회", drawInfoLive:"보너스 번호 포함 · 동행복권 실시간 연동", drawInfoOffline:"보너스 번호 포함 · 네트워크 연결 실패로 데모 데이터 표시", resultLabel:"내 번호 결과", resultPlaceholder:"번호를 입력하고 확인해보세요", invalidInput:"1~45 사이 숫자 6개를 입력해주세요", matchFmt:"{n}개 일치 ({nums})", rank0:"낙첨", rank1:"1등", rank2:"2등", rank3:"3등", rank4:"4등", rank5:"5등", noPrize:"당첨금 없음", myNumPlaceholder:"번호 6개 입력 (예: 3, 11, 19, 27, 33, 41)", myNumCheck:"확인", loadingText:"당첨번호 불러오는 중...", modeQr:"QR코드로 확인", modeManual:"직접 번호 입력하기", scanMsgDefault:"복권 뒷면 QR코드를 카메라에 비춰주세요", scanMsgActive:"QR코드를 스캔하는 중이에요...", btnCamera:"카메라로 스캔", btnCameraStop:"스캔 중지", btnDemoScan:"데모: 최신 회차 당첨 QR 스캔", formatNote:"* 실제 동행복권 QR 규격은 비공개입니다. 데모는 자체 정의 포맷(LOTTO|회차|번호6개)으로 인식·판정을 시연합니다.", digitPlaceholder:"번호를 입력하세요 (1~45)", allSixSelected:"6개를 모두 선택했어요. 확인을 눌러주세요", alreadySelected:"이미 선택한 번호예요", noMatch:"해당하는 번호가 없어요", needMoreBalls:"{n}개 더 선택해주세요", toastCameraUnavailable:"이 기기에서는 카메라를 사용할 수 없어요", toastCameraDenied:"카메라 접근 권한이 필요해요", toastFormatWarn:"인식할 수 없는 QR 형식이에요", toastParseFail:"QR 코드를 읽는 데 실패했어요", toastUnsupportedRound:"{round}회차 데이터를 찾을 수 없어요", toastScanned:"QR 스캔 완료! {round}회 번호를 불러왔어요", cardDrawTitle:"당첨번호 조회", linkGo:"보러가기 ›", linkMyHistory:"나의 번호, 과거엔 혹시 당첨?", linkHot:"최근 많이 뽑힌 번호는?", linkCold:"최근 오랫동안 안 보인 번호는?", linkChallenge:"3등 챌린지 도전하기", ctaPayout:"당첨금 실수령액 계산하기 ›", ctaBonus:"낙첨복권 우대금리 신청 ›", badgeNote:"낙첨 복권도 NH예적금 우대금리로 교환할 수 있어요", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrTitle:"Round {round} Winning Numbers", hdrSub:"Drawn {date} · Linked with Lottery data", roundOption:"Round {round}", drawInfoLive:"Bonus number included · Live-linked with Lottery data", drawInfoOffline:"Bonus number included · Network failed, showing demo data", resultLabel:"My Ticket Result", resultPlaceholder:"Enter your numbers to check", invalidInput:"Enter 6 numbers between 1 and 45", matchFmt:"{n} numbers matched ({nums})", rank0:"Not a Winner", rank1:"1st Prize", rank2:"2nd Prize", rank3:"3rd Prize", rank4:"4th Prize", rank5:"5th Prize", noPrize:"No Prize", myNumPlaceholder:"Enter 6 numbers (e.g. 3, 11, 19, 27, 33, 41)", myNumCheck:"Check", loadingText:"Loading winning numbers...", modeQr:"Scan QR Code", modeManual:"Enter Numbers Manually", scanMsgDefault:"Point your camera at the QR code on the ticket", scanMsgActive:"Scanning QR code...", btnCamera:"Scan with Camera", btnCameraStop:"Stop Scanning", btnDemoScan:"Demo: Scan Latest Winning QR", formatNote:"* The real Lottery QR spec is not public. This demo uses a custom format (LOTTO|round|6 numbers) to demonstrate recognition.", digitPlaceholder:"Enter a number (1-45)", allSixSelected:"All 6 numbers selected. Tap Check.", alreadySelected:"Already selected", noMatch:"No matching number", needMoreBalls:"Select {n} more number(s)", toastCameraUnavailable:"Camera is not available on this device", toastCameraDenied:"Camera access is required", toastFormatWarn:"Unrecognized QR format", toastParseFail:"Failed to read the QR code", toastUnsupportedRound:"Round {round} data not found", toastScanned:"Scan complete! Loaded round {round} numbers", cardDrawTitle:"Check Winning Numbers", linkGo:"View ›", linkMyHistory:"Would my numbers have won?", linkHot:"Most drawn numbers lately", linkCold:"Longest missing numbers", linkChallenge:"Try the 3rd Prize Challenge", ctaPayout:"Calculate Take-Home Prize ›", ctaBonus:"Apply for Losing-Ticket Bonus Rate ›", badgeNote:"Even losing tickets can be exchanged for NH deposit rate bonuses", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrTitle:"第{round}期 中奖号码", hdrSub:"{date} 开奖 · 与彩票数据联动", roundOption:"第{round}期", drawInfoLive:"含奖金号码 · 与彩票数据实时联动", drawInfoOffline:"含奖金号码 · 网络连接失败，显示演示数据", resultLabel:"我的号码结果", resultPlaceholder:"请输入号码进行查询", invalidInput:"请输入1~45之间的6个数字", matchFmt:"命中{n}个号码 ({nums})", rank0:"未中奖", rank1:"1等奖", rank2:"2等奖", rank3:"3等奖", rank4:"4等奖", rank5:"5等奖", noPrize:"无奖金", myNumPlaceholder:"输入6个号码 (例: 3, 11, 19, 27, 33, 41)", myNumCheck:"查询", loadingText:"正在加载中奖号码...", modeQr:"扫码确认", modeManual:"手动输入号码", scanMsgDefault:"请将彩票QR码对准摄像头", scanMsgActive:"正在扫描QR码...", btnCamera:"扫码", btnCameraStop:"停止扫描", btnDemoScan:"演示：扫描最新一期中奖QR", formatNote:"* 实际彩票QR规格未公开。演示使用自定义格式(LOTTO|期号|6个号码)进行识别演示。", digitPlaceholder:"请输入号码 (1~45)", allSixSelected:"已选择全部6个号码，请点击查询", alreadySelected:"已选择该号码", noMatch:"没有匹配的号码", needMoreBalls:"还需选择{n}个号码", toastCameraUnavailable:"此设备无法使用摄像头", toastCameraDenied:"需要摄像头权限", toastFormatWarn:"无法识别的QR格式", toastParseFail:"读取QR码失败", toastUnsupportedRound:"未找到第{round}期数据", toastScanned:"扫描完成！已载入第{round}期号码", cardDrawTitle:"查询中奖号码", linkGo:"查看 ›", linkMyHistory:"我的号码，过去中过奖吗?", linkHot:"最近常出的号码?", linkCold:"最近很久没出的号码?", linkChallenge:"挑战三等奖", ctaPayout:"计算实际到手奖金 ›", ctaBonus:"未中奖彩票申请优惠利率 ›", badgeNote:"未中奖彩票也可兑换NH存款优惠利率", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrTitle:"Kỳ quay số {round}", hdrSub:"Quay số {date} · Liên kết dữ liệu xổ số", roundOption:"Kỳ {round}", drawInfoLive:"Bao gồm số thưởng · Liên kết trực tiếp với dữ liệu xổ số", drawInfoOffline:"Bao gồm số thưởng · Kết nối mạng thất bại, hiển thị dữ liệu demo", resultLabel:"Kết quả vé của tôi", resultPlaceholder:"Nhập số của bạn để kiểm tra", invalidInput:"Vui lòng nhập 6 số từ 1 đến 45", matchFmt:"Trùng {n} số ({nums})", rank0:"Không trúng", rank1:"Giải 1", rank2:"Giải 2", rank3:"Giải 3", rank4:"Giải 4", rank5:"Giải 5", noPrize:"Không có tiền thưởng", myNumPlaceholder:"Nhập 6 số (vd: 3, 11, 19, 27, 33, 41)", myNumCheck:"Kiểm tra", loadingText:"Đang tải số trúng thưởng...", modeQr:"Quét mã QR", modeManual:"Nhập số thủ công", scanMsgDefault:"Hướng camera vào mã QR trên vé", scanMsgActive:"Đang quét mã QR...", btnCamera:"Quét bằng camera", btnCameraStop:"Dừng quét", btnDemoScan:"Demo: Quét QR trúng thưởng kỳ mới nhất", formatNote:"* Quy cách QR thực tế của xổ số không công khai. Demo dùng định dạng riêng (LOTTO|kỳ|6 số) để minh họa.", digitPlaceholder:"Nhập số (1~45)", allSixSelected:"Đã chọn đủ 6 số. Nhấn Kiểm tra.", alreadySelected:"Số này đã được chọn", noMatch:"Không có số phù hợp", needMoreBalls:"Chọn thêm {n} số nữa", toastCameraUnavailable:"Thiết bị này không hỗ trợ camera", toastCameraDenied:"Cần quyền truy cập camera", toastFormatWarn:"Định dạng QR không nhận dạng được", toastParseFail:"Không đọc được mã QR", toastUnsupportedRound:"Không tìm thấy dữ liệu kỳ {round}", toastScanned:"Quét xong! Đã tải số của kỳ {round}", cardDrawTitle:"Tra cứu số trúng thưởng", linkGo:"Xem ›", linkMyHistory:"Số của tôi từng trúng chưa?", linkHot:"Số ra nhiều gần đây?", linkCold:"Số lâu chưa ra nhất?", linkChallenge:"Thử thách giải Ba", ctaPayout:"Tính số tiền thực nhận ›", ctaBonus:"Đăng ký lãi suất ưu đãi vé không trúng ›", badgeNote:"Vé không trúng cũng có thể đổi lấy lãi suất ưu đãi tiền gửi NH", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrTitle:"งวดที่ {round} ผลรางวัล", hdrSub:"จับรางวัล{date} · เชื่อมข้อมูลสลาก", roundOption:"งวดที่ {round}", drawInfoLive:"รวมเลขโบนัส · เชื่อมข้อมูลสลากแบบเรียลไทม์", drawInfoOffline:"รวมเลขโบนัส · การเชื่อมต่อล้มเหลว แสดงข้อมูลตัวอย่าง", resultLabel:"ผลตรวจของฉัน", resultPlaceholder:"กรอกเลขของคุณเพื่อตรวจสอบ", invalidInput:"กรุณากรอกตัวเลข 6 ตัวระหว่าง 1 ถึง 45", matchFmt:"ตรง {n} ตัว ({nums})", rank0:"ไม่ถูกรางวัล", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3:"รางวัลที่ 3", rank4:"รางวัลที่ 4", rank5:"รางวัลที่ 5", noPrize:"ไม่มีเงินรางวัล", myNumPlaceholder:"กรอกเลข 6 ตัว (เช่น 3, 11, 19, 27, 33, 41)", myNumCheck:"ตรวจสอบ", loadingText:"กำลังโหลดผลรางวัล...", modeQr:"สแกน QR ตรวจสอบ", modeManual:"กรอกเลขด้วยตนเอง", scanMsgDefault:"ส่องกล้องไปที่ QR โค้ดบนสลาก", scanMsgActive:"กำลังสแกน QR โค้ด...", btnCamera:"สแกนด้วยกล้อง", btnCameraStop:"หยุดสแกน", btnDemoScan:"เดโม: สแกน QR ถูกรางวัลงวดล่าสุด", formatNote:"* รูปแบบ QR จริงของสลากไม่เปิดเผยต่อสาธารณะ เดโมนี้ใช้รูปแบบกำหนดเอง (LOTTO|งวด|เลข 6 ตัว) เพื่อสาธิตการรู้จำ", digitPlaceholder:"กรอกเลข (1~45)", allSixSelected:"เลือกครบ 6 ตัวแล้ว กดตรวจสอบได้เลย", alreadySelected:"เลขนี้ถูกเลือกแล้ว", noMatch:"ไม่มีเลขที่ตรงกัน", needMoreBalls:"เลือกเพิ่มอีก {n} ตัว", toastCameraUnavailable:"อุปกรณ์นี้ไม่รองรับกล้อง", toastCameraDenied:"ต้องได้รับอนุญาตให้ใช้กล้อง", toastFormatWarn:"รูปแบบ QR ไม่ถูกต้อง", toastParseFail:"อ่าน QR โค้ดไม่สำเร็จ", toastUnsupportedRound:"ไม่พบข้อมูลงวดที่ {round}", toastScanned:"สแกนสำเร็จ! โหลดเลขงวดที่ {round} แล้ว", cardDrawTitle:"ตรวจสอบเลขที่ถูกรางวัล", linkGo:"ดู ›", linkMyHistory:"เลขของฉันเคยถูกรางวัลไหม?", linkHot:"เลขที่ออกบ่อยล่าสุด?", linkCold:"เลขที่ไม่ออกนานที่สุด?", linkChallenge:"ท้าทายรางวัลที่ 3", ctaPayout:"คำนวณเงินรางวัลสุทธิ ›", ctaBonus:"สมัครดอกเบี้ยพิเศษสลากไม่ถูกรางวัล ›", badgeNote:"สลากไม่ถูกรางวัลก็แลกดอกเบี้ยพิเศษเงินฝาก NH ได้", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrTitle:"{round}-son g'olib raqamlari", hdrSub:"{date} qur'a · Lotereya ma'lumotlari bilan bog'langan", roundOption:"{round}-son", drawInfoLive:"Bonus raqami bilan · Lotereya ma'lumotlari bilan jonli bog'langan", drawInfoOffline:"Bonus raqami bilan · Tarmoq xatosi, namunaviy ma'lumot ko'rsatilmoqda", resultLabel:"Mening natijam", resultPlaceholder:"Tekshirish uchun raqamlaringizni kiriting", invalidInput:"1 dan 45 gacha 6 ta raqam kiriting", matchFmt:"{n} ta raqam mos ({nums})", rank0:"Yutuq yo'q", rank1:"1-mukofot", rank2:"2-mukofot", rank3:"3-mukofot", rank4:"4-mukofot", rank5:"5-mukofot", noPrize:"Mukofot yo'q", myNumPlaceholder:"6 ta raqam kiriting (masalan: 3, 11, 19, 27, 33, 41)", myNumCheck:"Tekshirish", loadingText:"G'olib raqamlar yuklanmoqda...", modeQr:"QR orqali tekshirish", modeManual:"Raqamlarni qo'lda kiriting", scanMsgDefault:"Kamerani chipta ustidagi QR kodga tuting", scanMsgActive:"QR kod skanerlanmoqda...", btnCamera:"Kamera bilan skanerlash", btnCameraStop:"Skanerlashni to'xtatish", btnDemoScan:"Demo: So'nggi tur yutuq QR skanerlash", formatNote:"* Lotereyaning haqiqiy QR formati ochiq emas. Demo o'z formatidan (LOTTO|tur|6 raqam) foydalanadi.", digitPlaceholder:"Raqam kiriting (1~45)", allSixSelected:"6 ta raqam tanlandi. Tekshirishni bosing.", alreadySelected:"Bu raqam allaqachon tanlangan", noMatch:"Mos raqam yo'q", needMoreBalls:"Yana {n} ta raqam tanlang", toastCameraUnavailable:"Bu qurilmada kamera mavjud emas", toastCameraDenied:"Kameraga ruxsat kerak", toastFormatWarn:"QR formati tanilmadi", toastParseFail:"QR kodni o'qib bo'lmadi", toastUnsupportedRound:"{round}-tur ma'lumoti topilmadi", toastScanned:"Skanerlash tugadi! {round}-tur raqamlari yuklandi", cardDrawTitle:"G'olib raqamlarni tekshirish", linkGo:"Ko'rish ›", linkMyHistory:"Raqamlarim ilgari yutganmi?", linkHot:"So'nggi paytda ko'p chiqqan raqamlar", linkCold:"Uzoq vaqt chiqmagan raqamlar", linkChallenge:"3-mukofot chellenji", ctaPayout:"Sof yutuq summasini hisoblash ›", ctaBonus:"Yutmagan chipta imtiyozli stavkasi ›", badgeNote:"Yutmagan chipta ham NH omonat imtiyozli foiziga almashtiriladi", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qo'llanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
 
 const LOCALE_MAP = { ko:'ko-KR', en:'en-US', zh:'zh-CN', vi:'vi-VN', th:'th-TH', uz:'uz-UZ' };
@@ -10796,48 +10812,6 @@ function scanLoop(){
   scanRAF = requestAnimationFrame(scanLoop);
 }
 
-function computeFrequency(draws, limit){
-  const recent = draws.slice(-limit);
-  const counts = new Array(46).fill(0);
-  recent.forEach(d => d.n.forEach(n => counts[n]++));
-  return counts;
-}
-
-function renderFreqChart(){
-  const counts = computeFrequency(ALL_DRAWS, 50);
-  const wrap = document.getElementById('freqChart');
-  wrap.innerHTML = '';
-  const max = Math.max(...counts.slice(1));
-  const sortedNums = Array.from({ length: 45 }, (_, i) => i + 1).sort((a, b) => counts[b] - counts[a]);
-  const topSet = new Set(sortedNums.slice(0, 3));
-
-  for(let n = 1; n <= 45; n++){
-    const col = document.createElement('div');
-    col.className = 'bar-col';
-    const bar = document.createElement('div');
-    bar.className = 'bar' + (topSet.has(n) ? ' hi' : '');
-    bar.style.height = (max ? counts[n] / max * 100 : 0) + '%';
-    col.appendChild(bar);
-    wrap.appendChild(col);
-  }
-
-  let longestGapNum = 1, longestGap = -1;
-  for(let n = 1; n <= 45; n++){
-    let gap = 0;
-    for(let i = ALL_DRAWS.length - 1; i >= 0; i--){
-      if(ALL_DRAWS[i].n.includes(n)) break;
-      gap++;
-    }
-    if(gap > longestGap){ longestGap = gap; longestGapNum = n; }
-  }
-  const totalDrawn = counts.slice(1).reduce((a, b) => a + b, 0);
-  const avg = (totalDrawn / 45).toFixed(1);
-
-  document.getElementById('statMaxVal').textContent = sortedNums[0];
-  document.getElementById('statRecentMissVal').textContent = longestGapNum;
-  document.getElementById('statAvgVal').textContent = avg + '회';
-}
-
 document.getElementById('roundSelect').addEventListener('change', e => {
   const r = Number(e.target.value);
   const idx = ALL_DRAWS.findIndex(d => d.r === r);
@@ -10890,7 +10864,6 @@ async function init(){
   renderRoundSelect();
   renderBalls();
   renderResult();
-  renderFreqChart();
   applyStaticI18n();
 }
 

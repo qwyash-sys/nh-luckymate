@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>NH행운메이트 - 번호 통계 분석</title>
+<title>NH행운메이트 - 재미로 보는 통계</title>
 <style>
   :root {
     --primary: #00A651;
@@ -64,27 +64,116 @@
 
   .content { padding: 16px; background:var(--bg-content); }
 
-  .segment {
-    display:flex; background:var(--bg-card); border-radius:12px; padding:4px;
-    margin-bottom:14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  .segment div {
-    flex:1; text-align:center; padding:9px 0; font-size:12.5px; font-weight:700;
-    border-radius:9px; color:var(--text-mute); cursor:pointer;
-  }
-  .segment .active { background:var(--primary); color:#fff; }
-
   .card {
     background:var(--bg-card); border-radius:16px; padding:16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 14px;
+    scroll-margin-top: 20px;
   }
   .card-title {
     font-size: 13px; font-weight:700; color:var(--text-sub);
     display:flex; justify-content:space-between; align-items:center;
-    margin-bottom: 4px;
+    margin-bottom: 4px; gap:8px;
   }
-  .card-sub { font-size:10.5px; color:var(--text-faint); margin-bottom:12px; }
+  .card-title .ttl { display:flex; align-items:center; gap:6px; }
+  .card-title .ttl .ico { font-size:15px; }
+  .card-sub { font-size:10.5px; color:var(--text-faint); margin-bottom:12px; line-height:1.5; }
 
+  /* ===== 내 번호 고정 카드 ===== */
+  .mynum-card {
+    background: linear-gradient(135deg,var(--primary-light2),var(--primary-light));
+    border:1px solid var(--primary-border); box-shadow:none;
+  }
+  .mynum-head {
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;
+  }
+  .mynum-head .label { font-size:12px; font-weight:800; color:var(--primary-dark); }
+  .btn-edit {
+    font-size:11px; font-weight:700; color:var(--primary-dark);
+    background:#fff; border:1px solid var(--primary-border);
+    padding:5px 12px; border-radius:20px;
+  }
+  .balls-row { display:flex; gap:7px; flex-wrap:wrap; align-items:center; min-height:34px; }
+  .ball {
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:800; color:#fff; flex:none;
+  }
+  .b-yellow{background:var(--ball-yellow);color:#4a3900}
+  .b-blue{background:var(--ball-blue);color:#04324d}
+  .b-red{background:var(--ball-red);color:#4a0000}
+  .b-gray{background:var(--ball-gray);color:#2b2b2b}
+  .b-green{background:var(--ball-green);color:#2b3900}
+  .ball.dim { opacity:0.32; }
+
+  .mynum-result {
+    margin-top:12px; padding-top:12px; border-top:1px dashed var(--primary-border);
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .mynum-result .rk { font-size:13px; font-weight:800; color:var(--primary-dark); }
+  .mynum-result .ds { font-size:10.5px; color:var(--text-sub); margin-top:3px; }
+  .mynum-result .amt { font-size:14px; font-weight:800; color:var(--text-main); white-space:nowrap; }
+  .mynum-empty { font-size:12.5px; font-weight:700; color:var(--text-sub); }
+  .mynum-empty-sub { font-size:10.5px; color:var(--text-mute); margin-top:4px; line-height:1.5; }
+
+  .chip-ball { cursor:pointer; position:relative; }
+  .chip-ball::after {
+    content:'×'; position:absolute; top:-4px; right:-4px; width:14px; height:14px;
+    background:#777; color:#fff; border-radius:50%; font-size:10px; line-height:14px;
+    font-weight:700; text-align:center;
+  }
+  .chip-empty { background:rgba(255,255,255,0.7) !important; border:1.5px dashed var(--primary-border); color:transparent; }
+  .my-num-input {
+    width:100%; border:1px solid var(--primary-border); border-radius:10px;
+    padding:10px 12px; font-size:12.5px; color:var(--text-main); background:#fff; margin-top:10px;
+  }
+  .my-num-input:focus { outline:none; border-color:var(--primary); }
+  .my-num-input:disabled { background:#f2f4f6; color:var(--text-mute); }
+  .suggest-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; min-height:32px; margin-top:8px; }
+  .suggest-ball { cursor:pointer; width:30px; height:30px; font-size:12.5px; box-shadow:0 1px 5px rgba(0,0,0,0.18); }
+  .suggest-msg { font-size:11.5px; color:var(--text-mute); }
+
+  /* ===== 과거 당첨 이력 ===== */
+  .seg { display:flex; background:var(--bg-content); border-radius:10px; padding:3px; margin-bottom:12px; }
+  .seg button {
+    flex:1; text-align:center; padding:8px 0; font-size:11.5px; font-weight:700;
+    border-radius:8px; color:var(--text-mute);
+  }
+  .seg button.active { background:var(--primary); color:#fff; }
+
+  .hist-summary {
+    font-size:11.5px; color:var(--text-sub); font-weight:700;
+    background:var(--primary-light2); border-radius:9px; padding:9px 11px; margin-bottom:10px;
+  }
+  .hist-summary b { color:var(--primary-dark); }
+  .hist-row { padding:10px 0; border-bottom:1px solid var(--border-light); }
+  .hist-row:last-child { border-bottom:none; }
+  .hist-top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .hist-round { font-size:12px; font-weight:700; color:var(--text-main); }
+  .hist-date { font-size:10px; color:var(--text-faint); font-weight:400; margin-left:5px; }
+  .hist-right { display:flex; align-items:center; gap:7px; }
+  .rank-badge {
+    font-size:10px; font-weight:800; color:#fff; padding:3px 8px; border-radius:20px;
+  }
+  .rank-badge.r1 { background:#E5A100; }
+  .rank-badge.r2 { background:#3FA9E0; }
+  .rank-badge.r3 { background:var(--primary); }
+  .rank-badge.r4 { background:#8C9AA5; }
+  .rank-badge.r5 { background:#B4BCC4; }
+  .hist-amt { font-size:12px; font-weight:800; color:var(--text-main); white-space:nowrap; }
+  .hist-balls { display:flex; gap:4px; margin-top:7px; flex-wrap:wrap; align-items:center; }
+  .hist-balls .mini {
+    width:22px; height:22px; border-radius:50%; font-size:10px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; color:#fff; flex:none;
+  }
+  .hist-hint { font-size:10px; color:var(--text-faint); margin-left:4px; }
+  .empty-msg { font-size:11.5px; color:var(--text-mute); text-align:center; padding:18px 6px; line-height:1.6; }
+  .btn-more {
+    display:block; width:100%; text-align:center; margin-top:10px;
+    font-size:12px; font-weight:700; color:var(--primary-dark);
+    background:var(--bg-content); border-radius:10px; padding:10px;
+  }
+
+  /* ===== 차트 ===== */
   .range-select-wrap { position:relative; display:inline-flex; align-items:center; }
   select.range-select {
     appearance:none; -webkit-appearance:none; border:none;
@@ -93,19 +182,13 @@
     cursor:pointer;
   }
   .range-select-wrap .range-arrow {
-    position:absolute; right:8px; pointer-events:none;
-    font-size:9px; color:var(--primary);
+    position:absolute; right:8px; pointer-events:none; font-size:9px; color:var(--primary);
   }
-
-  .chart-wrap { height: 210px; display:flex; align-items:flex-end; gap:2px; padding:4px 2px 0; }
-  .chart-wrap .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; position:relative; }
-  .chart-wrap .bar { width: 5px; border-radius: 2px 2px 0 0; background:#D9DEE2; }
+  .chart-wrap { height: 170px; display:flex; align-items:flex-end; gap:2px; padding:4px 2px 0; }
+  .chart-wrap .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .chart-wrap .bar { width: 5px; border-radius: 2px 2px 0 0; background:#D9DEE2; min-height:2px; }
   .chart-wrap .bar.hot { background:var(--primary); }
   .chart-wrap .bar.cold { background:var(--danger); }
-  .chart-wrap.dist-mode .bar-col { flex:none; width:15%; }
-  .chart-wrap.dist-mode .bar { width:34px; border-radius:6px 6px 0 0; }
-  .bucket-label { font-size:9.5px; color:var(--text-mute); margin-top:6px; font-weight:700; }
-
   .legend-row { display:flex; gap:14px; margin-top:10px; justify-content:center; }
   .legend-item { display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--text-mute); }
   .dot { width:8px; height:8px; border-radius:50%; }
@@ -122,28 +205,39 @@
   .bar-tooltip.show { opacity:1; }
 
   .divider { height:1px; background:var(--border-light); margin:14px 0; }
-
   .num-grid { display:flex; justify-content:space-between; }
-  .num-chip {
-    width:42px; display:flex; flex-direction:column; align-items:center;
-  }
+  .num-chip { width:42px; display:flex; flex-direction:column; align-items:center; }
   .num-chip .circle {
     width:32px; height:32px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     font-size:13px; font-weight:800; color:#fff; margin-bottom:3px;
   }
   .num-chip .cnt { font-size:9.5px; color:var(--text-mute); }
-  .b-yellow{background:var(--ball-yellow);color:#4a3900}
-  .b-blue{background:var(--ball-blue);color:#04324d}
-  .b-red{background:var(--ball-red);color:#4a0000}
-  .b-gray{background:var(--ball-gray);color:#2b2b2b}
-  .b-green{background:var(--ball-green);color:#2b3900}
+
+  .stat-row { display:flex; justify-content:space-between; margin-top:14px; gap:6px; }
+  .stat-item { text-align:center; flex:1; }
+  .stat-item .num { font-size:15px; font-weight:800; color:var(--text-main); }
+  .stat-item .label { font-size:10px; color:var(--text-mute); margin-top:3px; line-height:1.3; }
+
+  /* ===== 3등 챌린지 ===== */
+  .ch-hero {
+    background:var(--primary-light2); border:1px solid var(--primary-border);
+    border-radius:12px; padding:13px 14px; margin-bottom:14px;
+  }
+  .ch-hero .t { font-size:14px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
+  .ch-hero .s { font-size:11px; color:var(--text-sub); }
+  .ch-hero .s b { color:var(--primary-dark); }
+  .ch-chart { height: 120px; display:flex; align-items:flex-end; gap:6px; padding:4px 2px 0; }
+  .ch-chart .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .ch-chart .bar { width: 14px; border-radius: 3px 3px 0 0; background:var(--primary-border); min-height:2px; }
+  .ch-chart .bar.now { background:var(--primary); }
+  .ch-chart .lb { font-size:8.5px; color:var(--text-faint); margin-top:4px; }
 
   .cta {
-    display:block;
-    margin-top: 4px; background:var(--primary); color:#fff; text-align:center;
+    display:block; margin-top:4px; background:var(--primary); color:#fff; text-align:center;
     padding:13px; border-radius:12px; font-size:14px; font-weight:700;
   }
+  .cta.outline { background:var(--bg-card); color:var(--primary); border:1.5px solid var(--primary); margin-top:12px; }
 
   .tabbar {
     display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
@@ -163,53 +257,124 @@
   <div class="header">
     <div class="top">
       <a class="back" href="nh_luckymate_mockup.html">‹</a>
-      <span class="title" data-i18n="hdrPageTitle">번호 통계 분석</span>
+      <span class="title" data-i18n="hdrPageTitle">재미로 보는 통계</span>
       <a class="dots" href="nh_luckymate_language.html">⋮</a>
     </div>
     <div class="sub">
-      <span id="hdrTitle">최근 50회차 출현·미출현 통계</span>
+      <span data-i18n="hdrTitle">내 번호로 보는 로또 통계</span>
       <span id="hdrSub">불러오는 중...</span>
     </div>
   </div>
 
   <div class="content">
 
-    <div class="segment" id="segmentTabs">
-      <div class="active" data-mode="freq" data-i18n="segFreq">출현 빈도</div>
-      <div data-mode="gap" data-i18n="segMiss">미출현 기간</div>
-      <div data-mode="dist" data-i18n="segDist">구간별 분포</div>
+    <!-- ===== 내 번호 (상단 고정) ===== -->
+    <div class="card mynum-card" id="secMyNum">
+      <div class="mynum-head">
+        <span class="label" data-i18n="myNumTitle">내 번호</span>
+        <button class="btn-edit" id="btnEditMyNum" data-i18n="btnEdit">수정</button>
+      </div>
+
+      <div id="myNumView">
+        <div class="balls-row" id="myBallsRow"></div>
+        <div class="mynum-result" id="myNumResult"></div>
+      </div>
+
+      <div id="myNumEditor" style="display:none;">
+        <div class="balls-row" id="editBallsRow"></div>
+        <input type="text" id="digitInput" class="my-num-input" inputmode="numeric" autocomplete="off"
+               data-i18n-placeholder="digitPlaceholder" placeholder="번호를 입력하세요 (1~45)">
+        <div class="suggest-row" id="suggestRow"></div>
+      </div>
     </div>
 
-    <div class="card">
+    <!-- ===== 1. 나의 번호, 과거엔 혹시 당첨? ===== -->
+    <div class="card" id="secMyHistory">
       <div class="card-title">
-        <span id="cardTitleText">번호별 출현 횟수</span>
+        <span class="ttl"><span class="ico">🕰️</span><span data-i18n="secMyHistoryTitle">나의 번호, 과거엔 혹시 당첨?</span></span>
+      </div>
+      <div class="card-sub" data-i18n="secMyHistorySub">내 번호로 과거 전 회차를 전부 채점해봤어요</div>
+
+      <div class="seg" id="histSeg">
+        <button class="active" data-sort="prize" data-i18n="tabByPrize">금액(등수)순</button>
+        <button data-sort="recent" data-i18n="tabByRecent">최근 순</button>
+      </div>
+
+      <div id="histSummary"></div>
+      <div id="histList"></div>
+      <button class="btn-more" id="btnMoreHist" style="display:none;" data-i18n="btnMore">더보기</button>
+    </div>
+
+    <!-- ===== 2. 최근 많이 뽑힌 번호는? ===== -->
+    <div class="card" id="secHot">
+      <div class="card-title">
+        <span class="ttl"><span class="ico">🔥</span><span data-i18n="secHotTitle">최근 많이 뽑힌 번호는?</span></span>
         <div class="range-select-wrap">
-          <select id="rangeSelect" class="range-select"></select>
+          <select id="hotRange" class="range-select"></select>
           <span class="range-arrow">▾</span>
         </div>
       </div>
-      <div class="card-sub" id="cardSubText">1~45번 전체 번호 기준 출현 횟수</div>
-      <div class="chart-wrap" id="mainChart"></div>
-      <div class="legend-row" id="legendRow"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span data-i18n="topHotTitle">최다 출현 번호 TOP 5</span></div>
-      <div class="num-grid" id="hotGrid"></div>
+      <div class="card-sub" data-i18n="secHotSub">선택한 범위에서 번호별 출현 횟수</div>
+      <div class="chart-wrap" id="hotChart"></div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="dot hot"></span><span data-i18n="legendHot">최다 출현 TOP5</span></div>
+        <div class="legend-item"><span class="dot normal"></span><span data-i18n="legendNormal">그 외 번호</span></div>
+      </div>
+      <div class="stat-row" id="hotStats"></div>
       <div class="divider"></div>
-      <div class="card-title"><span data-i18n="topColdTitle">장기 미출현 번호 TOP 5</span></div>
-      <div class="num-grid" id="coldGrid"></div>
+      <div class="card-title"><span class="ttl" data-i18n="topHotTitle">최다 출현 번호 TOP 5</span></div>
+      <div class="num-grid" id="hotGrid" style="margin-top:10px;"></div>
     </div>
 
-    <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaCompare">내 번호 입력하고 당첨 확인하기 ›</a>
+    <!-- ===== 3. 최근 오랫동안 안 보인 번호는? ===== -->
+    <div class="card" id="secCold">
+      <div class="card-title">
+        <span class="ttl"><span class="ico">❄️</span><span data-i18n="secColdTitle">최근 오랫동안 안 보인 번호는?</span></span>
+        <div class="range-select-wrap">
+          <select id="coldRange" class="range-select"></select>
+          <span class="range-arrow">▾</span>
+        </div>
+      </div>
+      <div class="card-sub" data-i18n="secColdSub">마지막으로 나온 뒤 지나간 회차 수</div>
+      <div class="chart-wrap" id="coldChart"></div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="dot cold"></span><span data-i18n="legendCold">장기 미출현 TOP5</span></div>
+        <div class="legend-item"><span class="dot normal"></span><span data-i18n="legendNormal">그 외 번호</span></div>
+      </div>
+      <div class="stat-row" id="coldStats"></div>
+      <div class="divider"></div>
+      <div class="card-title"><span class="ttl" data-i18n="topColdTitle">장기 미출현 번호 TOP 5</span></div>
+      <div class="num-grid" id="coldGrid" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- ===== 4. 3등 챌린지 ===== -->
+    <div class="card" id="secChallenge">
+      <div class="card-title">
+        <span class="ttl"><span class="ico">🏆</span><span data-i18n="secChallengeTitle">3등 챌린지</span></span>
+      </div>
+      <div class="card-sub" data-i18n="secChallengeSub">1등보다 현실적인 목표, 3등에 도전해요</div>
+
+      <div class="ch-hero">
+        <div class="t" id="chHeroTitle">-</div>
+        <div class="s" id="chHeroSub"></div>
+      </div>
+
+      <div class="card-title"><span class="ttl" data-i18n="challengeChartTitle">최근 12주 3등 당첨자 수</span></div>
+      <div class="ch-chart" id="chChart" style="margin-top:8px;"></div>
+      <div class="stat-row" id="chStats"></div>
+
+      <a class="cta outline" href="nh_luckymate_challenge.html" data-i18n="challengeMore">3등 챌린지 자세히 보기 ›</a>
+    </div>
+
+    <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaBack">당첨번호 조회하러 가기 ›</a>
   </div>
 
   <div class="tabbar">
-    <a class="tab active" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
+    <a class="tab active" href="nh_luckymate_stats.html"><span class="icon">📊</span><span data-i18n="tabStats">재미로보는통계</span></a>
     <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
-    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
     <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
-    <a class="tab" href="nh_luckymate_challenge.html"><span class="icon">🏆</span><span data-i18n="tabChallenge">3등챌린지</span></a>
+    <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
   </div>
 
   <div class="bar-tooltip" id="barTooltip"></div>
@@ -217,41 +382,59 @@
 
 <script>
 const I18N = {
-  ko: { hdrPageTitle:"번호 통계 분석", hdrTitleTpl:"최근 {n}회차 출현·미출현 통계", hdrTitleTplAll:"전체 회차 출현·미출현 통계", hdrSubTpl:"제 {start}회 ~ {end}회 기준 · 동행복권 실시간 데이터", segFreq:"출현 빈도", segMiss:"미출현 기간", segDist:"구간별 분포", cardFreqTitle:"번호별 출현 횟수", cardFreqSub:"1~45번 전체 번호 기준 출현 횟수", cardGapTitle:"번호별 미출현 기간", cardGapSub:"선택한 범위 안에서 마지막 출현 이후 지난 회차 수", cardDistTitle:"구간별 출현 분포", cardDistSub:"1~45번을 5구간으로 나눈 출현 횟수 합계", legendHot:"최다 출현 TOP5", legendCold:"장기 미출현 TOP5", legendNormal:"평균 범위", topHotTitle:"최다 출현 번호 TOP 5", topColdTitle:"장기 미출현 번호 TOP 5", ctaCompare:"내 번호 입력하고 당첨 확인하기 ›", rangeOption:"최근 {n}회", rangeOptionAll:"전체", tooltipFreq:"{n}번 · {v}회", tooltipGap:"{n}번 · {v}회째 미출현", tooltipDist:"{label} · {v}회", tabHome:"당첨조회", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrPageTitle:"Number Statistics", hdrTitleTpl:"Appearance Stats (Last {n} Draws)", hdrTitleTplAll:"Appearance Stats (All Draws)", hdrSubTpl:"Based on Rounds {start}–{end} · Live Lottery data", segFreq:"Frequency", segMiss:"Missing Streak", segDist:"Range Distribution", cardFreqTitle:"Appearance Count by Number", cardFreqSub:"Appearance count for all numbers 1–45", cardGapTitle:"Missing Streak by Number", cardGapSub:"Draws passed since last appearance, within the selected range", cardDistTitle:"Appearance by Number Range", cardDistSub:"Numbers 1–45 grouped into 5 ranges", legendHot:"Top 5 Most Frequent", legendCold:"Top 5 Longest Missing", legendNormal:"Average Range", topHotTitle:"Top 5 Most Frequent Numbers", topColdTitle:"Top 5 Longest Missing Numbers", ctaCompare:"Enter My Numbers to Check ›", rangeOption:"Last {n}", rangeOptionAll:"All", tooltipFreq:"No.{n} · {v} times", tooltipGap:"No.{n} · missing {v} draws", tooltipDist:"{label} · {v} times", tabHome:"Winning Numbers", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrPageTitle:"号码统计分析", hdrTitleTpl:"近{n}期 出现·未出现统计", hdrTitleTplAll:"全部期数 出现·未出现统计", hdrSubTpl:"以第{start}期至{end}期为准 · 实时彩票数据", segFreq:"出现频率", segMiss:"未出现周期", segDist:"区间分布", cardFreqTitle:"各号码出现次数", cardFreqSub:"1~45号全号码出现次数统计", cardGapTitle:"各号码未出现周期", cardGapSub:"所选范围内自最后一次出现以来经过的期数", cardDistTitle:"区间出现分布", cardDistSub:"将1~45号分为5个区间统计出现次数", legendHot:"最多出现TOP5", legendCold:"长期未出现TOP5", legendNormal:"平均区间", topHotTitle:"最多出现号码TOP5", topColdTitle:"长期未出现号码TOP5", ctaCompare:"输入我的号码查询 ›", rangeOption:"近{n}期", rangeOptionAll:"全部", tooltipFreq:"{n}号 · {v}次", tooltipGap:"{n}号 · 已{v}期未出现", tooltipDist:"{label} · {v}次", tabHome:"中奖查询", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrPageTitle:"Phân tích thống kê số", hdrTitleTpl:"Thống kê xuất hiện/chưa ra ({n} kỳ gần nhất)", hdrTitleTplAll:"Thống kê xuất hiện/chưa ra (toàn bộ kỳ)", hdrSubTpl:"Dựa trên kỳ {start}–{end} · Dữ liệu xổ số thời gian thực", segFreq:"Tần suất xuất hiện", segMiss:"Kỳ chưa ra", segDist:"Phân bố theo khoảng", cardFreqTitle:"Số lần xuất hiện theo số", cardFreqSub:"Số lần xuất hiện của tất cả số 1–45", cardGapTitle:"Số kỳ chưa ra theo số", cardGapSub:"Số kỳ đã trôi qua kể từ lần xuất hiện gần nhất, trong phạm vi đã chọn", cardDistTitle:"Phân bố theo khoảng số", cardDistSub:"Số 1–45 chia thành 5 khoảng", legendHot:"Top 5 xuất hiện nhiều nhất", legendCold:"Top 5 lâu chưa ra nhất", legendNormal:"Khoảng trung bình", topHotTitle:"Top 5 số xuất hiện nhiều nhất", topColdTitle:"Top 5 số lâu chưa ra nhất", ctaCompare:"Nhập số của tôi để kiểm tra ›", rangeOption:"{n} kỳ gần nhất", rangeOptionAll:"Tất cả", tooltipFreq:"Số {n} · {v} lần", tooltipGap:"Số {n} · chưa ra {v} kỳ", tooltipDist:"{label} · {v} lần", tabHome:"Tra cứu số", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrPageTitle:"วิเคราะห์สถิติเลข", hdrTitleTpl:"สถิติออก/ไม่ออก ({n} งวดล่าสุด)", hdrTitleTplAll:"สถิติออก/ไม่ออก (ทุกงวด)", hdrSubTpl:"อ้างอิงงวดที่ {start}–{end} · ข้อมูลสลากแบบเรียลไทม์", segFreq:"ความถี่", segMiss:"ช่วงไม่ออก", segDist:"การกระจายตามช่วง", cardFreqTitle:"จำนวนครั้งที่ออกตามเลข", cardFreqSub:"จำนวนครั้งที่ออกของเลข 1–45 ทั้งหมด", cardGapTitle:"ช่วงไม่ออกตามเลข", cardGapSub:"จำนวนงวดที่ผ่านไปนับจากออกครั้งล่าสุด ภายในช่วงที่เลือก", cardDistTitle:"การกระจายตามช่วงเลข", cardDistSub:"แบ่งเลข 1–45 ออกเป็น 5 ช่วง", legendHot:"ออกบ่อยที่สุด 5 อันดับ", legendCold:"ไม่ออกนานที่สุด 5 อันดับ", legendNormal:"ช่วงเฉลี่ย", topHotTitle:"เลขออกบ่อยที่สุด 5 อันดับ", topColdTitle:"เลขไม่ออกนานที่สุด 5 อันดับ", ctaCompare:"กรอกเลขของฉันเพื่อตรวจสอบ ›", rangeOption:"{n} งวดล่าสุด", rangeOptionAll:"ทั้งหมด", tooltipFreq:"เลข {n} · {v} ครั้ง", tooltipGap:"เลข {n} · ไม่ออกมา {v} งวด", tooltipDist:"{label} · {v} ครั้ง", tabHome:"ตรวจผลรางวัล", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrPageTitle:"Raqam statistikasi tahlili", hdrTitleTpl:"Chiqish/chiqmaslik statistikasi (oxirgi {n} tur)", hdrTitleTplAll:"Chiqish/chiqmaslik statistikasi (barcha turlar)", hdrSubTpl:"{start}–{end} turlar asosida · Jonli lotereya maʼlumotlari", segFreq:"Chiqish chastotasi", segMiss:"Chiqmagan davr", segDist:"Diapazon boʻyicha taqsimot", cardFreqTitle:"Raqam boʻyicha chiqish soni", cardFreqSub:"1–45 gacha barcha raqamlar chiqish soni", cardGapTitle:"Raqam boʻyicha chiqmagan davr", cardGapSub:"Tanlangan oraliqda oxirgi chiqishdan beri oʻtgan turlar soni", cardDistTitle:"Diapazon boʻyicha chiqish taqsimoti", cardDistSub:"1–45 raqamlari 5 diapazonga boʻlingan", legendHot:"Eng koʻp chiqqan TOP5", legendCold:"Eng uzoq chiqmagan TOP5", legendNormal:"Oʻrtacha diapazon", topHotTitle:"Eng koʻp chiqqan TOP 5 raqam", topColdTitle:"Eng uzoq chiqmagan TOP 5 raqam", ctaCompare:"Raqamlarimni kiritib tekshirish ›", rangeOption:"Oxirgi {n}", rangeOptionAll:"Barchasi", tooltipFreq:"{n}-raqam · {v} marta", tooltipGap:"{n}-raqam · {v} turdan beri chiqmagan", tooltipDist:"{label} · {v} marta", tabHome:"Yutuq raqamlari", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { hdrPageTitle:"재미로 보는 통계", hdrTitle:"내 번호로 보는 로또 통계", hdrSubTpl:"제 {start}회 ~ {end}회 · 동행복권 실시간 데이터", myNumTitle:"내 번호", btnEdit:"수정", btnDone:"완료", myNumEmpty:"아직 저장된 번호가 없어요", myNumEmptySub:"수정을 눌러 번호 6개를 입력하면 아래 통계가 내 번호 기준으로 바뀌어요", myNumResultTpl:"제 {round}회 기준 · {n}개 일치", noPrize:"당첨금 없음", rank0:"낙첨", rank1:"1등", rank2:"2등", rank3:"3등", rank4:"4등", rank5:"5등", digitPlaceholder:"번호를 입력하세요 (1~45)", allSixSelected:"6개를 모두 선택했어요. 완료를 눌러주세요", alreadySelected:"이미 선택한 번호예요", noMatch:"해당하는 번호가 없어요", needMoreBalls:"{n}개 더 선택해주세요", secMyHistoryTitle:"나의 번호, 과거엔 혹시 당첨?", secMyHistorySub:"내 번호로 과거 전 회차를 전부 채점해봤어요", tabByPrize:"금액(등수)순", tabByRecent:"최근 순", historySummaryTpl:"전체 {total}회차 중 <b>{hits}번</b> 당첨됐어요", historyNone:"아쉽게도 당첨된 회차가 한 번도 없어요", historyNeedNum:"위에서 내 번호를 입력하면<br>과거 당첨 이력을 확인할 수 있어요", btnMore:"더보기", roundFmt:"{r}회", matchTpl:"{n}개 일치", secHotTitle:"최근 많이 뽑힌 번호는?", secHotSub:"선택한 범위에서 번호별 출현 횟수", secColdTitle:"최근 오랫동안 안 보인 번호는?", secColdSub:"마지막으로 나온 뒤 지나간 회차 수", topHotTitle:"최다 출현 번호 TOP 5", topColdTitle:"장기 미출현 번호 TOP 5", legendHot:"최다 출현 TOP5", legendCold:"장기 미출현 TOP5", legendNormal:"그 외 번호", statMostNum:"최다출현 번호", statMostCnt:"최다 출현 횟수", statAvgCnt:"번호당 평균 출현", statLongestNum:"최장 미출현 번호", statLongestGap:"미출현 회차", statAvgGap:"평균 미출현", secChallengeTitle:"3등 챌린지", secChallengeSub:"1등보다 현실적인 목표, 3등에 도전해요", challengeHeroTpl:"제 {round}회 3등 당첨 도전", challengeDdayTpl:"다음 추첨 {date} · D-{days}", challengeChartTitle:"최근 12주 3등 당첨자 수", statAvgPrize:"3등 평균 당첨금", statOdds:"3등 당첨 확률", statAvgWinners:"3등 평균 당첨자", challengeMore:"3등 챌린지 자세히 보기 ›", rangeOption:"최근 {n}회", rangeOptionAll:"전체", tooltipFreq:"{n}번 · {v}회", tooltipGap:"{n}번 · {v}회째 미출현", unitTimes:"회", unitTimesUp:"회↑", unitPeople:"명", wonFmt:"{v}원", ctaBack:"당첨번호 조회하러 가기 ›", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabBonus:"우대금리", tabGuide:"당첨가이드" },
+  en: { hdrPageTitle:"Fun Stats", hdrTitle:"Lottery stats through my numbers", hdrSubTpl:"Rounds {start}–{end} · Live Lottery data", myNumTitle:"My Numbers", btnEdit:"Edit", btnDone:"Done", myNumEmpty:"No numbers saved yet", myNumEmptySub:"Tap Edit and enter 6 numbers to personalize the stats below", myNumResultTpl:"Round {round} · {n} matched", noPrize:"No Prize", rank0:"Not a Winner", rank1:"1st Prize", rank2:"2nd Prize", rank3:"3rd Prize", rank4:"4th Prize", rank5:"5th Prize", digitPlaceholder:"Enter a number (1-45)", allSixSelected:"All 6 selected. Tap Done.", alreadySelected:"Already selected", noMatch:"No matching number", needMoreBalls:"Select {n} more number(s)", secMyHistoryTitle:"Would my numbers have won?", secMyHistorySub:"We checked your numbers against every past draw", tabByPrize:"By Prize", tabByRecent:"Most Recent", historySummaryTpl:"Won <b>{hits} times</b> out of {total} draws", historyNone:"No winning rounds found", historyNeedNum:"Enter your numbers above<br>to see past winning history", btnMore:"Show more", roundFmt:"Round {r}", matchTpl:"{n} matched", secHotTitle:"Most drawn numbers lately", secHotSub:"Appearance count per number in the selected range", secColdTitle:"Longest missing numbers", secColdSub:"Draws passed since each number last appeared", topHotTitle:"Top 5 Most Frequent", topColdTitle:"Top 5 Longest Missing", legendHot:"Top 5 Frequent", legendCold:"Top 5 Missing", legendNormal:"Others", statMostNum:"Most Frequent", statMostCnt:"Top Count", statAvgCnt:"Avg per Number", statLongestNum:"Longest Missing", statLongestGap:"Draws Missing", statAvgGap:"Avg Missing", secChallengeTitle:"3rd Prize Challenge", secChallengeSub:"A more realistic goal than 1st prize", challengeHeroTpl:"Round {round} · 3rd Prize Challenge", challengeDdayTpl:"Next draw {date} · D-{days}", challengeChartTitle:"3rd-Prize Winners (Last 12 Weeks)", statAvgPrize:"Avg 3rd Prize", statOdds:"3rd Prize Odds", statAvgWinners:"Avg Winners", challengeMore:"See the full challenge ›", rangeOption:"Last {n}", rangeOptionAll:"All", tooltipFreq:"No.{n} · {v} times", tooltipGap:"No.{n} · missing {v} draws", unitTimes:"x", unitTimesUp:"x+", unitPeople:"", wonFmt:"₩{v}", ctaBack:"Check winning numbers ›", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabBonus:"Bonus Rate", tabGuide:"Winner Guide" },
+  zh: { hdrPageTitle:"趣味统计", hdrTitle:"用我的号码看彩票统计", hdrSubTpl:"第{start}期~第{end}期 · 实时彩票数据", myNumTitle:"我的号码", btnEdit:"修改", btnDone:"完成", myNumEmpty:"尚未保存号码", myNumEmptySub:"点击修改并输入6个号码，下方统计将以我的号码为准", myNumResultTpl:"第{round}期 · 命中{n}个", noPrize:"无奖金", rank0:"未中奖", rank1:"1等奖", rank2:"2等奖", rank3:"3等奖", rank4:"4等奖", rank5:"5等奖", digitPlaceholder:"请输入号码 (1~45)", allSixSelected:"已选择全部6个号码，请点击完成", alreadySelected:"已选择该号码", noMatch:"没有匹配的号码", needMoreBalls:"还需选择{n}个号码", secMyHistoryTitle:"我的号码，过去中过奖吗?", secMyHistorySub:"用我的号码对过去所有期数进行了核对", tabByPrize:"按金额(等级)", tabByRecent:"按最近", historySummaryTpl:"全部{total}期中 <b>中奖{hits}次</b>", historyNone:"很遗憾，没有中奖的期数", historyNeedNum:"在上方输入我的号码<br>即可查看过去中奖记录", btnMore:"查看更多", roundFmt:"第{r}期", matchTpl:"命中{n}个", secHotTitle:"最近常出的号码?", secHotSub:"所选范围内各号码出现次数", secColdTitle:"最近很久没出的号码?", secColdSub:"自最后一次出现以来经过的期数", topHotTitle:"最多出现号码TOP5", topColdTitle:"长期未出现号码TOP5", legendHot:"最多出现TOP5", legendCold:"长期未出现TOP5", legendNormal:"其他号码", statMostNum:"最多出现号码", statMostCnt:"最多出现次数", statAvgCnt:"每号平均出现", statLongestNum:"最久未出号码", statLongestGap:"未出期数", statAvgGap:"平均未出", secChallengeTitle:"三等奖挑战", secChallengeSub:"比一等奖更现实的目标", challengeHeroTpl:"第{round}期 三等奖挑战", challengeDdayTpl:"下次开奖 {date} · D-{days}", challengeChartTitle:"近12周三等奖中奖人数", statAvgPrize:"三等奖平均奖金", statOdds:"三等奖概率", statAvgWinners:"三等奖平均人数", challengeMore:"查看三等奖挑战详情 ›", rangeOption:"近{n}期", rangeOptionAll:"全部", tooltipFreq:"{n}号 · {v}次", tooltipGap:"{n}号 · 已{v}期未出现", unitTimes:"次", unitTimesUp:"期↑", unitPeople:"人", wonFmt:"{v}韩元", ctaBack:"去查询中奖号码 ›", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabBonus:"优惠利率", tabGuide:"中奖指南" },
+  vi: { hdrPageTitle:"Thống kê vui", hdrTitle:"Thống kê xổ số theo số của tôi", hdrSubTpl:"Kỳ {start}–{end} · Dữ liệu xổ số thời gian thực", myNumTitle:"Số của tôi", btnEdit:"Sửa", btnDone:"Xong", myNumEmpty:"Chưa lưu số nào", myNumEmptySub:"Nhấn Sửa và nhập 6 số để thống kê bên dưới theo số của bạn", myNumResultTpl:"Kỳ {round} · trùng {n} số", noPrize:"Không có thưởng", rank0:"Không trúng", rank1:"Giải 1", rank2:"Giải 2", rank3:"Giải 3", rank4:"Giải 4", rank5:"Giải 5", digitPlaceholder:"Nhập số (1~45)", allSixSelected:"Đã chọn đủ 6 số. Nhấn Xong.", alreadySelected:"Số này đã được chọn", noMatch:"Không có số phù hợp", needMoreBalls:"Chọn thêm {n} số nữa", secMyHistoryTitle:"Số của tôi từng trúng chưa?", secMyHistorySub:"Đã đối chiếu số của bạn với toàn bộ kỳ quay trước đây", tabByPrize:"Theo giải thưởng", tabByRecent:"Gần đây nhất", historySummaryTpl:"Trúng <b>{hits} lần</b> trong {total} kỳ", historyNone:"Tiếc quá, chưa có kỳ nào trúng", historyNeedNum:"Nhập số của bạn ở trên<br>để xem lịch sử trúng thưởng", btnMore:"Xem thêm", roundFmt:"Kỳ {r}", matchTpl:"trùng {n}", secHotTitle:"Số ra nhiều gần đây?", secHotSub:"Số lần xuất hiện của từng số trong phạm vi đã chọn", secColdTitle:"Số lâu chưa ra nhất?", secColdSub:"Số kỳ đã trôi qua kể từ lần xuất hiện gần nhất", topHotTitle:"Top 5 xuất hiện nhiều nhất", topColdTitle:"Top 5 lâu chưa ra nhất", legendHot:"Top 5 nhiều nhất", legendCold:"Top 5 lâu nhất", legendNormal:"Số khác", statMostNum:"Số ra nhiều nhất", statMostCnt:"Số lần nhiều nhất", statAvgCnt:"TB mỗi số", statLongestNum:"Số lâu chưa ra", statLongestGap:"Số kỳ chưa ra", statAvgGap:"TB chưa ra", secChallengeTitle:"Thử thách giải Ba", secChallengeSub:"Mục tiêu thực tế hơn giải nhất", challengeHeroTpl:"Thử thách giải Ba kỳ {round}", challengeDdayTpl:"Quay số tiếp theo {date} · D-{days}", challengeChartTitle:"Người trúng giải Ba (12 tuần gần nhất)", statAvgPrize:"Giải Ba trung bình", statOdds:"Tỷ lệ trúng giải Ba", statAvgWinners:"TB người trúng", challengeMore:"Xem chi tiết thử thách ›", rangeOption:"{n} kỳ gần nhất", rangeOptionAll:"Tất cả", tooltipFreq:"Số {n} · {v} lần", tooltipGap:"Số {n} · chưa ra {v} kỳ", unitTimes:" lần", unitTimesUp:" kỳ↑", unitPeople:" người", wonFmt:"{v} won", ctaBack:"Đi tra cứu số trúng thưởng ›", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabBonus:"Lãi suất ưu đãi", tabGuide:"Hướng dẫn" },
+  th: { hdrPageTitle:"สถิติสนุก", hdrTitle:"สถิติสลากจากเลขของฉัน", hdrSubTpl:"งวดที่ {start}–{end} · ข้อมูลสลากแบบเรียลไทม์", myNumTitle:"เลขของฉัน", btnEdit:"แก้ไข", btnDone:"เสร็จ", myNumEmpty:"ยังไม่ได้บันทึกเลข", myNumEmptySub:"กดแก้ไขแล้วกรอกเลข 6 ตัว สถิติด้านล่างจะอิงเลขของคุณ", myNumResultTpl:"งวดที่ {round} · ตรง {n} ตัว", noPrize:"ไม่มีเงินรางวัล", rank0:"ไม่ถูกรางวัล", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3:"รางวัลที่ 3", rank4:"รางวัลที่ 4", rank5:"รางวัลที่ 5", digitPlaceholder:"กรอกเลข (1~45)", allSixSelected:"เลือกครบ 6 ตัวแล้ว กดเสร็จได้เลย", alreadySelected:"เลขนี้ถูกเลือกแล้ว", noMatch:"ไม่มีเลขที่ตรงกัน", needMoreBalls:"เลือกเพิ่มอีก {n} ตัว", secMyHistoryTitle:"เลขของฉันเคยถูกรางวัลไหม?", secMyHistorySub:"ตรวจเลขของคุณกับทุกงวดที่ผ่านมาแล้ว", tabByPrize:"ตามเงินรางวัล", tabByRecent:"ล่าสุด", historySummaryTpl:"ถูกรางวัล <b>{hits} ครั้ง</b> จาก {total} งวด", historyNone:"น่าเสียดาย ยังไม่มีงวดที่ถูกรางวัล", historyNeedNum:"กรอกเลขของคุณด้านบน<br>เพื่อดูประวัติการถูกรางวัล", btnMore:"ดูเพิ่มเติม", roundFmt:"งวดที่ {r}", matchTpl:"ตรง {n} ตัว", secHotTitle:"เลขที่ออกบ่อยล่าสุด?", secHotSub:"จำนวนครั้งที่ออกของแต่ละเลขในช่วงที่เลือก", secColdTitle:"เลขที่ไม่ออกนานที่สุด?", secColdSub:"จำนวนงวดนับจากออกครั้งล่าสุด", topHotTitle:"เลขออกบ่อย 5 อันดับ", topColdTitle:"เลขไม่ออกนาน 5 อันดับ", legendHot:"ออกบ่อย 5 อันดับ", legendCold:"ไม่ออกนาน 5 อันดับ", legendNormal:"เลขอื่น", statMostNum:"เลขออกบ่อยสุด", statMostCnt:"จำนวนครั้งสูงสุด", statAvgCnt:"เฉลี่ยต่อเลข", statLongestNum:"เลขไม่ออกนานสุด", statLongestGap:"งวดที่ไม่ออก", statAvgGap:"เฉลี่ยไม่ออก", secChallengeTitle:"ท้าทายรางวัลที่ 3", secChallengeSub:"เป้าหมายที่เป็นจริงกว่ารางวัลที่ 1", challengeHeroTpl:"ท้าทายรางวัลที่ 3 งวดที่ {round}", challengeDdayTpl:"จับรางวัลครั้งถัดไป {date} · D-{days}", challengeChartTitle:"ผู้ถูกรางวัลที่ 3 (12 สัปดาห์ล่าสุด)", statAvgPrize:"รางวัลที่ 3 เฉลี่ย", statOdds:"โอกาสถูกรางวัลที่ 3", statAvgWinners:"ผู้ถูกรางวัลเฉลี่ย", challengeMore:"ดูรายละเอียดการท้าทาย ›", rangeOption:"{n} งวดล่าสุด", rangeOptionAll:"ทั้งหมด", tooltipFreq:"เลข {n} · {v} ครั้ง", tooltipGap:"เลข {n} · ไม่ออกมา {v} งวด", unitTimes:" ครั้ง", unitTimesUp:" งวด↑", unitPeople:" คน", wonFmt:"{v} วอน", ctaBack:"ไปตรวจเลขที่ถูกรางวัล ›", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabBonus:"ดอกเบี้ยพิเศษ", tabGuide:"คู่มือผู้ถูกรางวัล" },
+  uz: { hdrPageTitle:"Statistika", hdrTitle:"Mening raqamlarim boʻyicha statistika", hdrSubTpl:"{start}–{end} turlar · Jonli lotereya maʼlumotlari", myNumTitle:"Mening raqamlarim", btnEdit:"Tahrirlash", btnDone:"Tayyor", myNumEmpty:"Hali raqamlar saqlanmagan", myNumEmptySub:"Tahrirlashni bosing va 6 ta raqam kiriting — quyidagi statistika shunga moslashadi", myNumResultTpl:"{round}-tur · {n} ta mos", noPrize:"Mukofot yoʻq", rank0:"Yutuq yoʻq", rank1:"1-mukofot", rank2:"2-mukofot", rank3:"3-mukofot", rank4:"4-mukofot", rank5:"5-mukofot", digitPlaceholder:"Raqam kiriting (1~45)", allSixSelected:"6 ta raqam tanlandi. Tayyorni bosing.", alreadySelected:"Bu raqam allaqachon tanlangan", noMatch:"Mos raqam yoʻq", needMoreBalls:"Yana {n} ta raqam tanlang", secMyHistoryTitle:"Raqamlarim ilgari yutganmi?", secMyHistorySub:"Raqamlaringiz barcha oʻtgan turlar boʻyicha tekshirildi", tabByPrize:"Mukofot boʻyicha", tabByRecent:"Eng yangi", historySummaryTpl:"{total} turdan <b>{hits} marta</b> yutgan", historyNone:"Afsuski, yutgan tur topilmadi", historyNeedNum:"Yuqorida raqamlaringizni kiriting<br>va yutuq tarixini koʻring", btnMore:"Koʻproq", roundFmt:"{r}-tur", matchTpl:"{n} ta mos", secHotTitle:"Soʻnggi paytda koʻp chiqqan raqamlar", secHotSub:"Tanlangan oraliqda har bir raqamning chiqish soni", secColdTitle:"Uzoq vaqt chiqmagan raqamlar", secColdSub:"Oxirgi chiqishdan beri oʻtgan turlar soni", topHotTitle:"Eng koʻp chiqqan TOP 5", topColdTitle:"Eng uzoq chiqmagan TOP 5", legendHot:"Koʻp chiqqan TOP5", legendCold:"Chiqmagan TOP5", legendNormal:"Boshqalar", statMostNum:"Eng koʻp chiqqan", statMostCnt:"Eng yuqori son", statAvgCnt:"Raqamga oʻrtacha", statLongestNum:"Eng uzoq chiqmagan", statLongestGap:"Chiqmagan turlar", statAvgGap:"Oʻrtacha chiqmagan", secChallengeTitle:"3-mukofot chellenji", secChallengeSub:"1-mukofotdan koʻra real maqsad", challengeHeroTpl:"{round}-tur 3-mukofot chellenji", challengeDdayTpl:"Keyingi qurʼa {date} · D-{days}", challengeChartTitle:"3-mukofot gʻoliblari (oxirgi 12 hafta)", statAvgPrize:"Oʻrtacha 3-mukofot", statOdds:"3-mukofot ehtimoli", statAvgWinners:"Oʻrtacha gʻoliblar", challengeMore:"Chellenj tafsilotlari ›", rangeOption:"Oxirgi {n}", rangeOptionAll:"Barchasi", tooltipFreq:"{n}-raqam · {v} marta", tooltipGap:"{n}-raqam · {v} turdan beri chiqmagan", unitTimes:" marta", unitTimesUp:" tur↑", unitPeople:" kishi", wonFmt:"{v} won", ctaBack:"Yutuq raqamlarini tekshirish ›", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabBonus:"Imtiyozli foiz", tabGuide:"Yutuvchi qoʻllanmasi" },
 };
 
-function currentLang(){
-  try { return localStorage.getItem('nh_lang') || 'ko'; } catch(e) { return 'ko'; }
-}
-function currentDict(){
-  return I18N[currentLang()] || I18N.ko;
-}
+const LOCALE_MAP = { ko:'ko-KR', en:'en-US', zh:'zh-CN', vi:'vi-VN', th:'th-TH', uz:'uz-UZ' };
+let LANG = 'ko';
+try { LANG = localStorage.getItem('nh_lang') || 'ko'; } catch(e) {}
+
 function t(key, vars){
-  const dict = currentDict();
-  let str = dict[key] !== undefined ? dict[key] : (I18N.ko[key] || key);
+  const dict = I18N[LANG] || I18N.ko;
+  let str = dict[key] !== undefined ? dict[key] : (I18N.ko[key] !== undefined ? I18N.ko[key] : key);
   if(vars) Object.keys(vars).forEach(k => { str = str.split('{' + k + '}').join(vars[k]); });
   return str;
 }
 function applyStaticI18n(){
-  const lang = currentLang();
-  const dict = currentDict();
-  document.documentElement.lang = lang;
+  const dict = I18N[LANG] || I18N.ko;
+  document.documentElement.lang = LANG;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
     if(dict[k] !== undefined) el.textContent = dict[k];
   });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const k = el.getAttribute('data-i18n-placeholder');
+    if(dict[k] !== undefined) el.placeholder = dict[k];
+  });
 }
 applyStaticI18n();
 
-/* ===== 동행복권 실시간 데이터 기반 번호 통계 (mockup.html과 캐시 공유) ===== */
+function formatWon(v){ return t('wonFmt', { v: v.toLocaleString(LOCALE_MAP[LANG] || 'ko-KR') }); }
+function formatWonCompact(v){
+  let s;
+  try { s = new Intl.NumberFormat(LOCALE_MAP[LANG] || 'ko-KR', { notation:'compact', maximumFractionDigits:1 }).format(v); }
+  catch(e) { s = v.toLocaleString(); }
+  return t('wonFmt', { v: s });
+}
+function formatDrawDate(ymd, opts){
+  const y = +ymd.slice(0,4), m = +ymd.slice(4,6) - 1, d = +ymd.slice(6,8);
+  try {
+    return new Intl.DateTimeFormat(LOCALE_MAP[LANG] || 'ko-KR', opts || { year:'numeric', month:'long', day:'numeric' })
+      .format(new Date(y, m, d));
+  } catch(e) { return ymd; }
+}
+function shortDate(ymd){ return ymd.slice(0,4) + '.' + ymd.slice(4,6) + '.' + ymd.slice(6,8); }
+
+/* ===== 동행복권 실시간 데이터 (mockup.html과 캐시 공유) ===== */
 const DH_API_URL = 'https://www.dhlottery.co.kr/lt645/selectPstLt645Info.do?srchLtEpsd=all';
 const CACHE_KEY = 'nh_dh645_cache_v2';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const MY_NUM_KEY = 'nh_my_numbers';
 const FALLBACK_DRAWS = [
   { r: 1180, d: '20260815', n: [3,11,19,27,33,41], b: 18, amt: [2000000000,60000000,1500000,50000,5000], cnt: [1,2,45,2200,35000] }
 ];
@@ -260,7 +443,7 @@ async function loadDrawData(){
   try {
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
     if(cached && Array.isArray(cached.list) && cached.list.length && (Date.now() - cached.t < CACHE_TTL_MS)){
-      return { list: cached.list };
+      return cached.list;
     }
   } catch(e) {}
   try {
@@ -280,10 +463,10 @@ async function loadDrawData(){
     })).sort((a, b) => a.r - b.r);
     if(!list.length) throw new Error('empty list');
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), list })); } catch(e) {}
-    return { list };
+    return list;
   } catch(e) {
     console.warn('동행복권 API 연동 실패, 데모 데이터로 대체합니다:', e);
-    return { list: FALLBACK_DRAWS };
+    return FALLBACK_DRAWS;
   }
 }
 
@@ -296,28 +479,215 @@ function ballColorClass(n){
 }
 
 const NUMS = Array.from({ length: 45 }, (_, i) => i + 1);
-const BUCKETS = [
-  { label: '1-10', from: 1, to: 10, cls: 'b-yellow', varName: '--ball-yellow' },
-  { label: '11-20', from: 11, to: 20, cls: 'b-blue', varName: '--ball-blue' },
-  { label: '21-30', from: 21, to: 30, cls: 'b-red', varName: '--ball-red' },
-  { label: '31-40', from: 31, to: 40, cls: 'b-gray', varName: '--ball-gray' },
-  { label: '41-45', from: 41, to: 45, cls: 'b-green', varName: '--ball-green' },
-];
-
 let ALL_DRAWS = [];
-let currentWindow = 50;
-let currentMode = 'freq';
+let myNumbers = [];
+let editing = false;
+let histSort = 'prize';
+let histShown = 4;
+const HIST_PAGE = 4;
 
-function getWindowDraws(){
-  return currentWindow === 'all' ? ALL_DRAWS : ALL_DRAWS.slice(-currentWindow);
+function computeRank(nums, draw){
+  const matched = nums.filter(n => draw.n.includes(n));
+  const bonusMatched = nums.includes(draw.b);
+  const c = matched.length;
+  let rank = 0;
+  if(c === 6) rank = 1;
+  else if(c === 5 && bonusMatched) rank = 2;
+  else if(c === 5) rank = 3;
+  else if(c === 4) rank = 4;
+  else if(c === 3) rank = 5;
+  return { matched, cnt: c, rank, amount: rank > 0 ? draw.amt[rank - 1] : 0 };
 }
+
+/* ===== 내 번호 카드 ===== */
+function saveMyNumbers(){
+  try { localStorage.setItem(MY_NUM_KEY, JSON.stringify(myNumbers)); } catch(e) {}
+}
+
+function renderMyNumView(){
+  const ballsRow = document.getElementById('myBallsRow');
+  const resultEl = document.getElementById('myNumResult');
+
+  if(myNumbers.length === 0){
+    ballsRow.innerHTML = '<div class="mynum-empty">' + t('myNumEmpty') + '</div>';
+    resultEl.innerHTML = '<div class="mynum-empty-sub">' + t('myNumEmptySub') + '</div>';
+    return;
+  }
+
+  ballsRow.innerHTML = myNumbers.slice().sort((a,b) => a-b)
+    .map(n => `<div class="ball ${ballColorClass(n)}">${n}</div>`).join('');
+
+  if(myNumbers.length < 6 || !ALL_DRAWS.length){
+    resultEl.innerHTML = '<div class="mynum-empty-sub">' + t('needMoreBalls', { n: 6 - myNumbers.length }) + '</div>';
+    return;
+  }
+
+  const latest = ALL_DRAWS[ALL_DRAWS.length - 1];
+  const { matched, cnt, rank, amount } = computeRank(myNumbers, latest);
+  resultEl.innerHTML = `
+    <div>
+      <div class="rk">${t('rank' + rank)}</div>
+      <div class="ds">${t('myNumResultTpl', { round: latest.r, n: cnt })}${matched.length ? ' · ' + matched.sort((a,b)=>a-b).join(', ') : ''}</div>
+    </div>
+    <div class="amt">${amount > 0 ? formatWon(amount) : t('noPrize')}</div>`;
+}
+
+function renderEditor(){
+  const wrap = document.getElementById('editBallsRow');
+  wrap.innerHTML = '';
+  myNumbers.slice().sort((a,b) => a-b).forEach(n => {
+    const chip = document.createElement('div');
+    chip.className = 'ball chip-ball ' + ballColorClass(n);
+    chip.textContent = n;
+    chip.addEventListener('click', () => {
+      myNumbers = myNumbers.filter(x => x !== n);
+      saveMyNumbers();
+      renderEditor();
+      renderSuggestions();
+    });
+    wrap.appendChild(chip);
+  });
+  for(let i = myNumbers.length; i < 6; i++){
+    const e = document.createElement('div');
+    e.className = 'ball chip-empty';
+    wrap.appendChild(e);
+  }
+}
+
+function renderSuggestions(){
+  const input = document.getElementById('digitInput');
+  const wrap = document.getElementById('suggestRow');
+  wrap.innerHTML = '';
+
+  if(myNumbers.length >= 6){
+    input.disabled = true;
+    wrap.innerHTML = '<span class="suggest-msg">' + t('allSixSelected') + '</span>';
+    return;
+  }
+  input.disabled = false;
+
+  const digits = input.value.replace(/[^0-9]/g, '');
+  if(!digits) return;
+
+  const candidates = NUMS.filter(n => !myNumbers.includes(n) && String(n).startsWith(digits));
+  if(!candidates.length){
+    const num = Number(digits);
+    wrap.innerHTML = '<span class="suggest-msg">' +
+      ((num >= 1 && num <= 45 && myNumbers.includes(num)) ? t('alreadySelected') : t('noMatch')) + '</span>';
+    return;
+  }
+  candidates.forEach(n => {
+    const b = document.createElement('div');
+    b.className = 'ball suggest-ball ' + ballColorClass(n);
+    b.textContent = n;
+    b.addEventListener('click', () => {
+      if(myNumbers.length >= 6 || myNumbers.includes(n)) return;
+      myNumbers.push(n);
+      saveMyNumbers();
+      input.value = '';
+      renderEditor();
+      renderSuggestions();
+      input.focus();
+    });
+    wrap.appendChild(b);
+  });
+}
+
+function setEditing(on){
+  editing = on;
+  document.getElementById('myNumView').style.display = on ? 'none' : '';
+  document.getElementById('myNumEditor').style.display = on ? '' : 'none';
+  document.getElementById('btnEditMyNum').textContent = on ? t('btnDone') : t('btnEdit');
+  if(on){
+    renderEditor();
+    renderSuggestions();
+    document.getElementById('digitInput').focus();
+  } else {
+    renderMyNumView();
+    histShown = HIST_PAGE;
+    renderHistory();
+  }
+}
+
+/* ===== 1. 과거 당첨 이력 ===== */
+function computeHistory(){
+  if(myNumbers.length !== 6) return [];
+  const hits = [];
+  ALL_DRAWS.forEach(d => {
+    const r = computeRank(myNumbers, d);
+    if(r.rank > 0) hits.push({ draw: d, ...r });
+  });
+  return hits;
+}
+
+function renderHistory(){
+  const summaryEl = document.getElementById('histSummary');
+  const listEl = document.getElementById('histList');
+  const moreBtn = document.getElementById('btnMoreHist');
+  const segEl = document.getElementById('histSeg');
+
+  if(myNumbers.length !== 6){
+    segEl.style.display = 'none';
+    summaryEl.innerHTML = '';
+    listEl.innerHTML = '<div class="empty-msg">' + t('historyNeedNum') + '</div>';
+    moreBtn.style.display = 'none';
+    return;
+  }
+  segEl.style.display = '';
+
+  const hits = computeHistory();
+  summaryEl.innerHTML = '<div class="hist-summary">' +
+    t('historySummaryTpl', { total: ALL_DRAWS.length.toLocaleString(), hits: hits.length }) + '</div>';
+
+  if(!hits.length){
+    listEl.innerHTML = '<div class="empty-msg">' + t('historyNone') + '</div>';
+    moreBtn.style.display = 'none';
+    return;
+  }
+
+  const sorted = hits.slice().sort((a, b) =>
+    histSort === 'prize' ? (b.amount - a.amount || b.draw.r - a.draw.r) : (b.draw.r - a.draw.r)
+  );
+
+  listEl.innerHTML = sorted.slice(0, histShown).map(h => `
+    <div class="hist-row">
+      <div class="hist-top">
+        <span class="hist-round">${t('roundFmt', { r: h.draw.r })}<span class="hist-date">${shortDate(h.draw.d)}</span></span>
+        <span class="hist-right">
+          <span class="rank-badge r${h.rank}">${t('rank' + h.rank)}</span>
+          <span class="hist-amt">${formatWon(h.amount)}</span>
+        </span>
+      </div>
+      <div class="hist-balls">
+        ${h.draw.n.map(n => `<div class="mini ${ballColorClass(n)}${h.matched.includes(n) ? '' : ' dim'}">${n}</div>`).join('')}
+        <span class="hist-hint">${t('matchTpl', { n: h.cnt })}</span>
+      </div>
+    </div>`).join('');
+
+  moreBtn.style.display = histShown < sorted.length ? '' : 'none';
+}
+
+/* ===== 2·3. 출현 빈도 / 미출현 기간 ===== */
+const tooltipEl = document.getElementById('barTooltip');
+function showTooltip(barEl, text){
+  const phoneRect = document.querySelector('.phone').getBoundingClientRect();
+  const barRect = barEl.getBoundingClientRect();
+  tooltipEl.textContent = text;
+  let x = barRect.left + barRect.width / 2 - phoneRect.left;
+  x = Math.max(28, Math.min(phoneRect.width - 28, x));
+  tooltipEl.style.left = x + 'px';
+  tooltipEl.style.top = (barRect.top - phoneRect.top) + 'px';
+  tooltipEl.classList.add('show');
+}
+function hideTooltip(){ tooltipEl.classList.remove('show'); }
+
+function windowDraws(win){ return win === 'all' ? ALL_DRAWS : ALL_DRAWS.slice(-win); }
 
 function computeCounts(draws){
   const counts = new Array(46).fill(0);
   draws.forEach(d => d.n.forEach(n => counts[n]++));
   return counts;
 }
-
 function computeGaps(draws){
   const gaps = {};
   NUMS.forEach(n => {
@@ -330,205 +700,195 @@ function computeGaps(draws){
   });
   return gaps;
 }
-
-const tooltipEl = document.getElementById('barTooltip');
-function showTooltip(barEl, text){
-  const phoneRect = document.querySelector('.phone').getBoundingClientRect();
-  const barRect = barEl.getBoundingClientRect();
-  tooltipEl.textContent = text;
-  let x = barRect.left + barRect.width / 2 - phoneRect.left;
-  x = Math.max(24, Math.min(phoneRect.width - 24, x));
-  tooltipEl.style.left = x + 'px';
-  tooltipEl.style.top = (barRect.top - phoneRect.top) + 'px';
-  tooltipEl.classList.add('show');
-}
-function hideTooltip(){
-  tooltipEl.classList.remove('show');
-}
-
 function renderChips(containerId, nums, valueFn){
-  const wrap = document.getElementById(containerId);
-  wrap.innerHTML = nums.map(n => `
-    <div class="num-chip"><div class="circle ${ballColorClass(n)}">${n}</div><div class="cnt">${valueFn(n)}</div></div>
-  `).join('');
+  document.getElementById(containerId).innerHTML = nums.map(n =>
+    `<div class="num-chip"><div class="circle ${ballColorClass(n)}">${n}</div><div class="cnt">${valueFn(n)}</div></div>`
+  ).join('');
+}
+function renderStatRow(containerId, items){
+  document.getElementById(containerId).innerHTML = items.map(it =>
+    `<div class="stat-item"><div class="num">${it.v}</div><div class="label">${it.l}</div></div>`
+  ).join('');
 }
 
-function renderLegend(kind){
-  const legend = document.getElementById('legendRow');
-  if(kind === 'freq'){
-    legend.style.display = '';
-    legend.innerHTML = `
-      <div class="legend-item"><span class="dot hot"></span><span>${t('legendHot')}</span></div>
-      <div class="legend-item"><span class="dot cold"></span><span>${t('legendCold')}</span></div>
-      <div class="legend-item"><span class="dot normal"></span><span>${t('legendNormal')}</span></div>
-    `;
-  } else if(kind === 'gap'){
-    legend.style.display = '';
-    legend.innerHTML = `
-      <div class="legend-item"><span class="dot cold"></span><span>${t('legendCold')}</span></div>
-      <div class="legend-item"><span class="dot normal"></span><span>${t('legendNormal')}</span></div>
-    `;
-  } else {
-    legend.style.display = 'none';
-    legend.innerHTML = '';
-  }
-}
+function renderHot(){
+  const win = document.getElementById('hotRange').value;
+  const draws = windowDraws(win === 'all' ? 'all' : Number(win));
+  const counts = computeCounts(draws);
+  const byFreq = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
+  const top5 = byFreq.slice(0, 5);
+  const hotSet = new Set(top5);
+  const max = Math.max(...NUMS.map(n => counts[n]));
 
-function updateHeaderTexts(){
-  document.getElementById('hdrTitle').textContent = currentWindow === 'all'
-    ? t('hdrTitleTplAll') : t('hdrTitleTpl', { n: currentWindow });
-  const windowDraws = getWindowDraws();
-  document.getElementById('hdrSub').textContent = t('hdrSubTpl', {
-    start: windowDraws[0].r, end: ALL_DRAWS[ALL_DRAWS.length - 1].r,
-  });
-}
-
-function renderFreqMode(){
-  document.getElementById('cardTitleText').textContent = t('cardFreqTitle');
-  document.getElementById('cardSubText').textContent = t('cardFreqSub');
-  renderLegend('freq');
-
-  const windowDraws = getWindowDraws();
-  const counts = computeCounts(windowDraws);
-  const gaps = computeGaps(windowDraws);
-
-  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
-  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
-  const top5Hot = byFreqDesc.slice(0, 5);
-  const top5Cold = byGapDesc.slice(0, 5);
-  const hotSet = new Set(top5Hot);
-  const coldSet = new Set(top5Cold);
-  const maxCount = Math.max(...NUMS.map(n => counts[n]));
-
-  const wrap = document.getElementById('mainChart');
-  wrap.className = 'chart-wrap';
+  const wrap = document.getElementById('hotChart');
   wrap.innerHTML = '';
   NUMS.forEach(n => {
     const col = document.createElement('div');
     col.className = 'bar-col';
     const bar = document.createElement('div');
-    bar.className = 'bar' + (hotSet.has(n) ? ' hot' : coldSet.has(n) ? ' cold' : '');
-    bar.style.height = (maxCount ? counts[n] / maxCount * 100 : 0) + '%';
+    bar.className = 'bar' + (hotSet.has(n) ? ' hot' : '');
+    bar.style.height = (max ? counts[n] / max * 100 : 0) + '%';
     bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipFreq', { n, v: counts[n] })));
     bar.addEventListener('mouseleave', hideTooltip);
     col.appendChild(bar);
     wrap.appendChild(col);
   });
 
-  renderChips('hotGrid', top5Hot, n => counts[n] + '회');
-  renderChips('coldGrid', top5Cold, n => gaps[n] + '회↑');
+  const total = counts.slice(1).reduce((a, b) => a + b, 0);
+  renderStatRow('hotStats', [
+    { v: top5[0], l: t('statMostNum') },
+    { v: counts[top5[0]] + t('unitTimes'), l: t('statMostCnt') },
+    { v: (total / 45).toFixed(1) + t('unitTimes'), l: t('statAvgCnt') },
+  ]);
+  renderChips('hotGrid', top5, n => counts[n] + t('unitTimes'));
 }
 
-function renderGapMode(){
-  document.getElementById('cardTitleText').textContent = t('cardGapTitle');
-  document.getElementById('cardSubText').textContent = t('cardGapSub');
-  renderLegend('gap');
+function renderCold(){
+  const win = document.getElementById('coldRange').value;
+  const draws = windowDraws(win === 'all' ? 'all' : Number(win));
+  const gaps = computeGaps(draws);
+  const byGap = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
+  const top5 = byGap.slice(0, 5);
+  const coldSet = new Set(top5);
+  const max = Math.max(...NUMS.map(n => gaps[n]));
 
-  const windowDraws = getWindowDraws();
-  const gaps = computeGaps(windowDraws);
-  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
-  const top5Cold = byGapDesc.slice(0, 5);
-  const coldSet = new Set(top5Cold);
-  const maxGap = Math.max(...NUMS.map(n => gaps[n]));
-
-  const wrap = document.getElementById('mainChart');
-  wrap.className = 'chart-wrap';
+  const wrap = document.getElementById('coldChart');
   wrap.innerHTML = '';
   NUMS.forEach(n => {
     const col = document.createElement('div');
     col.className = 'bar-col';
     const bar = document.createElement('div');
     bar.className = 'bar' + (coldSet.has(n) ? ' cold' : '');
-    bar.style.height = (maxGap ? gaps[n] / maxGap * 100 : 0) + '%';
+    bar.style.height = (max ? gaps[n] / max * 100 : 0) + '%';
     bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipGap', { n, v: gaps[n] })));
     bar.addEventListener('mouseleave', hideTooltip);
     col.appendChild(bar);
     wrap.appendChild(col);
   });
 
-  const counts = computeCounts(windowDraws);
-  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
-  renderChips('hotGrid', byFreqDesc.slice(0, 5), n => counts[n] + '회');
-  renderChips('coldGrid', top5Cold, n => gaps[n] + '회↑');
+  const avgGap = NUMS.reduce((a, n) => a + gaps[n], 0) / 45;
+  renderStatRow('coldStats', [
+    { v: top5[0], l: t('statLongestNum') },
+    { v: gaps[top5[0]] + t('unitTimes'), l: t('statLongestGap') },
+    { v: avgGap.toFixed(1) + t('unitTimes'), l: t('statAvgGap') },
+  ]);
+  renderChips('coldGrid', top5, n => gaps[n] + t('unitTimesUp'));
 }
 
-function renderDistMode(){
-  document.getElementById('cardTitleText').textContent = t('cardDistTitle');
-  document.getElementById('cardSubText').textContent = t('cardDistSub');
-  renderLegend('dist');
-
-  const windowDraws = getWindowDraws();
-  const counts = computeCounts(windowDraws);
-  const bucketSums = BUCKETS.map(b => {
-    let sum = 0;
-    for(let n = b.from; n <= b.to; n++) sum += counts[n];
-    return sum;
-  });
-  const maxSum = Math.max(...bucketSums);
-
-  const wrap = document.getElementById('mainChart');
-  wrap.className = 'chart-wrap dist-mode';
+/* ===== 4. 3등 챌린지 ===== */
+function renderChallenge(){
+  const recent12 = ALL_DRAWS.slice(-12);
+  const wrap = document.getElementById('chChart');
   wrap.innerHTML = '';
-  BUCKETS.forEach((b, i) => {
+  const max = Math.max(...recent12.map(d => d.cnt[2]));
+  recent12.forEach((d, i) => {
     const col = document.createElement('div');
     col.className = 'bar-col';
     const bar = document.createElement('div');
-    bar.className = 'bar';
-    bar.style.background = `var(${b.varName})`;
-    bar.style.height = (maxSum ? bucketSums[i] / maxSum * 100 : 0) + '%';
-    bar.addEventListener('mouseenter', () => showTooltip(bar, t('tooltipDist', { label: b.label, v: bucketSums[i] })));
+    bar.className = 'bar' + (i === recent12.length - 1 ? ' now' : '');
+    bar.style.height = (max ? d.cnt[2] / max * 100 : 0) + '%';
+    bar.addEventListener('mouseenter', () => showTooltip(bar, d.r + ' · ' + d.cnt[2].toLocaleString() + t('unitPeople')));
     bar.addEventListener('mouseleave', hideTooltip);
-    const label = document.createElement('div');
-    label.className = 'bucket-label';
-    label.textContent = b.label;
+    const lb = document.createElement('div');
+    lb.className = 'lb';
+    lb.textContent = d.r;
     col.appendChild(bar);
-    col.appendChild(label);
+    col.appendChild(lb);
     wrap.appendChild(col);
   });
 
-  const byFreqDesc = NUMS.slice().sort((a, b) => counts[b] - counts[a]);
-  const gaps = computeGaps(windowDraws);
-  const byGapDesc = NUMS.slice().sort((a, b) => gaps[b] - gaps[a]);
-  renderChips('hotGrid', byFreqDesc.slice(0, 5), n => counts[n] + '회');
-  renderChips('coldGrid', byGapDesc.slice(0, 5), n => gaps[n] + '회↑');
+  const avgPrize = Math.round(recent12.reduce((a, d) => a + d.amt[2], 0) / recent12.length);
+  const avgWinners = Math.round(recent12.reduce((a, d) => a + d.cnt[2], 0) / recent12.length);
+  renderStatRow('chStats', [
+    { v: formatWonCompact(avgPrize), l: t('statAvgPrize') },
+    { v: '1/41,404', l: t('statOdds') },
+    { v: avgWinners.toLocaleString() + t('unitPeople'), l: t('statAvgWinners') },
+  ]);
+
+  const latest = ALL_DRAWS[ALL_DRAWS.length - 1];
+  const latestDate = new Date(+latest.d.slice(0,4), +latest.d.slice(4,6) - 1, +latest.d.slice(6,8));
+  const nextDraw = new Date(latestDate.getTime() + 7 * 86400000);
+  const daysLeft = Math.max(0, Math.ceil((nextDraw - new Date()) / 86400000));
+  const nextYmd = nextDraw.getFullYear() +
+    String(nextDraw.getMonth() + 1).padStart(2, '0') +
+    String(nextDraw.getDate()).padStart(2, '0');
+
+  document.getElementById('chHeroTitle').textContent = t('challengeHeroTpl', { round: latest.r + 1 });
+  document.getElementById('chHeroSub').innerHTML = t('challengeDdayTpl', {
+    date: formatDrawDate(nextYmd), days: '<b>' + daysLeft + '</b>',
+  });
 }
 
-function render(){
-  updateHeaderTexts();
-  if(currentMode === 'freq') renderFreqMode();
-  else if(currentMode === 'gap') renderGapMode();
-  else renderDistMode();
+/* ===== 초기화 ===== */
+function renderRangeOptions(sel, initial){
+  const el = document.getElementById(sel);
+  el.innerHTML = [30, 50, 100, 'all'].map(v =>
+    `<option value="${v}">${v === 'all' ? t('rangeOptionAll') : t('rangeOption', { n: v })}</option>`
+  ).join('');
+  el.value = String(initial);
 }
 
-function renderRangeOptions(){
-  const sel = document.getElementById('rangeSelect');
-  const options = [30, 50, 100, 'all'];
-  sel.innerHTML = options.map(v => `<option value="${v}">${v === 'all' ? t('rangeOptionAll') : t('rangeOption', { n: v })}</option>`).join('');
-  sel.value = String(currentWindow);
-}
-
-document.getElementById('rangeSelect').addEventListener('change', e => {
-  currentWindow = e.target.value === 'all' ? 'all' : Number(e.target.value);
-  render();
+document.getElementById('btnEditMyNum').addEventListener('click', () => setEditing(!editing));
+document.getElementById('digitInput').addEventListener('input', renderSuggestions);
+document.getElementById('digitInput').addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const digits = e.target.value.replace(/[^0-9]/g, '');
+  const candidates = NUMS.filter(n => !myNumbers.includes(n) && String(n).startsWith(digits));
+  if(candidates.length === 1){
+    myNumbers.push(candidates[0]);
+    saveMyNumbers();
+    e.target.value = '';
+    renderEditor();
+    renderSuggestions();
+  }
 });
 
-document.querySelectorAll('#segmentTabs div').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('#segmentTabs div').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
-    currentMode = el.getAttribute('data-mode');
-    render();
+document.querySelectorAll('#histSeg button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#histSeg button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    histSort = btn.getAttribute('data-sort');
+    histShown = HIST_PAGE;
+    renderHistory();
   });
 });
+document.getElementById('btnMoreHist').addEventListener('click', () => {
+  histShown += HIST_PAGE;
+  renderHistory();
+});
+document.getElementById('hotRange').addEventListener('change', renderHot);
+document.getElementById('coldRange').addEventListener('change', renderCold);
 
-async function initStats(){
-  const { list } = await loadDrawData();
-  ALL_DRAWS = list;
-  renderRangeOptions();
-  render();
+async function init(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(MY_NUM_KEY) || 'null');
+    if(Array.isArray(saved) && saved.length <= 6 && saved.every(n => Number.isInteger(n) && n >= 1 && n <= 45)){
+      myNumbers = saved;
+    }
+  } catch(e) {}
+
+  ALL_DRAWS = await loadDrawData();
+
+  document.getElementById('hdrSub').textContent = t('hdrSubTpl', {
+    start: ALL_DRAWS[0].r, end: ALL_DRAWS[ALL_DRAWS.length - 1].r,
+  });
+
+  renderRangeOptions('hotRange', 50);
+  renderRangeOptions('coldRange', 50);
+
+  renderMyNumView();
+  renderHistory();
+  renderHot();
+  renderCold();
+  renderChallenge();
+
+  if(location.hash){
+    const target = document.querySelector(location.hash);
+    if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
 }
 
-initStats();
+init();
 </script>
 
 </body>

@@ -448,7 +448,7 @@ async function loadDrawData(){
   } catch(e) {}
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
+    const timer = setTimeout(() => controller.abort(), 15000); // 동행복권 응답이 7초를 넘는 경우가 있어 여유를 둠
     const res = await fetch(DH_API_URL, { signal: controller.signal });
     clearTimeout(timer);
     if(!res.ok) throw new Error('HTTP ' + res.status);

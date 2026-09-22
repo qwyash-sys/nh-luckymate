@@ -153,48 +153,21 @@
 
   <div class="content">
 
-    <div class="rank-tabs">
-      <div class="active" data-i18n="rank1">1등</div>
-      <div data-i18n="rank2">2등</div>
-      <div data-i18n="rank3plus">3등 이하</div>
+    <div class="rank-tabs" id="rankTabs">
+      <div class="active" data-rank="0" data-i18n="rank1">1등</div>
+      <div data-rank="1" data-i18n="rank2">2등</div>
+      <div data-rank="2" data-i18n="rank3plus">3등 이하</div>
     </div>
 
     <div class="card">
       <div class="card-title" data-i18n="stepsTitle">지급 절차 4단계</div>
-      <div class="step-row">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="title" data-i18n="step1Title">복권 원본 보관</div>
-          <div class="desc" data-i18n="step1Desc">복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요.</div>
-        </div>
-      </div>
-      <div class="step-row">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="title" data-i18n="step2Title">신분증 지참</div>
-          <div class="desc" data-i18n="step2Desc">주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요.</div>
-        </div>
-      </div>
-      <div class="step-row">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="title" data-i18n="step3Title">올원뱅크 방문 예약</div>
-          <div class="desc" data-i18n="step3Desc">앱에서 방문 예약 시 대기 없이 우선 상담을 받을 수 있어요.</div>
-        </div>
-      </div>
-      <div class="step-row">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <div class="title" data-i18n="step4Title">본점 방문 · 지급 신청</div>
-          <div class="desc" data-i18n="step4Desc">1등 당첨금은 서대문 본점에서만 지급 신청이 가능합니다.</div>
-        </div>
-      </div>
+      <div id="stepList"></div>
     </div>
 
     <div class="branch-card">
-      <div class="label" data-i18n="branchLabel">1등 전용 지급처</div>
-      <div class="name">NH농협은행 서대문 본점</div>
-      <div class="addr">서울 중구 새문안로 16 · 평일 09:00~16:00</div>
+      <div class="label" id="branchLabel"></div>
+      <div class="name" id="branchName"></div>
+      <div class="addr" id="branchAddr"></div>
       <div class="btn-row">
         <a class="btn" id="btnMap" data-i18n="btnMap" target="_blank" rel="noopener">카카오맵 길찾기</a>
         <button class="btn solid" id="btnReserve" data-i18n="btnReserve">방문 예약하기</button>
@@ -203,31 +176,11 @@
 
     <div class="card">
       <div class="card-title" data-i18n="productsTitle">당첨금 규모별 금융상품 연계</div>
-      <div class="product-row">
-        <div>
-          <div class="pname">NH왈츠회전예금Ⅱ</div>
-          <div class="pdesc" data-i18n="prod1Desc">거액 자금 단기 예치에 적합</div>
-        </div>
-        <div class="prate">3.10%</div>
-      </div>
-      <div class="product-row">
-        <div>
-          <div class="pname">NH퇴직연금 IRP</div>
-          <div class="pdesc" data-i18n="prod2Desc">세제 혜택으로 목돈 절세 설계</div>
-        </div>
-        <div class="prate" data-i18n="prod2Rate">절세형</div>
-      </div>
-      <div class="product-row">
-        <div>
-          <div class="pname">NH올원e예금</div>
-          <div class="pdesc" data-i18n="prod3Desc">비대면 가입, 자유로운 예치기간</div>
-        </div>
-        <div class="prate">3.20%</div>
-      </div>
+      <div id="productList"></div>
     </div>
 
     <a class="cta" href="nh_luckymate_bonus.html" data-i18n="ctaBonus">낙첨이어도 괜찮아요, 우대금리 받기 ›</a>
-    <div class="badge-note" data-i18n="badgeNote">* 방문 예약 실연동은 개발 예정 기능입니다</div>
+    <div class="badge-note" data-i18n="claimNote">* 당첨금 지급 기한은 지급개시일로부터 1년입니다. 방문 예약 실연동은 개발 예정 기능입니다</div>
   </div>
 
   <div class="tabbar">
@@ -251,25 +204,65 @@
 
 <script>
 const I18N = {
-  ko: { hdrPageTitle:"당첨자 행동요령 가이드", hdrTitle:"당첨금 규모별로 다르게 안내해드려요", hdrSub:"등수를 선택하면 절차가 달라집니다", rank1:"1등", rank2:"2등", rank3plus:"3등 이하", stepsTitle:"지급 절차 4단계", step1Title:"복권 원본 보관", step1Desc:"복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요.", step2Title:"신분증 지참", step2Desc:"주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요.", step3Title:"올원뱅크 방문 예약", step3Desc:"앱에서 방문 예약 시 대기 없이 우선 상담을 받을 수 있어요.", step4Title:"본점 방문 · 지급 신청", step4Desc:"1등 당첨금은 서대문 본점에서만 지급 신청이 가능합니다.", branchLabel:"1등 전용 지급처", btnMap:"카카오맵 길찾기", btnReserve:"방문 예약하기", productsTitle:"당첨금 규모별 금융상품 연계", prod1Desc:"거액 자금 단기 예치에 적합", prod2Desc:"세제 혜택으로 목돈 절세 설계", prod2Rate:"절세형", prod3Desc:"비대면 가입, 자유로운 예치기간", ctaBonus:"낙첨이어도 괜찮아요, 우대금리 받기 ›", badgeNote:"* 방문 예약 실연동은 개발 예정 기능입니다", modalReserveMsg:"올원뱅크 방문하기 페이지로 이동합니다", modalCancel:"취소", modalConfirm:"확인", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrPageTitle:"Winner's Action Guide", hdrTitle:"Guidance differs by prize size", hdrSub:"Steps change based on the prize tier you select", rank1:"1st Prize", rank2:"2nd Prize", rank3plus:"3rd Prize & Below", stepsTitle:"4 Steps to Claim Your Prize", step1Title:"Keep the Original Ticket", step1Desc:"Sign the back and keep it safe from loss or damage.", step2Title:"Bring Your ID", step2Desc:"Prepare an ID such as a resident card or driver's license.", step3Title:"Book a Branch Visit in AllOne Bank", step3Desc:"Booking in the app gets you priority consultation with no wait.", step4Title:"Visit Head Office · Claim Payment", step4Desc:"1st-prize payments can only be claimed at the Seodaemun Head Office.", branchLabel:"Exclusive 1st-Prize Payment Location", btnMap:"Kakao Maps Directions", btnReserve:"Book a Visit", productsTitle:"Financial Products by Prize Size", prod1Desc:"Suited for short-term deposit of large sums", prod2Desc:"Tax-advantaged planning for lump sums", prod2Rate:"Tax-saving", prod3Desc:"Sign up online, flexible deposit period", ctaBonus:"Even if you didn't win, get a bonus rate ›", badgeNote:"* Real-time visit booking is an upcoming feature.", modalReserveMsg:"You'll be taken to the AllOne Bank branch-visit page", modalCancel:"Cancel", modalConfirm:"OK", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrPageTitle:"中奖者行动指南", hdrTitle:"根据奖金规模提供不同指引", hdrSub:"选择等级后流程会有所不同", rank1:"1等奖", rank2:"2等奖", rank3plus:"3等奖及以下", stepsTitle:"领奖4大步骤", step1Title:"保管彩票原件", step1Desc:"在彩票背面签名后妥善保管，避免遗失或损坏。", step2Title:"携带身份证", step2Desc:"请准备身份证、驾照等身份证明文件。", step3Title:"在AllOne Bank预约到访", step3Desc:"在应用内预约可优先咨询，无需排队等候。", step4Title:"前往总行 · 申请领奖", step4Desc:"一等奖奖金仅可在西大门总行申请领取。", branchLabel:"一等奖专属领奖处", btnMap:"Kakao地图导航", btnReserve:"预约到访", productsTitle:"按奖金规模推荐金融产品", prod1Desc:"适合大额资金短期存放", prod2Desc:"通过税收优惠为大额资金节税规划", prod2Rate:"节税型", prod3Desc:"非面对面开户，存款期限自由", ctaBonus:"没中奖也没关系，领取优惠利率 ›", badgeNote:"* 预约到访实际联动为开发中功能", modalReserveMsg:"即将前往AllOne Bank到访预约页面", modalCancel:"取消", modalConfirm:"确认", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrPageTitle:"Hướng dẫn hành động cho người trúng thưởng", hdrTitle:"Hướng dẫn khác nhau theo mức giải thưởng", hdrSub:"Chọn hạng giải để xem quy trình phù hợp", rank1:"Giải Nhất", rank2:"Giải Nhì", rank3plus:"Giải Ba trở xuống", stepsTitle:"4 bước nhận thưởng", step1Title:"Giữ vé gốc", step1Desc:"Ký tên mặt sau và giữ cẩn thận tránh mất hoặc hư hỏng.", step2Title:"Mang theo giấy tờ tùy thân", step2Desc:"Chuẩn bị CMND/CCCD, bằng lái xe để xác minh danh tính.", step3Title:"Đặt lịch hẹn qua AllOne Bank", step3Desc:"Đặt lịch qua ứng dụng để được tư vấn ưu tiên, không cần chờ đợi.", step4Title:"Đến trụ sở chính · Nộp đơn nhận thưởng", step4Desc:"Giải nhất chỉ được nhận tại trụ sở chính Seodaemun.", branchLabel:"Nơi nhận riêng cho Giải Nhất", btnMap:"Chỉ đường Kakao Maps", btnReserve:"Đặt lịch hẹn", productsTitle:"Sản phẩm tài chính theo mức giải thưởng", prod1Desc:"Phù hợp gửi ngắn hạn số tiền lớn", prod2Desc:"Thiết kế tiết kiệm thuế cho khoản tiền lớn", prod2Rate:"Tiết kiệm thuế", prod3Desc:"Đăng ký trực tuyến, kỳ hạn linh hoạt", ctaBonus:"Không trúng cũng không sao, nhận lãi suất ưu đãi ›", badgeNote:"* Đặt lịch hẹn thời gian thực là tính năng sắp ra mắt", modalReserveMsg:"Bạn sẽ được chuyển đến trang đặt lịch hẹn của AllOne Bank", modalCancel:"Hủy", modalConfirm:"Xác nhận", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrPageTitle:"คู่มือปฏิบัติสำหรับผู้ถูกรางวัล", hdrTitle:"คำแนะนำแตกต่างกันตามขนาดเงินรางวัล", hdrSub:"เลือกระดับรางวัลเพื่อดูขั้นตอนที่เหมาะสม", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3plus:"รางวัลที่ 3 ลงไป", stepsTitle:"4 ขั้นตอนรับรางวัล", step1Title:"เก็บสลากตัวจริง", step1Desc:"เซ็นชื่อด้านหลังสลากและเก็บรักษาอย่างดีไม่ให้สูญหายหรือเสียหาย", step2Title:"เตรียมบัตรประชาชน", step2Desc:"เตรียมบัตรประชาชนหรือใบขับขี่เพื่อยืนยันตัวตน", step3Title:"จองเข้าใช้บริการผ่านแอป AllOne Bank", step3Desc:"จองผ่านแอปเพื่อรับคำปรึกษาก่อนโดยไม่ต้องรอคิว", step4Title:"ไปสำนักงานใหญ่ · ยื่นขอรับเงินรางวัล", step4Desc:"รางวัลที่ 1 ยื่นขอรับได้ที่สำนักงานใหญ่ซอแดมุนเท่านั้น", branchLabel:"สถานที่รับรางวัลที่ 1 โดยเฉพาะ", btnMap:"นำทางด้วย Kakao Maps", btnReserve:"จองเข้าใช้บริการ", productsTitle:"ผลิตภัณฑ์ทางการเงินตามขนาดเงินรางวัล", prod1Desc:"เหมาะสำหรับฝากเงินก้อนใหญ่ระยะสั้น", prod2Desc:"วางแผนประหยัดภาษีสำหรับเงินก้อนใหญ่", prod2Rate:"ประหยัดภาษี", prod3Desc:"สมัครออนไลน์ ระยะเวลาฝากยืดหยุ่น", ctaBonus:"ถ้าไม่ถูกรางวัลก็ไม่เป็นไร รับดอกเบี้ยพิเศษ ›", badgeNote:"* ฟีเจอร์จองเข้าใช้บริการแบบเรียลไทม์อยู่ระหว่างพัฒนา", modalReserveMsg:"คุณจะถูกนำไปยังหน้าจองเข้าใช้บริการของ AllOne Bank", modalCancel:"ยกเลิก", modalConfirm:"ยืนยัน", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrPageTitle:"Gʻolib uchun harakat qoʻllanmasi", hdrTitle:"Yutuq miqdoriga qarab yoʻriqnoma farqlanadi", hdrSub:"Tanlangan mukofot darajasiga qarab tartib oʻzgaradi", rank1:"1-mukofot", rank2:"2-mukofot", rank3plus:"3-mukofot va undan quyi", stepsTitle:"Yutuqni olishning 4 bosqichi", step1Title:"Chiptaning asl nusxasini saqlang", step1Desc:"Orqa tomoniga imzo qoʻying va yoʻqotib qoʻymang yoki shikastlantirmang.", step2Title:"Shaxsingizni tasdiqlovchi hujjatni oling", step2Desc:"Fuqarolik guvohnomasi yoki haydovchilik guvohnomasi kabi hujjat tayyorlang.", step3Title:"AllOne Bank orqali filialga tashrifni bron qiling", step3Desc:"Ilova orqali bron qilsangiz navbatsiz ustuvor maslahat olasiz.", step4Title:"Bosh ofisga boring · Toʻlovni talab qiling", step4Desc:"1-mukofot faqat Seodaemun bosh ofisida olinadi.", branchLabel:"Faqat 1-mukofot uchun toʻlov joyi", btnMap:"Kakao Maps orqali yoʻnalish", btnReserve:"Tashrifni bron qilish", productsTitle:"Yutuq miqdoriga mos moliyaviy mahsulotlar", prod1Desc:"Katta mablagʻlarni qisqa muddatga saqlash uchun mos", prod2Desc:"Katta mablagʻ uchun soliq imtiyozli reja", prod2Rate:"Soliq tejovchi", prod3Desc:"Onlayn ochish, moslashuvchan muddat", ctaBonus:"Yutmagan boʻlsangiz ham imtiyozli foiz oling ›", badgeNote:"* Real vaqtli tashrif broni ishlab chiqilmoqda", modalReserveMsg:"Siz AllOne Bank tashrif bron qilish sahifasiga o'tasiz", modalCancel:"Bekor qilish", modalConfirm:"Tasdiqlash", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { hdrPageTitle:"당첨자 행동요령 가이드", hdrTitle:"당첨금 규모별로 다르게 안내해드려요", hdrSub:"등수를 선택하면 절차가 달라집니다", rank1:"1등", rank2:"2등", rank3plus:"3등 이하", stepsTitle:"지급 절차 4단계", btnMap:"카카오맵 길찾기", btnReserve:"방문 예약하기", productsTitle:"당첨금 규모별 금융상품 연계", claimNote:"* 당첨금 지급 기한은 지급개시일로부터 1년입니다. 방문 예약 실연동은 개발 예정 기능입니다", ranks:[{"steps": [["복권 원본 보관", "복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요."], ["신분증 지참", "주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요."], ["올원뱅크 방문 예약", "앱에서 방문 예약 시 대기 없이 우선 상담을 받을 수 있어요."], ["본점 방문 · 지급 신청", "1등 당첨금은 농협은행 본점에서만 지급 신청이 가능합니다."]], "label": "1등 전용 지급처", "name": "NH농협은행 본점", "addr": "서울 중구 새문안로 16 · 평일 09:00~16:00", "map": "서울 중구 새문안로 16", "products": [["NH왈츠회전예금Ⅱ", "거액 자금 단기 예치에 적합", "3.10%"], ["NH퇴직연금 IRP", "세제 혜택으로 목돈 절세 설계", "절세형"], ["NH올원e예금", "비대면 가입, 자유로운 예치기간", "3.20%"]]}, {"steps": [["복권 원본 보관", "복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요."], ["신분증 지참", "주민등록증·운전면허증 등 본인 확인용 신분증을 준비하세요."], ["가까운 영업점 확인", "2등부터는 본점이 아니라 전국 농협은행 영업점에서 받을 수 있어요."], ["영업점 방문 · 지급 신청", "방문 예약을 하면 대기 없이 바로 상담받을 수 있어요."]], "label": "2등 지급처 (전국 영업점)", "name": "가까운 NH농협은행 영업점", "addr": "전국 영업점 어디서나 · 평일 09:00~16:00", "map": "NH농협은행", "products": [["NH올원e예금", "목돈 비대면 예치", "3.20%"], ["NH왈츠회전예금Ⅱ", "단기 예치 후 자금 계획 세우기", "3.10%"], ["NH직장인든든적금", "남은 자금 적립식 운용", "3.50%"]]}, {"steps": [["복권 원본 보관", "복권 뒷면에 서명 후 분실·훼손되지 않게 보관하세요."], ["당첨금액 확인", "5만원 이하는 복권 판매점에서도 바로 받을 수 있어요."], ["5만원 초과면 신분증 지참", "5만원을 넘으면 농협은행 영업점에서 본인 확인 후 지급됩니다."], ["판매점 또는 영업점 방문", "3등은 영업점에서, 4·5등은 판매점에서도 수령할 수 있습니다."]], "label": "3등 이하 지급처", "name": "NH농협은행 영업점 · 복권 판매점", "addr": "5만원 이하는 판매점에서도 지급 · 평일 09:00~16:00", "map": "NH농협은행", "products": [["NH올원e예금", "소액도 비대면으로 바로 예치", "3.20%"], ["NH직장인든든적금", "당첨금으로 적금 시작하기", "3.50%"]]}], ctaBonus:"낙첨이어도 괜찮아요, 우대금리 받기 ›", modalReserveMsg:"올원뱅크 방문하기 페이지로 이동합니다", modalCancel:"취소", modalConfirm:"확인", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"Winner's Action Guide", hdrTitle:"Guidance differs by prize size", hdrSub:"Steps change based on the prize tier you select", rank1:"1st Prize", rank2:"2nd Prize", rank3plus:"3rd Prize & Below", stepsTitle:"4 Steps to Claim Your Prize", btnMap:"Kakao Maps Directions", btnReserve:"Book a Visit", productsTitle:"Financial Products by Prize Size", claimNote:"* Prizes must be claimed within 1 year of the payment start date. Live visit booking is an upcoming feature.", ranks:[{"steps": [["Keep the Original Ticket", "Sign the back and keep it safe from loss or damage."], ["Bring Your ID", "Prepare an ID such as a resident card or driver's license."], ["Book a Visit in AllOne Bank", "Booking in the app gets you priority consultation with no wait."], ["Visit Head Office · Claim Payment", "1st-prize payments can only be claimed at the NH Bank head office."]], "label": "Exclusive 1st-Prize Payment Location", "name": "NH Bank Head Office", "addr": "16 Saemunan-ro, Jung-gu, Seoul · Weekdays 09:00–16:00", "map": "서울 중구 새문안로 16", "products": [["NH Waltz Rotating Deposit II", "Suited for short-term deposit of large sums", "3.10%"], ["NH Retirement Pension IRP", "Tax-advantaged planning for lump sums", "Tax-saving"], ["NH AllOne e-Deposit", "Sign up online, flexible deposit period", "3.20%"]]}, {"steps": [["Keep the Original Ticket", "Sign the back and keep it safe from loss or damage."], ["Bring Your ID", "Prepare an ID such as a resident card or driver's license."], ["Find a Nearby Branch", "From 2nd prize, you can claim at any NH Bank branch nationwide."], ["Visit Branch · Claim Payment", "Booking a visit gets you seen right away with no wait."]], "label": "2nd-Prize Payment (Any Branch)", "name": "Your nearest NH Bank branch", "addr": "Any branch nationwide · Weekdays 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Deposit your lump sum online", "3.20%"], ["NH Waltz Rotating Deposit II", "Park it short-term while you plan", "3.10%"], ["NH Office Worker Savings", "Put the rest into regular savings", "3.50%"]]}, {"steps": [["Keep the Original Ticket", "Sign the back and keep it safe from loss or damage."], ["Check the Prize Amount", "Prizes of ₩50,000 or less can be claimed right at the lottery retailer."], ["Bring ID if Over ₩50,000", "Above ₩50,000, an NH Bank branch verifies your identity before payout."], ["Visit a Retailer or Branch", "3rd prize is paid at branches; 4th and 5th also at retailers."]], "label": "3rd Prize & Below Payment", "name": "NH Bank branch · Lottery retailer", "addr": "₩50,000 or less also paid at retailers · Weekdays 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Even small amounts, deposited online", "3.20%"], ["NH Office Worker Savings", "Start a savings plan with your winnings", "3.50%"]]}], ctaBonus:"Even if you didn't win, get a bonus rate ›", modalReserveMsg:"You'll be taken to the AllOne Bank branch-visit page", modalCancel:"Cancel", modalConfirm:"OK", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"中奖者行动指南", hdrTitle:"根据奖金规模提供不同指引", hdrSub:"选择等级后流程会有所不同", rank1:"1等奖", rank2:"2等奖", rank3plus:"3等奖及以下", stepsTitle:"领奖4大步骤", btnMap:"Kakao地图导航", btnReserve:"预约到访", productsTitle:"按奖金规模推荐金融产品", claimNote:"* 奖金须自开始支付之日起1年内领取。预约到访实际联动为开发中功能", ranks:[{"steps": [["保管彩票原件", "在彩票背面签名后妥善保管，避免遗失或损坏。"], ["携带身份证", "请准备身份证、驾照等身份证明文件。"], ["在AllOne Bank预约到访", "在应用内预约可优先咨询，无需排队等候。"], ["前往总行 · 申请领奖", "一等奖奖金仅可在农协银行总行申请领取。"]], "label": "一等奖专属领奖处", "name": "NH农协银行总行", "addr": "首尔中区新门内路16 · 工作日 09:00~16:00", "map": "서울 중구 새문안로 16", "products": [["NH华尔兹循环存款Ⅱ", "适合大额资金短期存放", "3.10%"], ["NH退休年金 IRP", "通过税收优惠为大额资金节税规划", "节税型"], ["NH AllOne e存款", "非面对面开户，存款期限自由", "3.20%"]]}, {"steps": [["保管彩票原件", "在彩票背面签名后妥善保管，避免遗失或损坏。"], ["携带身份证", "请准备身份证、驾照等身份证明文件。"], ["确认就近网点", "二等奖起可在全国农协银行任意网点领取，无需前往总行。"], ["前往网点 · 申请领奖", "预约到访即可免排队直接办理。"]], "label": "二等奖领奖处（全国网点）", "name": "就近的NH农协银行网点", "addr": "全国任意网点 · 工作日 09:00~16:00", "map": "NH농협은행", "products": [["NH AllOne e存款", "大额资金非面对面存入", "3.20%"], ["NH华尔兹循环存款Ⅱ", "短期存放，从容规划资金", "3.10%"], ["NH上班族稳健零存整取", "剩余资金定期积累", "3.50%"]]}, {"steps": [["保管彩票原件", "在彩票背面签名后妥善保管，避免遗失或损坏。"], ["确认中奖金额", "5万韩元以下可直接在彩票销售点领取。"], ["超过5万韩元需带身份证", "超过5万韩元须在农协银行网点核验身份后发放。"], ["前往销售点或网点", "三等奖在网点领取，四、五等奖也可在销售点领取。"]], "label": "三等奖及以下领奖处", "name": "NH农协银行网点 · 彩票销售点", "addr": "5万韩元以下销售点也可领取 · 工作日 09:00~16:00", "map": "NH농협은행", "products": [["NH AllOne e存款", "小额也可非面对面存入", "3.20%"], ["NH上班族稳健零存整取", "用奖金开启零存整取", "3.50%"]]}], ctaBonus:"没中奖也没关系，领取优惠利率 ›", modalReserveMsg:"即将前往AllOne Bank到访预约页面", modalCancel:"取消", modalConfirm:"确认", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Hướng dẫn hành động cho người trúng thưởng", hdrTitle:"Hướng dẫn khác nhau theo mức giải thưởng", hdrSub:"Chọn hạng giải để xem quy trình phù hợp", rank1:"Giải Nhất", rank2:"Giải Nhì", rank3plus:"Giải Ba trở xuống", stepsTitle:"4 bước nhận thưởng", btnMap:"Chỉ đường Kakao Maps", btnReserve:"Đặt lịch hẹn", productsTitle:"Sản phẩm tài chính theo mức giải thưởng", claimNote:"* Phải nhận thưởng trong vòng 1 năm kể từ ngày bắt đầu chi trả. Đặt lịch hẹn trực tiếp là tính năng sắp ra mắt.", ranks:[{"steps": [["Giữ vé gốc", "Ký tên mặt sau và giữ cẩn thận tránh mất hoặc hư hỏng."], ["Mang theo giấy tờ tùy thân", "Chuẩn bị CMND/CCCD, bằng lái xe để xác minh danh tính."], ["Đặt lịch hẹn qua AllOne Bank", "Đặt lịch qua ứng dụng để được tư vấn ưu tiên, không cần chờ đợi."], ["Đến trụ sở chính · Nộp đơn nhận thưởng", "Giải nhất chỉ được nhận tại trụ sở chính NH Bank."]], "label": "Nơi nhận riêng cho Giải Nhất", "name": "Trụ sở chính NH Bank", "addr": "16 Saemunan-ro, Jung-gu, Seoul · T2–T6 09:00–16:00", "map": "서울 중구 새문안로 16", "products": [["NH Waltz Rotating Deposit II", "Phù hợp gửi ngắn hạn số tiền lớn", "3.10%"], ["NH Retirement Pension IRP", "Thiết kế tiết kiệm thuế cho khoản tiền lớn", "Tiết kiệm thuế"], ["NH AllOne e-Deposit", "Đăng ký trực tuyến, kỳ hạn linh hoạt", "3.20%"]]}, {"steps": [["Giữ vé gốc", "Ký tên mặt sau và giữ cẩn thận tránh mất hoặc hư hỏng."], ["Mang theo giấy tờ tùy thân", "Chuẩn bị CMND/CCCD, bằng lái xe để xác minh danh tính."], ["Tìm chi nhánh gần nhất", "Từ giải nhì, bạn có thể nhận tại bất kỳ chi nhánh NH Bank nào."], ["Đến chi nhánh · Nộp đơn nhận thưởng", "Đặt lịch hẹn để được phục vụ ngay, không phải chờ."]], "label": "Nơi nhận Giải Nhì (mọi chi nhánh)", "name": "Chi nhánh NH Bank gần bạn", "addr": "Bất kỳ chi nhánh nào toàn quốc · T2–T6 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Gửi khoản tiền lớn trực tuyến", "3.20%"], ["NH Waltz Rotating Deposit II", "Gửi ngắn hạn trong lúc lên kế hoạch", "3.10%"], ["NH Office Worker Savings", "Tích lũy phần còn lại theo định kỳ", "3.50%"]]}, {"steps": [["Giữ vé gốc", "Ký tên mặt sau và giữ cẩn thận tránh mất hoặc hư hỏng."], ["Kiểm tra số tiền trúng", "Từ 50.000 won trở xuống có thể nhận ngay tại điểm bán vé."], ["Trên 50.000 won cần giấy tờ", "Trên 50.000 won, chi nhánh NH Bank xác minh danh tính rồi chi trả."], ["Đến điểm bán vé hoặc chi nhánh", "Giải ba nhận tại chi nhánh; giải tư và năm nhận cả ở điểm bán."]], "label": "Nơi nhận Giải Ba trở xuống", "name": "Chi nhánh NH Bank · Điểm bán vé", "addr": "Từ 50.000 won trở xuống nhận tại điểm bán · T2–T6 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Số tiền nhỏ cũng gửi được trực tuyến", "3.20%"], ["NH Office Worker Savings", "Bắt đầu tiết kiệm từ tiền trúng thưởng", "3.50%"]]}], ctaBonus:"Không trúng cũng không sao, nhận lãi suất ưu đãi ›", modalReserveMsg:"Bạn sẽ được chuyển đến trang đặt lịch hẹn của AllOne Bank", modalCancel:"Hủy", modalConfirm:"Xác nhận", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"คู่มือปฏิบัติสำหรับผู้ถูกรางวัล", hdrTitle:"คำแนะนำแตกต่างกันตามขนาดเงินรางวัล", hdrSub:"เลือกระดับรางวัลเพื่อดูขั้นตอนที่เหมาะสม", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3plus:"รางวัลที่ 3 ลงไป", stepsTitle:"4 ขั้นตอนรับรางวัล", btnMap:"นำทางด้วย Kakao Maps", btnReserve:"จองเข้าใช้บริการ", productsTitle:"ผลิตภัณฑ์ทางการเงินตามขนาดเงินรางวัล", claimNote:"* ต้องขอรับเงินรางวัลภายใน 1 ปีนับจากวันเริ่มจ่าย ฟีเจอร์จองเข้าใช้บริการจริงอยู่ระหว่างพัฒนา", ranks:[{"steps": [["เก็บสลากตัวจริง", "เซ็นชื่อด้านหลังสลากและเก็บรักษาอย่างดีไม่ให้สูญหายหรือเสียหาย"], ["เตรียมบัตรประชาชน", "เตรียมบัตรประชาชนหรือใบขับขี่เพื่อยืนยันตัวตน"], ["จองเข้าใช้บริการผ่านแอป AllOne Bank", "จองผ่านแอปเพื่อรับคำปรึกษาก่อนโดยไม่ต้องรอคิว"], ["ไปสำนักงานใหญ่ · ยื่นขอรับเงินรางวัล", "รางวัลที่ 1 ยื่นขอรับได้ที่สำนักงานใหญ่ NH Bank เท่านั้น"]], "label": "สถานที่รับรางวัลที่ 1 โดยเฉพาะ", "name": "สำนักงานใหญ่ NH Bank", "addr": "16 Saemunan-ro, Jung-gu, โซล · จันทร์–ศุกร์ 09:00–16:00", "map": "서울 중구 새문안로 16", "products": [["NH Waltz Rotating Deposit II", "เหมาะสำหรับฝากเงินก้อนใหญ่ระยะสั้น", "3.10%"], ["NH Retirement Pension IRP", "วางแผนประหยัดภาษีสำหรับเงินก้อนใหญ่", "ประหยัดภาษี"], ["NH AllOne e-Deposit", "สมัครออนไลน์ ระยะเวลาฝากยืดหยุ่น", "3.20%"]]}, {"steps": [["เก็บสลากตัวจริง", "เซ็นชื่อด้านหลังสลากและเก็บรักษาอย่างดีไม่ให้สูญหายหรือเสียหาย"], ["เตรียมบัตรประชาชน", "เตรียมบัตรประชาชนหรือใบขับขี่เพื่อยืนยันตัวตน"], ["หาสาขาใกล้บ้าน", "ตั้งแต่รางวัลที่ 2 รับได้ที่สาขา NH Bank ทั่วประเทศ ไม่ต้องไปสำนักงานใหญ่"], ["ไปที่สาขา · ยื่นขอรับเงินรางวัล", "จองล่วงหน้าแล้วรับบริการได้ทันทีโดยไม่ต้องรอ"]], "label": "จุดรับรางวัลที่ 2 (ทุกสาขา)", "name": "สาขา NH Bank ใกล้คุณ", "addr": "ทุกสาขาทั่วประเทศ · จันทร์–ศุกร์ 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "ฝากเงินก้อนแบบออนไลน์", "3.20%"], ["NH Waltz Rotating Deposit II", "พักเงินระยะสั้นระหว่างวางแผน", "3.10%"], ["NH Office Worker Savings", "นำส่วนที่เหลือมาออมรายเดือน", "3.50%"]]}, {"steps": [["เก็บสลากตัวจริง", "เซ็นชื่อด้านหลังสลากและเก็บรักษาอย่างดีไม่ให้สูญหายหรือเสียหาย"], ["ตรวจสอบจำนวนเงินรางวัล", "รางวัลไม่เกิน 50,000 วอน รับได้ที่จุดจำหน่ายสลากทันที"], ["เกิน 50,000 วอน ต้องใช้บัตรประชาชน", "เกิน 50,000 วอน ต้องยืนยันตัวตนที่สาขา NH Bank ก่อนรับเงิน"], ["ไปที่จุดจำหน่ายหรือสาขา", "รางวัลที่ 3 รับที่สาขา ส่วนรางวัลที่ 4 และ 5 รับที่จุดจำหน่ายได้ด้วย"]], "label": "จุดรับรางวัลที่ 3 ลงไป", "name": "สาขา NH Bank · จุดจำหน่ายสลาก", "addr": "ไม่เกิน 50,000 วอน รับที่จุดจำหน่ายได้ · จันทร์–ศุกร์ 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "จำนวนน้อยก็ฝากออนไลน์ได้", "3.20%"], ["NH Office Worker Savings", "เริ่มออมด้วยเงินรางวัล", "3.50%"]]}], ctaBonus:"ถ้าไม่ถูกรางวัลก็ไม่เป็นไร รับดอกเบี้ยพิเศษ ›", modalReserveMsg:"คุณจะถูกนำไปยังหน้าจองเข้าใช้บริการของ AllOne Bank", modalCancel:"ยกเลิก", modalConfirm:"ยืนยัน", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"Gʻolib uchun harakat qoʻllanmasi", hdrTitle:"Yutuq miqdoriga qarab yoʻriqnoma farqlanadi", hdrSub:"Tanlangan mukofot darajasiga qarab tartib oʻzgaradi", rank1:"1-mukofot", rank2:"2-mukofot", rank3plus:"3-mukofot va undan quyi", stepsTitle:"Yutuqni olishning 4 bosqichi", btnMap:"Kakao Maps orqali yoʻnalish", btnReserve:"Tashrifni bron qilish", productsTitle:"Yutuq miqdoriga mos moliyaviy mahsulotlar", claimNote:"* Yutuqni toʻlov boshlangan kundan 1 yil ichida olish kerak. Real vaqtli bron ishlab chiqilmoqda.", ranks:[{"steps": [["Chiptaning asl nusxasini saqlang", "Orqa tomoniga imzo qoʻying va yoʻqotib qoʻymang yoki shikastlantirmang."], ["Shaxsni tasdiqlovchi hujjat", "Fuqarolik yoki haydovchilik guvohnomasini tayyorlang."], ["AllOne Bank orqali tashrifni bron qiling", "Ilova orqali bron qilsangiz navbatsiz ustuvor maslahat olasiz."], ["Bosh ofisga boring · Toʻlovni talab qiling", "1-mukofot faqat NH Bank bosh ofisida beriladi."]], "label": "Faqat 1-mukofot uchun toʻlov joyi", "name": "NH Bank bosh ofisi", "addr": "16 Saemunan-ro, Jung-gu, Seul · Dush–Juma 09:00–16:00", "map": "서울 중구 새문안로 16", "products": [["NH Waltz Rotating Deposit II", "Katta mablagʻni qisqa muddatga saqlash uchun", "3.10%"], ["NH Retirement Pension IRP", "Katta mablagʻ uchun soliq imtiyozli reja", "Soliq tejovchi"], ["NH AllOne e-Deposit", "Onlayn ochish, moslashuvchan muddat", "3.20%"]]}, {"steps": [["Chiptaning asl nusxasini saqlang", "Orqa tomoniga imzo qoʻying va yoʻqotib qoʻymang yoki shikastlantirmang."], ["Shaxsni tasdiqlovchi hujjat", "Fuqarolik yoki haydovchilik guvohnomasini tayyorlang."], ["Yaqin filialni toping", "2-mukofotdan boshlab mamlakatdagi istalgan NH Bank filialida olasiz."], ["Filialga boring · Toʻlovni talab qiling", "Bron qilsangiz navbatsiz darhol qabul qilinasiz."]], "label": "2-mukofot toʻlovi (istalgan filial)", "name": "Sizga yaqin NH Bank filiali", "addr": "Mamlakat boʻylab istalgan filial · Dush–Juma 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Mablagʻni onlayn joylashtiring", "3.20%"], ["NH Waltz Rotating Deposit II", "Reja tuzguningizcha qisqa muddatga saqlang", "3.10%"], ["NH Office Worker Savings", "Qolganini muntazam jamgʻarmaga", "3.50%"]]}, {"steps": [["Chiptaning asl nusxasini saqlang", "Orqa tomoniga imzo qoʻying va yoʻqotib qoʻymang yoki shikastlantirmang."], ["Yutuq miqdorini tekshiring", "50 000 vondan kam yutuqni lotereya sotuvchisidan darhol olasiz."], ["50 000 vondan koʻp boʻlsa hujjat kerak", "50 000 vondan oshsa, NH Bank filiali shaxsni tasdiqlab toʻlaydi."], ["Sotuvchi yoki filialga boring", "3-mukofot filialda, 4- va 5-mukofot sotuvchida ham beriladi."]], "label": "3-mukofot va undan quyi toʻlov joyi", "name": "NH Bank filiali · Lotereya sotuvchisi", "addr": "50 000 vongacha sotuvchida ham · Dush–Juma 09:00–16:00", "map": "NH농협은행", "products": [["NH AllOne e-Deposit", "Kichik summani ham onlayn joylashtiring", "3.20%"], ["NH Office Worker Savings", "Yutuq bilan jamgʻarmani boshlang", "3.50%"]]}], ctaBonus:"Yutmagan boʻlsangiz ham imtiyozli foiz oling ›", modalReserveMsg:"Siz AllOne Bank tashrif bron qilish sahifasiga o'tasiz", modalCancel:"Bekor qilish", modalConfirm:"Tasdiqlash", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
+const LANG = localStorage.getItem('nh_lang') || 'ko';
+const DICT = I18N[LANG] || I18N.ko;
+
 (function(){
-  const lang = localStorage.getItem('nh_lang') || 'ko';
-  const dict = I18N[lang] || I18N.ko;
-  document.documentElement.lang = lang;
+  document.documentElement.lang = LANG;
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const k = el.getAttribute('data-i18n');
-    if(dict[k] !== undefined) el.textContent = dict[k];
+    if(DICT[k] !== undefined) el.textContent = DICT[k];
   });
 })();
 
-/* ---- 카카오맵 길찾기: 별도 API 키 없이 카카오맵 웹 검색으로 실제 연결 ---- */
-document.getElementById('btnMap').href = 'https://map.kakao.com/link/search/' + encodeURIComponent('서울 중구 새문안로 16');
+/* ---- 등수별 절차·지급처·상품 렌더링 ----
+   1등은 본점에서만, 2등은 전국 영업점, 3등 이하는 5만원 기준으로 판매점 수령이
+   가능한 실제 지급 규정을 반영해 탭마다 다른 내용을 보여준다. */
+function renderRank(idx){
+  const r = (DICT.ranks || I18N.ko.ranks)[idx];
+
+  document.getElementById('stepList').innerHTML = r.steps.map(([title, desc], i) => `
+    <div class="step-row">
+      <div class="step-num">${i + 1}</div>
+      <div class="step-body">
+        <div class="title">${title}</div>
+        <div class="desc">${desc}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('branchLabel').textContent = r.label;
+  document.getElementById('branchName').textContent = r.name;
+  document.getElementById('branchAddr').textContent = r.addr;
+  // 카카오맵 길찾기: 별도 API 키 없이 카카오맵 웹 검색으로 실제 연결
+  document.getElementById('btnMap').href =
+    'https://map.kakao.com/link/search/' + encodeURIComponent(r.map);
+
+  document.getElementById('productList').innerHTML = r.products.map(([name, desc, rate]) => `
+    <div class="product-row">
+      <div>
+        <div class="pname">${name}</div>
+        <div class="pdesc">${desc}</div>
+      </div>
+      <div class="prate">${rate}</div>
+    </div>`).join('');
+}
+
+document.querySelectorAll('#rankTabs div').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#rankTabs div').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderRank(Number(tab.getAttribute('data-rank')));
+  });
+});
+
+renderRank(0);
 
 /* ---- 방문 예약하기: 실제 예약 페이지 연동 전까지 확인 팝업만 표시 ---- */
 const modalOverlay = document.getElementById('modalOverlay');

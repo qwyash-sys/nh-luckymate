@@ -36,6 +36,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     overflow: hidden;
     border: 8px solid #1c1c1e;
+    position: relative;
   }
   .statusbar {
     height: 30px; background: var(--bg-card);
@@ -56,7 +57,10 @@
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
-  .content { padding: 16px; background:var(--bg-content); min-height: 480px; }
+  .content {
+    padding: 16px; background:var(--bg-content);
+    height: 600px; overflow-y: auto;
+  }
 
   .card {
     background:var(--bg-card); border-radius:16px; padding:6px 16px;
@@ -92,6 +96,47 @@
   .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
   .tabbar .tab.active { color:var(--primary); font-weight:700; }
   .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+
+  /* ===== 세금상담 AI챗봇 ===== */
+  .chat-fab, .chat-close { all:unset; box-sizing:border-box; cursor:pointer; }
+  .chat-fab {
+    position:absolute; right:16px; bottom:74px; z-index:60;
+    width:50px; height:50px; border-radius:50%;
+    background:linear-gradient(135deg,#0BBF63,#00893F);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,122,61,0.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .chat-fab:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,122,61,0.45); }
+  .chat-fab svg { width:24px; height:24px; display:block; }
+  .chat-fab .tip {
+    position:absolute; right:58px; top:50%; transform:translateY(-50%);
+    background:rgba(20,20,20,0.92); color:#fff; font-size:11px; font-weight:700;
+    padding:6px 10px; border-radius:8px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .15s ease;
+  }
+  .chat-fab:hover .tip { opacity:1; }
+
+  .chat-overlay {
+    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+    display:none; z-index:130; padding:10px;
+  }
+  .chat-overlay.show { display:block; }
+  .chat-panel {
+    width:100%; height:100%; background:#fff; border-radius:18px;
+    overflow:hidden; position:relative; display:flex; flex-direction:column;
+  }
+  .chat-close {
+    position:absolute; top:10px; right:10px; z-index:2;
+    width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.07);
+    color:var(--text-sub); font-size:16px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .chat-close:hover { background:rgba(0,0,0,0.12); }
+  .chat-body { flex:1; display:flex; align-items:center; justify-content:center; }
+  .chat-body iframe { width:100%; height:100%; border:0; }
+  .chat-placeholder { text-align:center; color:var(--text-mute); font-size:12px; line-height:1.75; padding:0 26px; }
+  .chat-placeholder .ico { font-size:30px; display:block; margin-bottom:12px; opacity:.45; }
 </style>
 </head>
 <body>
@@ -185,6 +230,24 @@
     <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaSave">저장하고 돌아가기</a>
   </div>
 
+
+  <button class="chat-fab" id="chatFab" aria-label="세금상담 AI챗봇">
+    <span class="tip" data-i18n="chatbotLabel">세금상담 AI챗봇</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 11.7c0 4.3-3.8 7.8-8.5 7.8-1.3 0-2.5-.3-3.6-.8L3.5 20.4l1.6-4.3c-1-1.2-1.6-2.7-1.6-4.4 0-4.3 3.8-7.8 8.5-7.8s8.5 3.5 8.5 7.8z"/>
+      <circle cx="8.8" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="15.2" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-panel">
+      <button class="chat-close" id="chatClose" aria-label="닫기">✕</button>
+      <div class="chat-body" id="chatBody"></div>
+    </div>
+  </div>
+
   <div class="tabbar">
     <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
     <a class="tab" href="nh_luckymate_stats.html"><span class="icon">📊</span><span data-i18n="tabStats">재미로보는통계</span></a>
@@ -196,12 +259,12 @@
 
 <script>
 const I18N = {
-  ko: { hdrTitle:"원하는 언어를 선택해주세요", hdrSub:"농어촌 지역 다문화 비중 상위 5개 언어 지원", noteText:"농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.", ctaSave:"저장하고 돌아가기", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrTitle:"Please select your language", hdrSub:"Supporting the top 5 languages among multicultural rural residents", noteText:"These 5 languages were selected for foreign workers and international students living in rural areas. Selecting one translates all screen text.", ctaSave:"Save and Go Back", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrTitle:"请选择您想使用的语言", hdrSub:"支持农渔村地区多元文化人口占比最高的5种语言", noteText:"这5种语言是为居住在农渔村地区的外国劳动者、留学生用户而选定的。选择后画面全部文字将被翻译显示。", ctaSave:"保存并返回", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrTitle:"Vui lòng chọn ngôn ngữ", hdrSub:"Hỗ trợ 5 ngôn ngữ phổ biến nhất tại vùng nông ngư thôn đa văn hóa", noteText:"5 ngôn ngữ này được chọn dành cho lao động nước ngoài và du học sinh sống ở vùng nông thôn. Khi chọn, toàn bộ văn bản trên màn hình sẽ được dịch.", ctaSave:"Lưu và quay lại", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrTitle:"กรุณาเลือกภาษาที่ต้องการ", hdrSub:"รองรับ 5 ภาษาที่มีสัดส่วนสูงสุดในพื้นที่ชนบทที่มีความหลากหลายทางวัฒนธรรม", noteText:"5 ภาษานี้ถูกเลือกมาสำหรับแรงงานต่างชาติและนักเรียนต่างชาติที่อาศัยในพื้นที่ชนบท เมื่อเลือกแล้วข้อความทั้งหมดบนหน้าจอจะถูกแปล", ctaSave:"บันทึกและย้อนกลับ", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrTitle:"Kerakli tilni tanlang", hdrSub:"Qishloq xoʻjaligi hududlaridagi koʻp millatli aholi orasida eng koʻp tarqalgan 5 til", noteText:"Ushbu 5 til qishloq hududlarida yashovchi xorijiy ishchilar va xalqaro talabalar uchun tanlangan. Tanlanganda ekrandagi barcha matn tarjima qilinadi.", ctaSave:"Saqlash va ortga qaytish", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { chatbotLabel:"세금상담 AI챗봇", chatbotPlaceholder:"세금상담 AI챗봇을 연결할 자리예요<br>챗봇 주소가 준비되면 이 화면에 바로 열립니다", hdrTitle:"원하는 언어를 선택해주세요", hdrSub:"농어촌 지역 다문화 비중 상위 5개 언어 지원", noteText:"농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.", ctaSave:"저장하고 돌아가기", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { chatbotLabel:"Tax Advice AI Chatbot", chatbotPlaceholder:"This is where the tax advice chatbot will live<br>It will open right here once the URL is ready", hdrTitle:"Please select your language", hdrSub:"Supporting the top 5 languages among multicultural rural residents", noteText:"These 5 languages were selected for foreign workers and international students living in rural areas. Selecting one translates all screen text.", ctaSave:"Save and Go Back", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { chatbotLabel:"税务咨询AI聊天机器人", chatbotPlaceholder:"此处将接入税务咨询AI聊天机器人<br>地址准备好后将直接在此打开", hdrTitle:"请选择您想使用的语言", hdrSub:"支持农渔村地区多元文化人口占比最高的5种语言", noteText:"这5种语言是为居住在农渔村地区的外国劳动者、留学生用户而选定的。选择后画面全部文字将被翻译显示。", ctaSave:"保存并返回", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { chatbotLabel:"Chatbot AI tư vấn thuế", chatbotPlaceholder:"Đây là nơi chatbot tư vấn thuế sẽ hiển thị<br>Sẽ mở ngay tại đây khi có đường dẫn", hdrTitle:"Vui lòng chọn ngôn ngữ", hdrSub:"Hỗ trợ 5 ngôn ngữ phổ biến nhất tại vùng nông ngư thôn đa văn hóa", noteText:"5 ngôn ngữ này được chọn dành cho lao động nước ngoài và du học sinh sống ở vùng nông thôn. Khi chọn, toàn bộ văn bản trên màn hình sẽ được dịch.", ctaSave:"Lưu và quay lại", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { chatbotLabel:"แชทบอท AI ปรึกษาภาษี", chatbotPlaceholder:"ตรงนี้จะเป็นที่อยู่ของแชทบอทปรึกษาภาษี<br>จะเปิดที่นี่ทันทีเมื่อมีลิงก์พร้อม", hdrTitle:"กรุณาเลือกภาษาที่ต้องการ", hdrSub:"รองรับ 5 ภาษาที่มีสัดส่วนสูงสุดในพื้นที่ชนบทที่มีความหลากหลายทางวัฒนธรรม", noteText:"5 ภาษานี้ถูกเลือกมาสำหรับแรงงานต่างชาติและนักเรียนต่างชาติที่อาศัยในพื้นที่ชนบท เมื่อเลือกแล้วข้อความทั้งหมดบนหน้าจอจะถูกแปล", ctaSave:"บันทึกและย้อนกลับ", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { chatbotLabel:"Soliq bo‘yicha AI chatbot", chatbotPlaceholder:"Bu yerda soliq bo‘yicha AI chatbot ochiladi<br>Manzil tayyor bo‘lgach shu yerda ishga tushadi", hdrTitle:"Kerakli tilni tanlang", hdrSub:"Qishloq xoʻjaligi hududlaridagi koʻp millatli aholi orasida eng koʻp tarqalgan 5 til", noteText:"Ushbu 5 til qishloq hududlarida yashovchi xorijiy ishchilar va xalqaro talabalar uchun tanlangan. Tanlanganda ekrandagi barcha matn tarjima qilinadi.", ctaSave:"Saqlash va ortga qaytish", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
 const LANG_KEY = 'nh_lang';
 
@@ -232,6 +295,45 @@ document.querySelectorAll('.lang-row').forEach(row=>{
 
 renderSelection();
 applyI18n();
+</script>
+
+
+<script>
+/* ===== 세금상담 AI챗봇 =====
+   챗봇 자체는 별도로 구현해 붙일 예정이라, 아래 주소만 채우면 바로 연결된다.
+   비어 있으면 안내 문구를 대신 보여준다. */
+const CHATBOT_URL = '';
+(function(){
+  function chatT(key, fallback){
+    try {
+      const lang = localStorage.getItem('nh_lang') || 'ko';
+      const dict = (typeof I18N !== 'undefined' && (I18N[lang] || I18N.ko)) || {};
+      return dict[key] || fallback;
+    } catch(e) { return fallback; }
+  }
+
+  const overlay = document.getElementById('chatOverlay');
+  const body = document.getElementById('chatBody');
+  let loaded = false;
+
+  function openChat(){
+    if(!loaded){
+      const label = chatT('chatbotLabel', '세금상담 AI챗봇');
+      body.innerHTML = CHATBOT_URL
+        ? '<iframe src="' + CHATBOT_URL + '" title="' + label + '"></iframe>'
+        : '<div class="chat-placeholder"><span class="ico">💬</span>' +
+          chatT('chatbotPlaceholder', '세금상담 AI챗봇을 연결할 자리예요') + '</div>';
+      loaded = true;
+    }
+    overlay.classList.add('show');
+  }
+  function closeChat(){ overlay.classList.remove('show'); }
+
+  document.getElementById('chatFab').addEventListener('click', openChat);
+  document.getElementById('chatClose').addEventListener('click', closeChat);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeChat(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeChat(); });
+})();
 </script>
 
 </body>

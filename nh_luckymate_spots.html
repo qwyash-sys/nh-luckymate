@@ -36,6 +36,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     overflow: hidden;
     border: 8px solid #1c1c1e;
+    position: relative;
   }
   .statusbar {
     height: 30px; background: var(--bg-card);
@@ -57,7 +58,10 @@
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
-  .content { padding: 16px; background:var(--bg-content); }
+  .content {
+    padding: 16px; background:var(--bg-content);
+    height: 600px; overflow-y: auto;
+  }
 
   .map-box {
     position:relative;
@@ -157,6 +161,47 @@
   .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
   .tabbar .tab.active { color:var(--primary); font-weight:700; }
   .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+
+  /* ===== 세금상담 AI챗봇 ===== */
+  .chat-fab, .chat-close { all:unset; box-sizing:border-box; cursor:pointer; }
+  .chat-fab {
+    position:absolute; right:16px; bottom:74px; z-index:60;
+    width:50px; height:50px; border-radius:50%;
+    background:linear-gradient(135deg,#0BBF63,#00893F);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,122,61,0.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .chat-fab:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,122,61,0.45); }
+  .chat-fab svg { width:24px; height:24px; display:block; }
+  .chat-fab .tip {
+    position:absolute; right:58px; top:50%; transform:translateY(-50%);
+    background:rgba(20,20,20,0.92); color:#fff; font-size:11px; font-weight:700;
+    padding:6px 10px; border-radius:8px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .15s ease;
+  }
+  .chat-fab:hover .tip { opacity:1; }
+
+  .chat-overlay {
+    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+    display:none; z-index:130; padding:10px;
+  }
+  .chat-overlay.show { display:block; }
+  .chat-panel {
+    width:100%; height:100%; background:#fff; border-radius:18px;
+    overflow:hidden; position:relative; display:flex; flex-direction:column;
+  }
+  .chat-close {
+    position:absolute; top:10px; right:10px; z-index:2;
+    width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.07);
+    color:var(--text-sub); font-size:16px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .chat-close:hover { background:rgba(0,0,0,0.12); }
+  .chat-body { flex:1; display:flex; align-items:center; justify-content:center; }
+  .chat-body iframe { width:100%; height:100%; border:0; }
+  .chat-placeholder { text-align:center; color:var(--text-mute); font-size:12px; line-height:1.75; padding:0 26px; }
+  .chat-placeholder .ico { font-size:30px; display:block; margin-bottom:12px; opacity:.45; }
 </style>
 </head>
 <body>
@@ -215,6 +260,24 @@
     <div class="badge-note" id="badgeNote">* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다</div>
   </div>
 
+
+  <button class="chat-fab" id="chatFab" aria-label="세금상담 AI챗봇">
+    <span class="tip" data-i18n="chatbotLabel">세금상담 AI챗봇</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 11.7c0 4.3-3.8 7.8-8.5 7.8-1.3 0-2.5-.3-3.6-.8L3.5 20.4l1.6-4.3c-1-1.2-1.6-2.7-1.6-4.4 0-4.3 3.8-7.8 8.5-7.8s8.5 3.5 8.5 7.8z"/>
+      <circle cx="8.8" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="15.2" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-panel">
+      <button class="chat-close" id="chatClose" aria-label="닫기">✕</button>
+      <div class="chat-body" id="chatBody"></div>
+    </div>
+  </div>
+
   <div class="tabbar">
     <a class="tab" href="nh_luckymate_mockup.html"><span class="icon">🏠</span><span data-i18n="tabHome">당첨조회</span></a>
     <a class="tab" href="nh_luckymate_stats.html"><span class="icon">📊</span><span data-i18n="tabStats">재미로보는통계</span></a>
@@ -226,12 +289,12 @@
 
 <script>
 const I18N = {
-  ko: { hdrPageTitle:"내 근처 로또 명당", hdrTitle:"1등 당첨 판매점이 여기 있어요", hdrSubTpl:"내 근처 판매점 {n}곳 찾음", hdrSubLoading:"내 근처 판매점 찾는 중...", hdrSubEmpty:"근처에서 판매점을 찾지 못했어요", mapBadgeGeo:"📍 내 위치 기준", mapBadgeFallback:"📍 서울 기준(위치 권한 없음)", segDist:"거리순", segCount:"당첨횟수순", segAmount:"당첨금액순", navLink:"길찾기 ›", ctaGuide:"당첨되면 어떻게 하나요? ›", badgeNote:"* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다", rank1Tag:"1등 {n}회", rank2Tag:"2등 {n}회", amountTag:"추정 누적 {n}", hdrSubError:"판매점 정보를 불러오지 못했어요", errorText:"일시적으로 연결이 원활하지 않아요. 잠시 후 다시 시도해주세요", radiusLabel:"검색 반경", radiusOption:"{n}km 이내", scopeBoth:"1·2등 합산", scopeR1:"1등만", scopeR2:"2등만", btnMore:"더보기", btnMoreTpl:"{n}곳 더보기", emptyInRadius:"이 반경 안에는 조건에 맞는 판매점이 없어요", emptyText:"근처에 데이터가 있는 판매점이 없어요", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrPageTitle:"Lucky Spots Near Me", hdrTitle:"1st-prize winning stores are here", hdrSubTpl:"Found {n} nearby stores", hdrSubLoading:"Finding nearby stores...", hdrSubEmpty:"No nearby stores found", mapBadgeGeo:"📍 Based on my location", mapBadgeFallback:"📍 Based on Seoul (no location access)", segDist:"By Distance", segCount:"By Win Count", segAmount:"By Prize Amount", navLink:"Directions ›", ctaGuide:"What to do if I win? ›", badgeNote:"* Based on official winning-store data (last 100 draws). Prize amounts are estimated using average per-rank prize.", rank1Tag:"1st x{n}", rank2Tag:"2nd x{n}", amountTag:"Est. total {n}", hdrSubError:"Couldn't load shop data", errorText:"Connection is temporarily unavailable. Please try again shortly.", radiusLabel:"Radius", radiusOption:"Within {n}km", scopeBoth:"1st + 2nd", scopeR1:"1st only", scopeR2:"2nd only", btnMore:"Show more", btnMoreTpl:"Show {n} more", emptyInRadius:"No matching shops within this radius", emptyText:"No stores with data found nearby", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrPageTitle:"我附近的幸运网点", hdrTitle:"这里有中过一等奖的销售点", hdrSubTpl:"找到附近{n}家网点", hdrSubLoading:"正在查找附近网点...", hdrSubEmpty:"附近未找到网点", mapBadgeGeo:"📍 基于我的位置", mapBadgeFallback:"📍 基于首尔(无位置权限)", segDist:"按距离", segCount:"按中奖次数", segAmount:"按中奖金额", navLink:"导航 ›", ctaGuide:"中奖了该怎么办? ›", badgeNote:"* 基于官方当选销售点数据(近100期)。中奖金额为按等级平均奖金估算值", rank1Tag:"1等x{n}", rank2Tag:"2等x{n}", amountTag:"预估累计{n}", hdrSubError:"无法加载销售点信息", errorText:"连接暂时不稳定，请稍后再试", radiusLabel:"搜索半径", radiusOption:"{n}km 以内", scopeBoth:"一·二等合计", scopeR1:"仅一等奖", scopeR2:"仅二等奖", btnMore:"查看更多", btnMoreTpl:"再看{n}个", emptyInRadius:"该半径内没有符合条件的销售点", emptyText:"附近没有找到有数据的网点", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrPageTitle:"Điểm may mắn gần tôi", hdrTitle:"Có cửa hàng từng trúng giải nhất ở đây", hdrSubTpl:"Tìm thấy {n} cửa hàng gần đây", hdrSubLoading:"Đang tìm cửa hàng gần đây...", hdrSubEmpty:"Không tìm thấy cửa hàng gần đây", mapBadgeGeo:"📍 Dựa trên vị trí của tôi", mapBadgeFallback:"📍 Dựa trên Seoul (không có quyền vị trí)", segDist:"Theo khoảng cách", segCount:"Theo số lần trúng", segAmount:"Theo số tiền trúng", navLink:"Chỉ đường ›", ctaGuide:"Nếu trúng thưởng thì làm gì? ›", badgeNote:"* Dựa trên dữ liệu cửa hàng trúng thưởng chính thức (100 kỳ gần nhất). Số tiền trúng thưởng là ước tính theo giải trung bình", rank1Tag:"Giải 1 x{n}", rank2Tag:"Giải 2 x{n}", amountTag:"Ước tính {n}", hdrSubError:"Không tải được dữ liệu điểm bán", errorText:"Kết nối tạm thời không ổn định. Vui lòng thử lại sau.", radiusLabel:"Bán kính", radiusOption:"Trong {n}km", scopeBoth:"Giải 1+2", scopeR1:"Chỉ giải 1", scopeR2:"Chỉ giải 2", btnMore:"Xem thêm", btnMoreTpl:"Xem thêm {n}", emptyInRadius:"Không có điểm bán phù hợp trong bán kính này", emptyText:"Không tìm thấy cửa hàng có dữ liệu gần đây", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrPageTitle:"จุดขายมงคลใกล้ฉัน", hdrTitle:"มีร้านที่เคยถูกรางวัลที่ 1 อยู่ตรงนี้", hdrSubTpl:"พบร้านใกล้เคียง {n} ร้าน", hdrSubLoading:"กำลังค้นหาร้านใกล้เคียง...", hdrSubEmpty:"ไม่พบร้านใกล้เคียง", mapBadgeGeo:"📍 อ้างอิงตำแหน่งของฉัน", mapBadgeFallback:"📍 อ้างอิงกรุงโซล (ไม่ได้รับอนุญาตตำแหน่ง)", segDist:"ตามระยะทาง", segCount:"ตามจำนวนครั้งที่ถูกรางวัล", segAmount:"ตามจำนวนเงินรางวัล", navLink:"นำทาง ›", ctaGuide:"ถ้าถูกรางวัลต้องทำอย่างไร? ›", badgeNote:"* อ้างอิงข้อมูลร้านถูกรางวัลจริง (100 งวดล่าสุด) ยอดเงินรางวัลเป็นค่าประมาณจากรางวัลเฉลี่ยแต่ละอันดับ", rank1Tag:"รางวัลที่1 x{n}", rank2Tag:"รางวัลที่2 x{n}", amountTag:"ประมาณรวม {n}", hdrSubError:"โหลดข้อมูลจุดจำหน่ายไม่สำเร็จ", errorText:"การเชื่อมต่อขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง", radiusLabel:"รัศมี", radiusOption:"ภายใน {n}km", scopeBoth:"รางวัลที่ 1+2", scopeR1:"เฉพาะที่ 1", scopeR2:"เฉพาะที่ 2", btnMore:"ดูเพิ่มเติม", btnMoreTpl:"ดูเพิ่ม {n} แห่ง", emptyInRadius:"ไม่มีจุดจำหน่ายที่ตรงเงื่อนไขในรัศมีนี้", emptyText:"ไม่พบร้านที่มีข้อมูลใกล้เคียง", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrPageTitle:"Yaqin atrofdagi baxtli joylar", hdrTitle:"Bu yerda 1-mukofot yutgan doʻkonlar bor", hdrSubTpl:"Yaqin atrofda {n} ta doʻkon topildi", hdrSubLoading:"Yaqin atrofdagi doʻkonlar qidirilmoqda...", hdrSubEmpty:"Yaqin atrofda doʻkon topilmadi", mapBadgeGeo:"📍 Mening joylashuvim asosida", mapBadgeFallback:"📍 Seul asosida (joylashuv ruxsati yoʻq)", segDist:"Masofa boʻyicha", segCount:"Yutuq soni boʻyicha", segAmount:"Yutuq summasi boʻyicha", navLink:"Yoʻnalish ›", ctaGuide:"Yutib olsam nima qilaman? ›", badgeNote:"* Rasmiy yutuq doʻkonlari maʼlumotlariga asoslangan (oxirgi 100 tur). Yutuq summasi daraja boʻyicha oʻrtacha mukofot asosida taxminiy", rank1Tag:"1-mukofot x{n}", rank2Tag:"2-mukofot x{n}", amountTag:"Taxminiy jami {n}", hdrSubError:"Sotuvchilar maʼlumoti yuklanmadi", errorText:"Aloqa vaqtincha mavjud emas. Birozdan soʻng qayta urinib koʻring.", radiusLabel:"Radius", radiusOption:"{n}km ichida", scopeBoth:"1+2-mukofot", scopeR1:"Faqat 1-", scopeR2:"Faqat 2-", btnMore:"Koʻproq", btnMoreTpl:"Yana {n} ta", emptyInRadius:"Bu radiusda mos sotuvchi yoʻq", emptyText:"Yaqin atrofda maʼlumotli doʻkon topilmadi", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { chatbotLabel:"세금상담 AI챗봇", chatbotPlaceholder:"세금상담 AI챗봇을 연결할 자리예요<br>챗봇 주소가 준비되면 이 화면에 바로 열립니다", hdrPageTitle:"내 근처 로또 명당", hdrTitle:"1등 당첨 판매점이 여기 있어요", hdrSubTpl:"내 근처 판매점 {n}곳 찾음", hdrSubLoading:"내 근처 판매점 찾는 중...", hdrSubEmpty:"근처에서 판매점을 찾지 못했어요", mapBadgeGeo:"📍 내 위치 기준", mapBadgeFallback:"📍 서울 기준(위치 권한 없음)", segDist:"거리순", segCount:"당첨횟수순", segAmount:"당첨금액순", navLink:"길찾기 ›", ctaGuide:"당첨되면 어떻게 하나요? ›", badgeNote:"* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다", rank1Tag:"1등 {n}회", rank2Tag:"2등 {n}회", amountTag:"추정 누적 {n}", hdrSubError:"판매점 정보를 불러오지 못했어요", errorText:"일시적으로 연결이 원활하지 않아요. 잠시 후 다시 시도해주세요", radiusLabel:"검색 반경", radiusOption:"{n}km 이내", scopeBoth:"1·2등 합산", scopeR1:"1등만", scopeR2:"2등만", btnMore:"더보기", btnMoreTpl:"{n}곳 더보기", emptyInRadius:"이 반경 안에는 조건에 맞는 판매점이 없어요", emptyText:"근처에 데이터가 있는 판매점이 없어요", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { chatbotLabel:"Tax Advice AI Chatbot", chatbotPlaceholder:"This is where the tax advice chatbot will live<br>It will open right here once the URL is ready", hdrPageTitle:"Lucky Spots Near Me", hdrTitle:"1st-prize winning stores are here", hdrSubTpl:"Found {n} nearby stores", hdrSubLoading:"Finding nearby stores...", hdrSubEmpty:"No nearby stores found", mapBadgeGeo:"📍 Based on my location", mapBadgeFallback:"📍 Based on Seoul (no location access)", segDist:"By Distance", segCount:"By Win Count", segAmount:"By Prize Amount", navLink:"Directions ›", ctaGuide:"What to do if I win? ›", badgeNote:"* Based on official winning-store data (last 100 draws). Prize amounts are estimated using average per-rank prize.", rank1Tag:"1st x{n}", rank2Tag:"2nd x{n}", amountTag:"Est. total {n}", hdrSubError:"Couldn't load shop data", errorText:"Connection is temporarily unavailable. Please try again shortly.", radiusLabel:"Radius", radiusOption:"Within {n}km", scopeBoth:"1st + 2nd", scopeR1:"1st only", scopeR2:"2nd only", btnMore:"Show more", btnMoreTpl:"Show {n} more", emptyInRadius:"No matching shops within this radius", emptyText:"No stores with data found nearby", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { chatbotLabel:"税务咨询AI聊天机器人", chatbotPlaceholder:"此处将接入税务咨询AI聊天机器人<br>地址准备好后将直接在此打开", hdrPageTitle:"我附近的幸运网点", hdrTitle:"这里有中过一等奖的销售点", hdrSubTpl:"找到附近{n}家网点", hdrSubLoading:"正在查找附近网点...", hdrSubEmpty:"附近未找到网点", mapBadgeGeo:"📍 基于我的位置", mapBadgeFallback:"📍 基于首尔(无位置权限)", segDist:"按距离", segCount:"按中奖次数", segAmount:"按中奖金额", navLink:"导航 ›", ctaGuide:"中奖了该怎么办? ›", badgeNote:"* 基于官方当选销售点数据(近100期)。中奖金额为按等级平均奖金估算值", rank1Tag:"1等x{n}", rank2Tag:"2等x{n}", amountTag:"预估累计{n}", hdrSubError:"无法加载销售点信息", errorText:"连接暂时不稳定，请稍后再试", radiusLabel:"搜索半径", radiusOption:"{n}km 以内", scopeBoth:"一·二等合计", scopeR1:"仅一等奖", scopeR2:"仅二等奖", btnMore:"查看更多", btnMoreTpl:"再看{n}个", emptyInRadius:"该半径内没有符合条件的销售点", emptyText:"附近没有找到有数据的网点", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { chatbotLabel:"Chatbot AI tư vấn thuế", chatbotPlaceholder:"Đây là nơi chatbot tư vấn thuế sẽ hiển thị<br>Sẽ mở ngay tại đây khi có đường dẫn", hdrPageTitle:"Điểm may mắn gần tôi", hdrTitle:"Có cửa hàng từng trúng giải nhất ở đây", hdrSubTpl:"Tìm thấy {n} cửa hàng gần đây", hdrSubLoading:"Đang tìm cửa hàng gần đây...", hdrSubEmpty:"Không tìm thấy cửa hàng gần đây", mapBadgeGeo:"📍 Dựa trên vị trí của tôi", mapBadgeFallback:"📍 Dựa trên Seoul (không có quyền vị trí)", segDist:"Theo khoảng cách", segCount:"Theo số lần trúng", segAmount:"Theo số tiền trúng", navLink:"Chỉ đường ›", ctaGuide:"Nếu trúng thưởng thì làm gì? ›", badgeNote:"* Dựa trên dữ liệu cửa hàng trúng thưởng chính thức (100 kỳ gần nhất). Số tiền trúng thưởng là ước tính theo giải trung bình", rank1Tag:"Giải 1 x{n}", rank2Tag:"Giải 2 x{n}", amountTag:"Ước tính {n}", hdrSubError:"Không tải được dữ liệu điểm bán", errorText:"Kết nối tạm thời không ổn định. Vui lòng thử lại sau.", radiusLabel:"Bán kính", radiusOption:"Trong {n}km", scopeBoth:"Giải 1+2", scopeR1:"Chỉ giải 1", scopeR2:"Chỉ giải 2", btnMore:"Xem thêm", btnMoreTpl:"Xem thêm {n}", emptyInRadius:"Không có điểm bán phù hợp trong bán kính này", emptyText:"Không tìm thấy cửa hàng có dữ liệu gần đây", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { chatbotLabel:"แชทบอท AI ปรึกษาภาษี", chatbotPlaceholder:"ตรงนี้จะเป็นที่อยู่ของแชทบอทปรึกษาภาษี<br>จะเปิดที่นี่ทันทีเมื่อมีลิงก์พร้อม", hdrPageTitle:"จุดขายมงคลใกล้ฉัน", hdrTitle:"มีร้านที่เคยถูกรางวัลที่ 1 อยู่ตรงนี้", hdrSubTpl:"พบร้านใกล้เคียง {n} ร้าน", hdrSubLoading:"กำลังค้นหาร้านใกล้เคียง...", hdrSubEmpty:"ไม่พบร้านใกล้เคียง", mapBadgeGeo:"📍 อ้างอิงตำแหน่งของฉัน", mapBadgeFallback:"📍 อ้างอิงกรุงโซล (ไม่ได้รับอนุญาตตำแหน่ง)", segDist:"ตามระยะทาง", segCount:"ตามจำนวนครั้งที่ถูกรางวัล", segAmount:"ตามจำนวนเงินรางวัล", navLink:"นำทาง ›", ctaGuide:"ถ้าถูกรางวัลต้องทำอย่างไร? ›", badgeNote:"* อ้างอิงข้อมูลร้านถูกรางวัลจริง (100 งวดล่าสุด) ยอดเงินรางวัลเป็นค่าประมาณจากรางวัลเฉลี่ยแต่ละอันดับ", rank1Tag:"รางวัลที่1 x{n}", rank2Tag:"รางวัลที่2 x{n}", amountTag:"ประมาณรวม {n}", hdrSubError:"โหลดข้อมูลจุดจำหน่ายไม่สำเร็จ", errorText:"การเชื่อมต่อขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง", radiusLabel:"รัศมี", radiusOption:"ภายใน {n}km", scopeBoth:"รางวัลที่ 1+2", scopeR1:"เฉพาะที่ 1", scopeR2:"เฉพาะที่ 2", btnMore:"ดูเพิ่มเติม", btnMoreTpl:"ดูเพิ่ม {n} แห่ง", emptyInRadius:"ไม่มีจุดจำหน่ายที่ตรงเงื่อนไขในรัศมีนี้", emptyText:"ไม่พบร้านที่มีข้อมูลใกล้เคียง", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { chatbotLabel:"Soliq bo‘yicha AI chatbot", chatbotPlaceholder:"Bu yerda soliq bo‘yicha AI chatbot ochiladi<br>Manzil tayyor bo‘lgach shu yerda ishga tushadi", hdrPageTitle:"Yaqin atrofdagi baxtli joylar", hdrTitle:"Bu yerda 1-mukofot yutgan doʻkonlar bor", hdrSubTpl:"Yaqin atrofda {n} ta doʻkon topildi", hdrSubLoading:"Yaqin atrofdagi doʻkonlar qidirilmoqda...", hdrSubEmpty:"Yaqin atrofda doʻkon topilmadi", mapBadgeGeo:"📍 Mening joylashuvim asosida", mapBadgeFallback:"📍 Seul asosida (joylashuv ruxsati yoʻq)", segDist:"Masofa boʻyicha", segCount:"Yutuq soni boʻyicha", segAmount:"Yutuq summasi boʻyicha", navLink:"Yoʻnalish ›", ctaGuide:"Yutib olsam nima qilaman? ›", badgeNote:"* Rasmiy yutuq doʻkonlari maʼlumotlariga asoslangan (oxirgi 100 tur). Yutuq summasi daraja boʻyicha oʻrtacha mukofot asosida taxminiy", rank1Tag:"1-mukofot x{n}", rank2Tag:"2-mukofot x{n}", amountTag:"Taxminiy jami {n}", hdrSubError:"Sotuvchilar maʼlumoti yuklanmadi", errorText:"Aloqa vaqtincha mavjud emas. Birozdan soʻng qayta urinib koʻring.", radiusLabel:"Radius", radiusOption:"{n}km ichida", scopeBoth:"1+2-mukofot", scopeR1:"Faqat 1-", scopeR2:"Faqat 2-", btnMore:"Koʻproq", btnMoreTpl:"Yana {n} ta", emptyInRadius:"Bu radiusda mos sotuvchi yoʻq", emptyText:"Yaqin atrofda maʼlumotli doʻkon topilmadi", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
 
 function currentLang(){
@@ -515,6 +578,45 @@ async function init(){
 }
 
 init();
+</script>
+
+
+<script>
+/* ===== 세금상담 AI챗봇 =====
+   챗봇 자체는 별도로 구현해 붙일 예정이라, 아래 주소만 채우면 바로 연결된다.
+   비어 있으면 안내 문구를 대신 보여준다. */
+const CHATBOT_URL = '';
+(function(){
+  function chatT(key, fallback){
+    try {
+      const lang = localStorage.getItem('nh_lang') || 'ko';
+      const dict = (typeof I18N !== 'undefined' && (I18N[lang] || I18N.ko)) || {};
+      return dict[key] || fallback;
+    } catch(e) { return fallback; }
+  }
+
+  const overlay = document.getElementById('chatOverlay');
+  const body = document.getElementById('chatBody');
+  let loaded = false;
+
+  function openChat(){
+    if(!loaded){
+      const label = chatT('chatbotLabel', '세금상담 AI챗봇');
+      body.innerHTML = CHATBOT_URL
+        ? '<iframe src="' + CHATBOT_URL + '" title="' + label + '"></iframe>'
+        : '<div class="chat-placeholder"><span class="ico">💬</span>' +
+          chatT('chatbotPlaceholder', '세금상담 AI챗봇을 연결할 자리예요') + '</div>';
+      loaded = true;
+    }
+    overlay.classList.add('show');
+  }
+  function closeChat(){ overlay.classList.remove('show'); }
+
+  document.getElementById('chatFab').addEventListener('click', openChat);
+  document.getElementById('chatClose').addEventListener('click', closeChat);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeChat(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeChat(); });
+})();
 </script>
 
 </body>

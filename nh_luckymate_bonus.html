@@ -58,7 +58,10 @@
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
-  .content { padding: 16px; background:var(--bg-content); }
+  .content {
+    padding: 16px; background:var(--bg-content);
+    height: 600px; overflow-y: auto;
+  }
 
   /* toast */
   .toast {
@@ -155,6 +158,47 @@
   .tabbar .tab { flex:1; text-align:center; font-size:10px; color:#bbb; }
   .tabbar .tab.active { color:var(--primary); font-weight:700; }
   .tabbar .tab .icon { font-size:18px; display:block; margin-bottom:3px; }
+
+  /* ===== 세금상담 AI챗봇 ===== */
+  .chat-fab, .chat-close { all:unset; box-sizing:border-box; cursor:pointer; }
+  .chat-fab {
+    position:absolute; right:16px; bottom:74px; z-index:60;
+    width:50px; height:50px; border-radius:50%;
+    background:linear-gradient(135deg,#0BBF63,#00893F);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,122,61,0.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .chat-fab:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,122,61,0.45); }
+  .chat-fab svg { width:24px; height:24px; display:block; }
+  .chat-fab .tip {
+    position:absolute; right:58px; top:50%; transform:translateY(-50%);
+    background:rgba(20,20,20,0.92); color:#fff; font-size:11px; font-weight:700;
+    padding:6px 10px; border-radius:8px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .15s ease;
+  }
+  .chat-fab:hover .tip { opacity:1; }
+
+  .chat-overlay {
+    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+    display:none; z-index:130; padding:10px;
+  }
+  .chat-overlay.show { display:block; }
+  .chat-panel {
+    width:100%; height:100%; background:#fff; border-radius:18px;
+    overflow:hidden; position:relative; display:flex; flex-direction:column;
+  }
+  .chat-close {
+    position:absolute; top:10px; right:10px; z-index:2;
+    width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.07);
+    color:var(--text-sub); font-size:16px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .chat-close:hover { background:rgba(0,0,0,0.12); }
+  .chat-body { flex:1; display:flex; align-items:center; justify-content:center; }
+  .chat-body iframe { width:100%; height:100%; border:0; }
+  .chat-placeholder { text-align:center; color:var(--text-mute); font-size:12px; line-height:1.75; padding:0 26px; }
+  .chat-placeholder .ico { font-size:30px; display:block; margin-bottom:12px; opacity:.45; }
 </style>
 </head>
 <body>
@@ -173,7 +217,7 @@
       <a class="dots" href="nh_luckymate_language.html" aria-label="언어 설정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 9h17.6M3.2 15h17.6"/><path d="M12 3c2.4 2.4 3.6 5.4 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.4-3.6-9S9.6 5.4 12 3z"/></svg></a>
     </div>
     <div class="sub">
-      <span data-i18n="hdrTitle">낙첨도 혜택이 되는 유일한 은행</span>
+      <span data-i18n="hdrTitle">낙첨 복권도 그냥 버리지 마세요</span>
       <span data-i18n="hdrSub">QR 스캔 한 번으로 예·적금 우대금리 적용</span>
     </div>
   </div>
@@ -202,9 +246,9 @@
 
     <div class="rate-card">
       <div class="title" data-i18n="rateTitle">우대금리 적립 안내</div>
-      <div class="rate-row" id="rateRow1"><span data-i18n="rateRow1">낙첨 복권 1장 등록</span><b>+0.1%p</b></div>
-      <div class="rate-row" id="rateRow2"><span data-i18n="rateRow2">월 5장 이상 등록 시</span><b>+0.3%p</b></div>
-      <div class="rate-row" id="rateRow3"><span data-i18n="rateRow3">최대 적용 한도</span><b>+0.5%p</b></div>
+      <div class="rate-row" id="rateRow1"><span data-i18n="rateRow1">1~4장 등록</span><b>+0.1%p</b></div>
+      <div class="rate-row" id="rateRow2"><span data-i18n="rateRow2">5~14장 등록</span><b>+0.3%p</b></div>
+      <div class="rate-row" id="rateRow3"><span data-i18n="rateRow3">15장 이상 등록</span><b>+0.5%p</b></div>
     </div>
 
     <div class="card">
@@ -218,6 +262,24 @@
 
     <a class="cta" href="nh_luckymate_guide.html" data-i18n="ctaBranch">영업점 방문해서 우대금리 받기 ›</a>
     <div class="badge-note" data-i18n="badgeNote">* 카메라/이미지에서 실제 jsQR로 QR 코드를 인식합니다. 영업점 실시간 연동은 개발 예정 기능입니다</div>
+  </div>
+
+
+  <button class="chat-fab" id="chatFab" aria-label="세금상담 AI챗봇">
+    <span class="tip" data-i18n="chatbotLabel">세금상담 AI챗봇</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 11.7c0 4.3-3.8 7.8-8.5 7.8-1.3 0-2.5-.3-3.6-.8L3.5 20.4l1.6-4.3c-1-1.2-1.6-2.7-1.6-4.4 0-4.3 3.8-7.8 8.5-7.8s8.5 3.5 8.5 7.8z"/>
+      <circle cx="8.8" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="12" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+      <circle cx="15.2" cy="11.7" r=".95" fill="currentColor" stroke="none"/>
+    </svg>
+  </button>
+
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-panel">
+      <button class="chat-close" id="chatClose" aria-label="닫기">✕</button>
+      <div class="chat-body" id="chatBody"></div>
+    </div>
   </div>
 
   <div class="tabbar">
@@ -10337,12 +10399,12 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 <script>
 /* ---- 다국어 ---- */
 const I18N = {
-  ko: { hdrPageTitle:"낙첨복권 우대금리", hdrTitle:"낙첨도 혜택이 되는 유일한 은행", hdrSub:"QR 스캔 한 번으로 예·적금 우대금리 적용", btnCamera:"카메라로 스캔", btnCameraStop:"카메라 끄기", btnUpload:"이미지 업로드", btnSampleScan:"데모: QR 등록해보기", formatNote:"* 실제 동행복권 QR은 당첨 여부 정보를 담고 있지 않고 동행복권 인증 사이트로 연결되는 주소예요. 스캔하면 그 주소를 저장해두고, 나중에 눌러서 동행복권 사이트에서 직접 확인할 수 있어요.", rateTitle:"우대금리 적립 안내", rateRow1:"낙첨 복권 1장 등록", rateRow2:"월 5장 이상 등록 시", rateRow3:"최대 적용 한도", ticketsTitle:"내 낙첨복권 보관함", emptyText:"아직 등록된 낙첨복권이 없어요", ticketLinkLabel:"🔗 인증 주소 확인하기", expiryNote:"* 등록 후 30일이 지나면 자동으로 삭제돼요", ctaBranch:"영업점 방문해서 우대금리 받기 ›", badgeNote:"* 카메라/이미지에서 실제 jsQR로 QR 코드를 인식합니다. 영업점 실시간 연동은 개발 예정 기능입니다", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지", scanMsgDefault:"낙첨 복권 QR코드를 스캔하세요", scanSubDefault:"복권 하단의 QR 코드를 카메라에 비춰주세요", scanMsgActive:"카메라를 QR코드에 비춰주세요", scanSubActive:"자동으로 인식됩니다", ticketCount:n=>`${n}장 등록됨`, ticketDate:date=>`${date} 등록`, daysLeft:n=>`D-${n} 후 삭제`, toastRegistered:"낙첨복권이 등록되었어요. 언제든 눌러서 동행복권 사이트에서 확인할 수 있어요", toastDuplicate:"이미 등록된 QR이에요", toastParseFail:"QR 코드를 인식하지 못했어요. 다시 시도해주세요.", toastCameraUnavailable:"이 브라우저/환경에서는 카메라를 사용할 수 없어요. 이미지 업로드로 테스트해보세요.", toastCameraDenied:"카메라 권한을 사용할 수 없어요 (파일로 직접 열었다면 카메라가 제한될 수 있어요). 이미지 업로드로 테스트해보세요.", toastImageNoQR:"이미지에서 QR 코드를 찾지 못했어요. 다른 이미지를 시도해보세요." },
-  en: { hdrPageTitle:"Bonus Rate for Losing Tickets", hdrTitle:"The only bank that rewards you even when you lose", hdrSub:"One QR scan applies a deposit rate bonus", btnCamera:"Scan with Camera", btnCameraStop:"Stop Camera", btnUpload:"Upload Image", btnSampleScan:"Demo: Register a QR", formatNote:"* A real lottery ticket QR doesn't contain win/lose info — it's just a link to the lottery's own verification site. Scanning saves that address so you can open it anytime to check for yourself.", rateTitle:"Bonus Rate Guide", rateRow1:"Register 1 losing ticket", rateRow2:"5+ tickets registered per month", rateRow3:"Maximum bonus cap", ticketsTitle:"My Losing Ticket Locker", emptyText:"No losing tickets registered yet", ticketLinkLabel:"🔗 View verification link", expiryNote:"* Entries are automatically deleted 30 days after registration", ctaBranch:"Visit a branch to get the bonus rate ›", badgeNote:"* Camera/image QR recognition runs on real jsQR. Real-time branch integration is a planned feature.", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize", scanMsgDefault:"Scan your losing ticket's QR code", scanSubDefault:"Point your camera at the QR code on the ticket", scanMsgActive:"Point the camera at the QR code", scanSubActive:"It will be recognized automatically", ticketCount:n=>`${n} registered`, ticketDate:date=>`Registered ${date}`, daysLeft:n=>`Deletes in D-${n}`, toastRegistered:"Losing ticket registered. Tap it anytime to verify on the lottery site.", toastDuplicate:"This QR is already registered", toastParseFail:"Couldn't recognize the QR code. Please try again.", toastCameraUnavailable:"Camera isn't available in this browser/environment. Try uploading an image instead.", toastCameraDenied:"Camera permission isn't available (opening the file directly may restrict camera access). Try uploading an image instead.", toastImageNoQR:"No QR code found in the image. Try a different image." },
-  zh: { hdrPageTitle:"未中奖彩票优惠利率", hdrTitle:"唯一一家连未中奖也有回馈的银行", hdrSub:"扫一次QR即可享受存款优惠利率", btnCamera:"用相机扫描", btnCameraStop:"关闭相机", btnUpload:"上传图片", btnSampleScan:"演示：注册一个QR", formatNote:"* 实际彩票QR码并不包含中奖信息，只是链接到彩票官方验证网站的地址。扫描后会保存该地址，之后可随时点击前往官网自行确认。", rateTitle:"优惠利率积累说明", rateRow1:"登记1张未中奖彩票", rateRow2:"每月登记5张以上", rateRow3:"最高适用额度", ticketsTitle:"我的未中奖彩票保管箱", emptyText:"尚未登记未中奖彩票", ticketLinkLabel:"🔗 查看验证地址", expiryNote:"* 登记30天后将自动删除", ctaBranch:"前往网点领取优惠利率 ›", badgeNote:"* 相机/图片使用真实jsQR识别QR码。网点实时联动为开发中功能。", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战", scanMsgDefault:"请扫描未中奖彩票的QR码", scanSubDefault:"将彩票下方的QR码对准相机", scanMsgActive:"请将相机对准QR码", scanSubActive:"将自动识别", ticketCount:n=>`已登记${n}张`, ticketDate:date=>`${date} 登记`, daysLeft:n=>`D-${n}后删除`, toastRegistered:"未中奖彩票已登记。随时点击即可前往官网确认。", toastDuplicate:"该QR已登记过了", toastParseFail:"无法识别QR码，请重试。", toastCameraUnavailable:"此浏览器/环境无法使用相机。请尝试上传图片。", toastCameraDenied:"无法使用相机权限(直接以文件打开时相机可能受限)。请尝试上传图片。", toastImageNoQR:"未在图片中找到QR码。请尝试其他图片。" },
-  vi: { hdrPageTitle:"Lãi suất ưu đãi cho vé không trúng", hdrTitle:"Ngân hàng duy nhất thưởng cho cả vé không trúng", hdrSub:"Chỉ cần quét QR một lần để nhận lãi suất ưu đãi", btnCamera:"Quét bằng camera", btnCameraStop:"Tắt camera", btnUpload:"Tải ảnh lên", btnSampleScan:"Demo: Đăng ký một QR", formatNote:"* Mã QR vé số thật không chứa thông tin trúng/không trúng — đó chỉ là liên kết đến trang xác minh của xổ số. Quét mã sẽ lưu lại địa chỉ đó để bạn mở ra kiểm tra bất cứ lúc nào.", rateTitle:"Hướng dẫn tích lũy lãi suất ưu đãi", rateRow1:"Đăng ký 1 vé không trúng", rateRow2:"Đăng ký từ 5 vé/tháng", rateRow3:"Mức áp dụng tối đa", ticketsTitle:"Kho vé không trúng của tôi", emptyText:"Chưa có vé không trúng nào được đăng ký", ticketLinkLabel:"🔗 Xem liên kết xác minh", expiryNote:"* Mục đăng ký sẽ tự động xóa sau 30 ngày", ctaBranch:"Đến chi nhánh để nhận lãi suất ưu đãi ›", badgeNote:"* Nhận diện QR qua camera/ảnh dùng jsQR thật. Liên kết chi nhánh theo thời gian thực là tính năng sắp ra mắt.", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3", scanMsgDefault:"Quét mã QR trên vé không trúng", scanSubDefault:"Hướng camera vào mã QR ở dưới vé", scanMsgActive:"Hướng camera vào mã QR", scanSubActive:"Sẽ tự động nhận diện", ticketCount:n=>`Đã đăng ký ${n} vé`, ticketDate:date=>`Đăng ký ${date}`, daysLeft:n=>`Xóa sau D-${n}`, toastRegistered:"Đã đăng ký vé không trúng. Nhấn vào bất cứ lúc nào để xác minh trên trang xổ số.", toastDuplicate:"Mã QR này đã được đăng ký", toastParseFail:"Không nhận diện được mã QR. Vui lòng thử lại.", toastCameraUnavailable:"Trình duyệt/môi trường này không hỗ trợ camera. Hãy thử tải ảnh lên.", toastCameraDenied:"Không có quyền dùng camera (mở trực tiếp bằng file có thể bị giới hạn camera). Hãy thử tải ảnh lên.", toastImageNoQR:"Không tìm thấy mã QR trong ảnh. Hãy thử ảnh khác." },
-  th: { hdrPageTitle:"ดอกเบี้ยพิเศษสำหรับสลากไม่ถูกรางวัล", hdrTitle:"ธนาคารเดียวที่ให้สิทธิประโยชน์แม้ไม่ถูกรางวัล", hdrSub:"สแกน QR เพียงครั้งเดียวรับดอกเบี้ยเงินฝากพิเศษ", btnCamera:"สแกนด้วยกล้อง", btnCameraStop:"ปิดกล้อง", btnUpload:"อัปโหลดรูปภาพ", btnSampleScan:"เดโม: ลงทะเบียน QR", formatNote:"* QR โค้ดสลากจริงไม่มีข้อมูลถูก/ไม่ถูกรางวัล เป็นเพียงลิงก์ไปยังเว็บไซต์ตรวจสอบของสลากเท่านั้น การสแกนจะบันทึกที่อยู่นี้ไว้ให้กดเข้าไปตรวจสอบเองได้ทุกเมื่อ", rateTitle:"คำแนะนำการสะสมดอกเบี้ยพิเศษ", rateRow1:"ลงทะเบียนสลากไม่ถูกรางวัล 1 ใบ", rateRow2:"ลงทะเบียนตั้งแต่ 5 ใบ/เดือน", rateRow3:"เพดานสูงสุดที่ใช้ได้", ticketsTitle:"ตู้เก็บสลากไม่ถูกรางวัลของฉัน", emptyText:"ยังไม่มีสลากไม่ถูกรางวัลที่ลงทะเบียน", ticketLinkLabel:"🔗 ดูลิงก์ยืนยัน", expiryNote:"* รายการจะถูกลบอัตโนมัติหลังลงทะเบียนครบ 30 วัน", ctaBranch:"ไปที่สาขาเพื่อรับดอกเบี้ยพิเศษ ›", badgeNote:"* การจดจำ QR จากกล้อง/รูปภาพใช้ jsQR จริง การเชื่อมต่อสาขาแบบเรียลไทม์เป็นฟีเจอร์ที่กำลังพัฒนา", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3", scanMsgDefault:"สแกน QR โค้ดของสลากที่ไม่ถูกรางวัล", scanSubDefault:"ส่องกล้องไปที่ QR โค้ดด้านล่างสลาก", scanMsgActive:"ส่องกล้องไปที่ QR โค้ด", scanSubActive:"ระบบจะจดจำโดยอัตโนมัติ", ticketCount:n=>`ลงทะเบียนแล้ว ${n} ใบ`, ticketDate:date=>`ลงทะเบียนเมื่อ ${date}`, daysLeft:n=>`ลบใน D-${n}`, toastRegistered:"ลงทะเบียนสลากไม่ถูกรางวัลแล้ว กดดูได้ทุกเมื่อเพื่อยืนยันบนเว็บไซต์สลาก", toastDuplicate:"QR นี้ลงทะเบียนไปแล้ว", toastParseFail:"ไม่สามารถจดจำ QR โค้ดได้ กรุณาลองใหม่", toastCameraUnavailable:"เบราว์เซอร์/สภาพแวดล้อมนี้ใช้กล้องไม่ได้ ลองอัปโหลดรูปภาพแทน", toastCameraDenied:"ไม่สามารถใช้สิทธิ์กล้องได้ (การเปิดไฟล์โดยตรงอาจจำกัดการใช้กล้อง) ลองอัปโหลดรูปภาพแทน", toastImageNoQR:"ไม่พบ QR โค้ดในรูปภาพ ลองรูปภาพอื่น" },
-  uz: { hdrPageTitle:"Yutmagan chipta uchun imtiyozli foiz", hdrTitle:"Yutmasangiz ham mukofotlaydigan yagona bank", hdrSub:"Bir marta QR skanerlab omonat imtiyozli foizini oling", btnCamera:"Kamera bilan skanerlash", btnCameraStop:"Kamerani o'chirish", btnUpload:"Rasm yuklash", btnSampleScan:"Demo: QR ro'yxatdan o'tkazish", formatNote:"* Haqiqiy lotereya chiptasining QR kodi yutuq/yutmaslik haqida maʼlumot saqlamaydi — u faqat lotereyaning tekshirish saytiga havola. Skanerlash shu manzilni saqlab qoladi, keyin istalgan vaqtda bosib oʻzingiz tekshirishingiz mumkin.", rateTitle:"Imtiyozli foiz toʻplash qoʻllanmasi", rateRow1:"1 ta yutmagan chiptani ro'yxatdan o'tkazish", rateRow2:"Oyiga 5+ chipta ro'yxatdan o'tkazilsa", rateRow3:"Maksimal qoʻllaniladigan chegara", ticketsTitle:"Mening yutmagan chiptalarim ombori", emptyText:"Hali ro'yxatdan o'tgan yutmagan chipta yo'q", ticketLinkLabel:"🔗 Tasdiqlash havolasini ko'rish", expiryNote:"* Ro'yxatga olingandan 30 kun o'tgach avtomatik o'chiriladi", ctaBranch:"Imtiyozli foiz olish uchun filialga boring ›", badgeNote:"* Kamera/rasmda QR haqiqiy jsQR bilan aniqlanadi. Filial bilan real vaqtli integratsiya rejalashtirilgan.", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot", scanMsgDefault:"Yutmagan chiptangizning QR kodini skanerlang", scanSubDefault:"Kamerani chiptaning pastidagi QR kodga qarating", scanMsgActive:"Kamerani QR kodga qarating", scanSubActive:"Avtomatik aniqlanadi", ticketCount:n=>`${n} ta ro'yxatdan o'tgan`, ticketDate:date=>`${date} da ro'yxatdan o'tgan`, daysLeft:n=>`D-${n} dan keyin o'chadi`, toastRegistered:"Yutmagan chipta ro'yxatga olindi. Istalgan vaqtda bosib lotereya saytida tekshiring.", toastDuplicate:"Bu QR allaqachon ro'yxatdan o'tgan", toastParseFail:"QR kodni aniqlab bo'lmadi. Qayta urinib ko'ring.", toastCameraUnavailable:"Bu brauzer/muhitda kameradan foydalanib bo'lmaydi. Rasm yuklashni sinab ko'ring.", toastCameraDenied:"Kamera ruxsati mavjud emas (faylni to'g'ridan-to'g'ri ochish kamerani cheklashi mumkin). Rasm yuklashni sinab ko'ring.", toastImageNoQR:"Rasmda QR kod topilmadi. Boshqa rasmni sinab ko'ring." },
+  ko: { chatbotLabel:"세금상담 AI챗봇", chatbotPlaceholder:"세금상담 AI챗봇을 연결할 자리예요<br>챗봇 주소가 준비되면 이 화면에 바로 열립니다", hdrPageTitle:"낙첨복권 우대금리", hdrTitle:"낙첨 복권도 그냥 버리지 마세요", hdrSub:"QR 스캔 한 번으로 예·적금 우대금리 적용", btnCamera:"카메라로 스캔", btnCameraStop:"카메라 끄기", btnUpload:"이미지 업로드", btnSampleScan:"데모: QR 등록해보기", formatNote:"* 실제 동행복권 QR은 당첨 여부 정보를 담고 있지 않고 동행복권 인증 사이트로 연결되는 주소예요. 스캔하면 그 주소를 저장해두고, 나중에 눌러서 동행복권 사이트에서 직접 확인할 수 있어요.", rateTitle:"우대금리 적립 안내", rateRow1:"1~4장 등록", rateRow2:"5~14장 등록", rateRow3:"15장 이상 등록", ticketsTitle:"내 낙첨복권 보관함", emptyText:"아직 등록된 낙첨복권이 없어요", ticketLinkLabel:"🔗 인증 주소 확인하기", expiryNote:"* 등록 후 30일이 지나면 자동으로 삭제돼요", ctaBranch:"영업점 방문해서 우대금리 받기 ›", badgeNote:"* 카메라/이미지에서 실제 jsQR로 QR 코드를 인식합니다. 영업점 실시간 연동은 개발 예정 기능입니다", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지", scanMsgDefault:"낙첨 복권 QR코드를 스캔하세요", scanSubDefault:"복권 하단의 QR 코드를 카메라에 비춰주세요", scanMsgActive:"카메라를 QR코드에 비춰주세요", scanSubActive:"자동으로 인식됩니다", ticketCount:n=>`${n}장 등록됨`, ticketDate:date=>`${date} 등록`, daysLeft:n=>`D-${n} 후 삭제`, toastRegistered:"낙첨복권이 등록되었어요. 언제든 눌러서 동행복권 사이트에서 확인할 수 있어요", toastDuplicate:"이미 등록된 QR이에요", toastParseFail:"QR 코드를 인식하지 못했어요. 다시 시도해주세요.", toastCameraUnavailable:"이 브라우저/환경에서는 카메라를 사용할 수 없어요. 이미지 업로드로 테스트해보세요.", toastCameraDenied:"카메라 권한을 사용할 수 없어요 (파일로 직접 열었다면 카메라가 제한될 수 있어요). 이미지 업로드로 테스트해보세요.", toastImageNoQR:"이미지에서 QR 코드를 찾지 못했어요. 다른 이미지를 시도해보세요." },
+  en: { chatbotLabel:"Tax Advice AI Chatbot", chatbotPlaceholder:"This is where the tax advice chatbot will live<br>It will open right here once the URL is ready", hdrPageTitle:"Bonus Rate for Losing Tickets", hdrTitle:"Don't just throw losing tickets away", hdrSub:"One QR scan applies a deposit rate bonus", btnCamera:"Scan with Camera", btnCameraStop:"Stop Camera", btnUpload:"Upload Image", btnSampleScan:"Demo: Register a QR", formatNote:"* A real lottery ticket QR doesn't contain win/lose info — it's just a link to the lottery's own verification site. Scanning saves that address so you can open it anytime to check for yourself.", rateTitle:"Bonus Rate Guide", rateRow1:"1-4 tickets registered", rateRow2:"5-14 tickets registered", rateRow3:"15+ tickets registered", ticketsTitle:"My Losing Ticket Locker", emptyText:"No losing tickets registered yet", ticketLinkLabel:"🔗 View verification link", expiryNote:"* Entries are automatically deleted 30 days after registration", ctaBranch:"Visit a branch to get the bonus rate ›", badgeNote:"* Camera/image QR recognition runs on real jsQR. Real-time branch integration is a planned feature.", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize", scanMsgDefault:"Scan your losing ticket's QR code", scanSubDefault:"Point your camera at the QR code on the ticket", scanMsgActive:"Point the camera at the QR code", scanSubActive:"It will be recognized automatically", ticketCount:n=>`${n} registered`, ticketDate:date=>`Registered ${date}`, daysLeft:n=>`Deletes in D-${n}`, toastRegistered:"Losing ticket registered. Tap it anytime to verify on the lottery site.", toastDuplicate:"This QR is already registered", toastParseFail:"Couldn't recognize the QR code. Please try again.", toastCameraUnavailable:"Camera isn't available in this browser/environment. Try uploading an image instead.", toastCameraDenied:"Camera permission isn't available (opening the file directly may restrict camera access). Try uploading an image instead.", toastImageNoQR:"No QR code found in the image. Try a different image." },
+  zh: { chatbotLabel:"税务咨询AI聊天机器人", chatbotPlaceholder:"此处将接入税务咨询AI聊天机器人<br>地址准备好后将直接在此打开", hdrPageTitle:"未中奖彩票优惠利率", hdrTitle:"未中奖彩票也别随手扔掉", hdrSub:"扫一次QR即可享受存款优惠利率", btnCamera:"用相机扫描", btnCameraStop:"关闭相机", btnUpload:"上传图片", btnSampleScan:"演示：注册一个QR", formatNote:"* 实际彩票QR码并不包含中奖信息，只是链接到彩票官方验证网站的地址。扫描后会保存该地址，之后可随时点击前往官网自行确认。", rateTitle:"优惠利率积累说明", rateRow1:"登记1~4张", rateRow2:"登记5~14张", rateRow3:"登记15张以上", ticketsTitle:"我的未中奖彩票保管箱", emptyText:"尚未登记未中奖彩票", ticketLinkLabel:"🔗 查看验证地址", expiryNote:"* 登记30天后将自动删除", ctaBranch:"前往网点领取优惠利率 ›", badgeNote:"* 相机/图片使用真实jsQR识别QR码。网点实时联动为开发中功能。", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战", scanMsgDefault:"请扫描未中奖彩票的QR码", scanSubDefault:"将彩票下方的QR码对准相机", scanMsgActive:"请将相机对准QR码", scanSubActive:"将自动识别", ticketCount:n=>`已登记${n}张`, ticketDate:date=>`${date} 登记`, daysLeft:n=>`D-${n}后删除`, toastRegistered:"未中奖彩票已登记。随时点击即可前往官网确认。", toastDuplicate:"该QR已登记过了", toastParseFail:"无法识别QR码，请重试。", toastCameraUnavailable:"此浏览器/环境无法使用相机。请尝试上传图片。", toastCameraDenied:"无法使用相机权限(直接以文件打开时相机可能受限)。请尝试上传图片。", toastImageNoQR:"未在图片中找到QR码。请尝试其他图片。" },
+  vi: { chatbotLabel:"Chatbot AI tư vấn thuế", chatbotPlaceholder:"Đây là nơi chatbot tư vấn thuế sẽ hiển thị<br>Sẽ mở ngay tại đây khi có đường dẫn", hdrPageTitle:"Lãi suất ưu đãi cho vé không trúng", hdrTitle:"Đừng vứt vé không trúng đi", hdrSub:"Chỉ cần quét QR một lần để nhận lãi suất ưu đãi", btnCamera:"Quét bằng camera", btnCameraStop:"Tắt camera", btnUpload:"Tải ảnh lên", btnSampleScan:"Demo: Đăng ký một QR", formatNote:"* Mã QR vé số thật không chứa thông tin trúng/không trúng — đó chỉ là liên kết đến trang xác minh của xổ số. Quét mã sẽ lưu lại địa chỉ đó để bạn mở ra kiểm tra bất cứ lúc nào.", rateTitle:"Hướng dẫn tích lũy lãi suất ưu đãi", rateRow1:"Đăng ký 1-4 vé", rateRow2:"Đăng ký 5-14 vé", rateRow3:"Đăng ký từ 15 vé", ticketsTitle:"Kho vé không trúng của tôi", emptyText:"Chưa có vé không trúng nào được đăng ký", ticketLinkLabel:"🔗 Xem liên kết xác minh", expiryNote:"* Mục đăng ký sẽ tự động xóa sau 30 ngày", ctaBranch:"Đến chi nhánh để nhận lãi suất ưu đãi ›", badgeNote:"* Nhận diện QR qua camera/ảnh dùng jsQR thật. Liên kết chi nhánh theo thời gian thực là tính năng sắp ra mắt.", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3", scanMsgDefault:"Quét mã QR trên vé không trúng", scanSubDefault:"Hướng camera vào mã QR ở dưới vé", scanMsgActive:"Hướng camera vào mã QR", scanSubActive:"Sẽ tự động nhận diện", ticketCount:n=>`Đã đăng ký ${n} vé`, ticketDate:date=>`Đăng ký ${date}`, daysLeft:n=>`Xóa sau D-${n}`, toastRegistered:"Đã đăng ký vé không trúng. Nhấn vào bất cứ lúc nào để xác minh trên trang xổ số.", toastDuplicate:"Mã QR này đã được đăng ký", toastParseFail:"Không nhận diện được mã QR. Vui lòng thử lại.", toastCameraUnavailable:"Trình duyệt/môi trường này không hỗ trợ camera. Hãy thử tải ảnh lên.", toastCameraDenied:"Không có quyền dùng camera (mở trực tiếp bằng file có thể bị giới hạn camera). Hãy thử tải ảnh lên.", toastImageNoQR:"Không tìm thấy mã QR trong ảnh. Hãy thử ảnh khác." },
+  th: { chatbotLabel:"แชทบอท AI ปรึกษาภาษี", chatbotPlaceholder:"ตรงนี้จะเป็นที่อยู่ของแชทบอทปรึกษาภาษี<br>จะเปิดที่นี่ทันทีเมื่อมีลิงก์พร้อม", hdrPageTitle:"ดอกเบี้ยพิเศษสำหรับสลากไม่ถูกรางวัล", hdrTitle:"อย่าเพิ่งทิ้งสลากที่ไม่ถูกรางวัล", hdrSub:"สแกน QR เพียงครั้งเดียวรับดอกเบี้ยเงินฝากพิเศษ", btnCamera:"สแกนด้วยกล้อง", btnCameraStop:"ปิดกล้อง", btnUpload:"อัปโหลดรูปภาพ", btnSampleScan:"เดโม: ลงทะเบียน QR", formatNote:"* QR โค้ดสลากจริงไม่มีข้อมูลถูก/ไม่ถูกรางวัล เป็นเพียงลิงก์ไปยังเว็บไซต์ตรวจสอบของสลากเท่านั้น การสแกนจะบันทึกที่อยู่นี้ไว้ให้กดเข้าไปตรวจสอบเองได้ทุกเมื่อ", rateTitle:"คำแนะนำการสะสมดอกเบี้ยพิเศษ", rateRow1:"ลงทะเบียน 1-4 ใบ", rateRow2:"ลงทะเบียน 5-14 ใบ", rateRow3:"ลงทะเบียน 15 ใบขึ้นไป", ticketsTitle:"ตู้เก็บสลากไม่ถูกรางวัลของฉัน", emptyText:"ยังไม่มีสลากไม่ถูกรางวัลที่ลงทะเบียน", ticketLinkLabel:"🔗 ดูลิงก์ยืนยัน", expiryNote:"* รายการจะถูกลบอัตโนมัติหลังลงทะเบียนครบ 30 วัน", ctaBranch:"ไปที่สาขาเพื่อรับดอกเบี้ยพิเศษ ›", badgeNote:"* การจดจำ QR จากกล้อง/รูปภาพใช้ jsQR จริง การเชื่อมต่อสาขาแบบเรียลไทม์เป็นฟีเจอร์ที่กำลังพัฒนา", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3", scanMsgDefault:"สแกน QR โค้ดของสลากที่ไม่ถูกรางวัล", scanSubDefault:"ส่องกล้องไปที่ QR โค้ดด้านล่างสลาก", scanMsgActive:"ส่องกล้องไปที่ QR โค้ด", scanSubActive:"ระบบจะจดจำโดยอัตโนมัติ", ticketCount:n=>`ลงทะเบียนแล้ว ${n} ใบ`, ticketDate:date=>`ลงทะเบียนเมื่อ ${date}`, daysLeft:n=>`ลบใน D-${n}`, toastRegistered:"ลงทะเบียนสลากไม่ถูกรางวัลแล้ว กดดูได้ทุกเมื่อเพื่อยืนยันบนเว็บไซต์สลาก", toastDuplicate:"QR นี้ลงทะเบียนไปแล้ว", toastParseFail:"ไม่สามารถจดจำ QR โค้ดได้ กรุณาลองใหม่", toastCameraUnavailable:"เบราว์เซอร์/สภาพแวดล้อมนี้ใช้กล้องไม่ได้ ลองอัปโหลดรูปภาพแทน", toastCameraDenied:"ไม่สามารถใช้สิทธิ์กล้องได้ (การเปิดไฟล์โดยตรงอาจจำกัดการใช้กล้อง) ลองอัปโหลดรูปภาพแทน", toastImageNoQR:"ไม่พบ QR โค้ดในรูปภาพ ลองรูปภาพอื่น" },
+  uz: { chatbotLabel:"Soliq bo‘yicha AI chatbot", chatbotPlaceholder:"Bu yerda soliq bo‘yicha AI chatbot ochiladi<br>Manzil tayyor bo‘lgach shu yerda ishga tushadi", hdrPageTitle:"Yutmagan chipta uchun imtiyozli foiz", hdrTitle:"Yutmagan chiptani tashlab yubormang", hdrSub:"Bir marta QR skanerlab omonat imtiyozli foizini oling", btnCamera:"Kamera bilan skanerlash", btnCameraStop:"Kamerani o'chirish", btnUpload:"Rasm yuklash", btnSampleScan:"Demo: QR ro'yxatdan o'tkazish", formatNote:"* Haqiqiy lotereya chiptasining QR kodi yutuq/yutmaslik haqida maʼlumot saqlamaydi — u faqat lotereyaning tekshirish saytiga havola. Skanerlash shu manzilni saqlab qoladi, keyin istalgan vaqtda bosib oʻzingiz tekshirishingiz mumkin.", rateTitle:"Imtiyozli foiz toʻplash qoʻllanmasi", rateRow1:"1-4 ta chipta", rateRow2:"5-14 ta chipta", rateRow3:"15 tadan ortiq chipta", ticketsTitle:"Mening yutmagan chiptalarim ombori", emptyText:"Hali ro'yxatdan o'tgan yutmagan chipta yo'q", ticketLinkLabel:"🔗 Tasdiqlash havolasini ko'rish", expiryNote:"* Ro'yxatga olingandan 30 kun o'tgach avtomatik o'chiriladi", ctaBranch:"Imtiyozli foiz olish uchun filialga boring ›", badgeNote:"* Kamera/rasmda QR haqiqiy jsQR bilan aniqlanadi. Filial bilan real vaqtli integratsiya rejalashtirilgan.", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot", scanMsgDefault:"Yutmagan chiptangizning QR kodini skanerlang", scanSubDefault:"Kamerani chiptaning pastidagi QR kodga qarating", scanMsgActive:"Kamerani QR kodga qarating", scanSubActive:"Avtomatik aniqlanadi", ticketCount:n=>`${n} ta ro'yxatdan o'tgan`, ticketDate:date=>`${date} da ro'yxatdan o'tgan`, daysLeft:n=>`D-${n} dan keyin o'chadi`, toastRegistered:"Yutmagan chipta ro'yxatga olindi. Istalgan vaqtda bosib lotereya saytida tekshiring.", toastDuplicate:"Bu QR allaqachon ro'yxatdan o'tgan", toastParseFail:"QR kodni aniqlab bo'lmadi. Qayta urinib ko'ring.", toastCameraUnavailable:"Bu brauzer/muhitda kameradan foydalanib bo'lmaydi. Rasm yuklashni sinab ko'ring.", toastCameraDenied:"Kamera ruxsati mavjud emas (faylni to'g'ridan-to'g'ri ochish kamerani cheklashi mumkin). Rasm yuklashni sinab ko'ring.", toastImageNoQR:"Rasmda QR kod topilmadi. Boshqa rasmni sinab ko'ring." },
 };
 function currentDict(){
   const lang = localStorage.getItem('nh_lang') || 'ko';
@@ -10567,6 +10629,45 @@ window.addEventListener('beforeunload', stopCamera);
 
 renderTickets();
 applyI18n();
+</script>
+
+
+<script>
+/* ===== 세금상담 AI챗봇 =====
+   챗봇 자체는 별도로 구현해 붙일 예정이라, 아래 주소만 채우면 바로 연결된다.
+   비어 있으면 안내 문구를 대신 보여준다. */
+const CHATBOT_URL = '';
+(function(){
+  function chatT(key, fallback){
+    try {
+      const lang = localStorage.getItem('nh_lang') || 'ko';
+      const dict = (typeof I18N !== 'undefined' && (I18N[lang] || I18N.ko)) || {};
+      return dict[key] || fallback;
+    } catch(e) { return fallback; }
+  }
+
+  const overlay = document.getElementById('chatOverlay');
+  const body = document.getElementById('chatBody');
+  let loaded = false;
+
+  function openChat(){
+    if(!loaded){
+      const label = chatT('chatbotLabel', '세금상담 AI챗봇');
+      body.innerHTML = CHATBOT_URL
+        ? '<iframe src="' + CHATBOT_URL + '" title="' + label + '"></iframe>'
+        : '<div class="chat-placeholder"><span class="ico">💬</span>' +
+          chatT('chatbotPlaceholder', '세금상담 AI챗봇을 연결할 자리예요') + '</div>';
+      loaded = true;
+    }
+    overlay.classList.add('show');
+  }
+  function closeChat(){ overlay.classList.remove('show'); }
+
+  document.getElementById('chatFab').addEventListener('click', openChat);
+  document.getElementById('chatClose').addEventListener('click', closeChat);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeChat(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeChat(); });
+})();
 </script>
 
 </body>

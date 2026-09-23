@@ -138,8 +138,15 @@ Supabase 실제 구축(계정·프로젝트 생성) 전에, **이 Claude Code �
 **이후 완료됨 (2026-09-23)**: `nh_luckymate_spots.html`의 Supabase 실연동, GitHub 저장소 생성·푸시, GitHub Pages 배포까지 전부 완료.
 배포 주소: **https://qwyash-sys.github.io/nh-luckymate/**
 
-**유일하게 남은 것**: GitHub Actions **Secrets 2개 등록**(`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`).
-워크플로 파일(`.github/workflows/crawl-winning-shops.yml`)은 이미 올라가 있으나 Secrets가 없어 **한 번도 실행된 적 없음**.
+**2026-09-23 최종 완료**: GitHub Actions Secrets 등록 후 워크플로를 수동 실행해 **백엔드까지 실제 동작 확인**.
+
+- 결과: 수집 회차 100 → **101개**(1242회차 추가), 판매점 4,641 → **4,667곳**(신규 26곳). 1242회 배출 판매점 105곳 정상 수집
+- **증분 수집 검증됨**: 100회차를 다시 긁지 않고 이미 있는 회차는 건너뛴 뒤 새로 열린 1회차만 수집함
+- 이후 **매주 월요일 오전 10시(KST) 자동 실행**되며, 이 접근 덕분에 Supabase가 미사용으로 pause되는 일도 방지됨
+
+**Secrets 등록 시 주의(실제로 겪음)**: 219자짜리 service_role key를 터미널 화면에서 마우스로 긁어 복사하면
+줄이 접히는 위치에 개행이 섞여 들어가 `Headers.append: invalid header value`로 모든 쓰기가 실패한다.
+`grep ... | tr -d '[:space:]' | pbcopy`처럼 클립보드로 직접 넣을 것. 현재는 클라이언트에서도 공백·개행을 제거한다.
 
 4. **백엔드 후보(장기)**: 실제 서비스로 갈 경우엔 PostGIS(위치 쿼리)와 관계형 집계를 함께 쓰기 좋은 **Supabase(Postgres 기반)**가 Firebase보다 적합 — Firestore는 지리공간 쿼리를 geohash로 직접 구현해야 해서 번거로움. 지금 프로토타입 단계는 위 로컬 JSON으로 충분해서 굳이 급하게 옮기지 않음.
 5. **실행 위치**: 회차별 순회 호출과 집계는 브라우저가 아니라 위 Node 스크립트(로컬 실행 또는 향후 서버/스케줄러)에서 수행하고, 화면은 그 결과 파일/DB를 읽기만 하면 됨.

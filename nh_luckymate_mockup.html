@@ -10669,6 +10669,14 @@ function renderResult(){
   const descEl = document.getElementById('resultDescVal');
   const amtEl = document.getElementById('resultAmountVal');
 
+  // 당첨번호가 아직 안 왔는데 먼저 번호를 고를 수 있으므로, 채점은 데이터가 온 뒤에 한다
+  if(!draw){
+    rankEl.textContent = t('resultLabel');
+    descEl.textContent = t('loadingText');
+    amtEl.textContent = '';
+    return;
+  }
+
   if(selectedBalls.length === 0){
     rankEl.textContent = t('resultLabel');
     descEl.textContent = t('resultPlaceholder');

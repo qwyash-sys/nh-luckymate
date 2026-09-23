@@ -121,17 +121,37 @@ function upsertShop(db, item) {
   }
 }
 
+/**
+ * 동행복권 서버가 응답까지 7초 이상 걸리거나 아예 connect가 타임아웃되는 일이 잦다.
+ * 한 번 실패했다고 실행 전체를 포기하면 주간 자동 수집이 그 주를 통째로 건너뛰므로,
+ * 간격을 늘려가며 몇 번 더 시도한다.
+ */
+async function fetchWithRetry(url, attempts = 3) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      lastErr = e;
+      if (i < attempts - 1) {
+        const wait = 3000 * (i + 1);
+        console.warn(`[crawl] 요청 실패(${i + 1}/${attempts}): ${e.message} — ${wait / 1000}초 후 재시도`);
+        await sleep(wait);
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function fetchLatestRound() {
-  const res = await fetch(EPSD_INFO_URL);
-  if (!res.ok) throw new Error(`최신 회차 조회 실패: HTTP ${res.status}`);
-  const json = await res.json();
+  const json = await fetchWithRetry(EPSD_INFO_URL);
   return json.data.list[0].ltEpsd;
 }
 
 async function fetchShopsForRound(round) {
-  const res = await fetch(shopUrl(round));
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = await res.json();
+  const json = await fetchWithRetry(shopUrl(round));
   if (!json.data) return null; // "조회할 수 없는 회차입니다" 등
   return json.data.list || [];
 }

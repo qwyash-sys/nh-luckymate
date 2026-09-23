@@ -174,12 +174,18 @@ async function main() {
   // GitHub Actions처럼 매번 새로 체크아웃되는 환경에서는 로컬 파일이 비어있으므로,
   // 이 조회가 없으면 매번 전체를 다시 긁으려 들게 된다.
   if (supabaseOn) {
+    // Supabase에 저장할 의도로 실행했는데 접속이 안 되는 상태라면 여기서 멈춘다.
+    // 그냥 진행하면 (1) 이미 수집한 회차를 다시 긁어 동행복권에 불필요한 부하를 주고,
+    // (2) 어차피 저장도 안 되므로 100회차를 헛돌게 된다.
     try {
       const remoteRounds = await fetchCrawledRounds();
       remoteRounds.forEach((r) => already.add(r));
       console.log(`[crawl] Supabase에서 이미 수집된 회차 ${remoteRounds.length}개 확인함`);
     } catch (e) {
-      console.warn(`[crawl] Supabase 회차 목록 조회 실패, 로컬 기록만으로 판단합니다: ${e.message}`);
+      console.error(`[crawl] Supabase 접속 실패로 중단합니다: ${e.message}`);
+      console.error('[crawl] SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY 값을 확인하세요.');
+      console.error('[crawl] (키를 복사·붙여넣기 할 때 줄바꿈이나 공백이 섞이면 이 오류가 납니다)');
+      process.exit(1);
     }
   }
 

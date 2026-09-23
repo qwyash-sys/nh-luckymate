@@ -29,9 +29,20 @@ function loadEnv() {
 }
 
 export const env = loadEnv();
-export const SUPABASE_URL = env.SUPABASE_URL;
-export const SUPABASE_SERVICE_ROLE_KEY = env.SUPABASE_SERVICE_ROLE_KEY;
-export const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY;
+
+/**
+ * 자격증명에서 모든 공백·줄바꿈을 제거한다.
+ * JWT와 URL에는 원래 공백이 없는데, 긴 키를 터미널이나 웹 입력창에서 복사·붙여넣기 하면
+ * 줄이 접히는 위치에 개행이 섞여 들어오는 일이 잦다. 그 상태로 HTTP 헤더에 넣으면
+ * "invalid header value"로 요청 자체가 실패한다.
+ */
+function clean(v) {
+  return v === undefined ? undefined : v.replace(/\s/g, '');
+}
+
+export const SUPABASE_URL = clean(env.SUPABASE_URL);
+export const SUPABASE_SERVICE_ROLE_KEY = clean(env.SUPABASE_SERVICE_ROLE_KEY);
+export const SUPABASE_ANON_KEY = clean(env.SUPABASE_ANON_KEY);
 
 export function isSupabaseConfigured() {
   return Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);

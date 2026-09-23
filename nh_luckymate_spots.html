@@ -52,7 +52,8 @@
   }
   .header .top .back { font-size:18px; }
   .header .top .title { font-size:16px; font-weight:700; }
-  .header .top .dots { font-size:17px; line-height:1; }
+  .header .top .dots { display:flex; align-items:center; color:#fff; opacity:0.92; }
+  .header .top .dots svg { width:20px; height:20px; display:block; }
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
@@ -169,7 +170,7 @@
     <div class="top">
       <a class="back" href="nh_luckymate_mockup.html">‹</a>
       <span class="title" data-i18n="hdrPageTitle">내 근처 로또 명당</span>
-      <a class="dots" href="nh_luckymate_language.html" title="언어 설정">🌐</a>
+      <a class="dots" href="nh_luckymate_language.html" aria-label="언어 설정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 9h17.6M3.2 15h17.6"/><path d="M12 3c2.4 2.4 3.6 5.4 3.6 9s-1.2 6.6-3.6 9c-2.4-2.4-3.6-5.4-3.6-9S9.6 5.4 12 3z"/></svg></a>
     </div>
     <div class="sub">
       <span data-i18n="hdrTitle">1등 당첨 판매점이 여기 있어요</span>

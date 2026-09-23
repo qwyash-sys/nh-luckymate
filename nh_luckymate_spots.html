@@ -21,6 +21,7 @@
     --border-light: #eee;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
+  button { all:unset; box-sizing:border-box; cursor:pointer; }
   body {
     font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
     background: var(--bg-page);
@@ -51,7 +52,7 @@
   }
   .header .top .back { font-size:18px; }
   .header .top .title { font-size:16px; font-weight:700; }
-  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .top .dots { font-size:17px; line-height:1; }
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
@@ -116,6 +117,32 @@
 
   .status-text { text-align:center; font-size:12px; color:var(--text-mute); padding:20px 0; }
 
+  .filter-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .filter-label { font-size:11.5px; font-weight:700; color:var(--text-sub); }
+  .range-select-wrap { position:relative; display:inline-flex; align-items:center; }
+  select.range-select {
+    appearance:none; -webkit-appearance:none; border:none;
+    font-size:11.5px; color:var(--primary); font-weight:700;
+    background:var(--primary-light); padding:5px 22px 5px 11px; border-radius:20px; cursor:pointer;
+  }
+  .range-select-wrap .range-arrow {
+    position:absolute; right:9px; pointer-events:none; font-size:9px; color:var(--primary);
+  }
+
+  .subseg { display:flex; gap:6px; margin-bottom:12px; }
+  .subseg button {
+    flex:1; text-align:center; padding:7px 0; border-radius:20px;
+    font-size:11.5px; font-weight:700; color:var(--text-mute);
+    background:var(--bg-card); border:1px solid var(--border-light);
+  }
+  .subseg button.active { background:var(--primary-light); color:var(--primary-dark); border-color:var(--primary-border); }
+
+  .btn-more {
+    display:block; width:100%; text-align:center; margin-bottom:14px;
+    font-size:12.5px; font-weight:700; color:var(--primary-dark);
+    background:var(--bg-card); border:1px solid var(--primary-border); border-radius:12px; padding:11px;
+  }
+
   .cta {
     display:block;
     margin-top: 4px; background:var(--primary); color:#fff; text-align:center;
@@ -142,7 +169,7 @@
     <div class="top">
       <a class="back" href="nh_luckymate_mockup.html">‹</a>
       <span class="title" data-i18n="hdrPageTitle">내 근처 로또 명당</span>
-      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+      <a class="dots" href="nh_luckymate_language.html" title="언어 설정">🌐</a>
     </div>
     <div class="sub">
       <span data-i18n="hdrTitle">1등 당첨 판매점이 여기 있어요</span>
@@ -160,13 +187,28 @@
       <div class="me"></div>
     </div>
 
+    <div class="filter-row">
+      <span class="filter-label" data-i18n="radiusLabel">검색 반경</span>
+      <div class="range-select-wrap">
+        <select id="radiusSelect" class="range-select"></select>
+        <span class="range-arrow">▾</span>
+      </div>
+    </div>
+
     <div class="segment">
       <div class="active" data-mode="dist" data-i18n="segDist">거리순</div>
       <div data-mode="count" data-i18n="segCount">당첨횟수순</div>
       <div data-mode="amount" data-i18n="segAmount">당첨금액순</div>
     </div>
 
+    <div class="subseg" id="rankScope" style="display:none;">
+      <button class="active" data-scope="both" data-i18n="scopeBoth">1·2등 합산</button>
+      <button data-scope="r1" data-i18n="scopeR1">1등만</button>
+      <button data-scope="r2" data-i18n="scopeR2">2등만</button>
+    </div>
+
     <div id="shopList"><div class="status-text" id="statusText">불러오는 중...</div></div>
+    <button class="btn-more" id="btnMoreShops" style="display:none;" data-i18n="btnMore">더보기</button>
 
     <a class="cta" href="nh_luckymate_guide.html" data-i18n="ctaGuide">당첨되면 어떻게 하나요? ›</a>
     <div class="badge-note" id="badgeNote">* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다</div>
@@ -183,12 +225,12 @@
 
 <script>
 const I18N = {
-  ko: { hdrPageTitle:"내 근처 로또 명당", hdrTitle:"1등 당첨 판매점이 여기 있어요", hdrSubTpl:"내 근처 판매점 {n}곳 찾음", hdrSubLoading:"내 근처 판매점 찾는 중...", hdrSubEmpty:"근처에서 판매점을 찾지 못했어요", mapBadgeGeo:"📍 내 위치 기준", mapBadgeFallback:"📍 서울 기준(위치 권한 없음)", segDist:"거리순", segCount:"당첨횟수순", segAmount:"당첨금액순", navLink:"길찾기 ›", ctaGuide:"당첨되면 어떻게 하나요? ›", badgeNote:"* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다", rank1Tag:"1등 {n}회", rank2Tag:"2등 {n}회", amountTag:"추정 누적 {n}", hdrSubError:"판매점 정보를 불러오지 못했어요", errorText:"일시적으로 연결이 원활하지 않아요. 잠시 후 다시 시도해주세요", emptyText:"근처에 데이터가 있는 판매점이 없어요", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { hdrPageTitle:"Lucky Spots Near Me", hdrTitle:"1st-prize winning stores are here", hdrSubTpl:"Found {n} nearby stores", hdrSubLoading:"Finding nearby stores...", hdrSubEmpty:"No nearby stores found", mapBadgeGeo:"📍 Based on my location", mapBadgeFallback:"📍 Based on Seoul (no location access)", segDist:"By Distance", segCount:"By Win Count", segAmount:"By Prize Amount", navLink:"Directions ›", ctaGuide:"What to do if I win? ›", badgeNote:"* Based on official winning-store data (last 100 draws). Prize amounts are estimated using average per-rank prize.", rank1Tag:"1st x{n}", rank2Tag:"2nd x{n}", amountTag:"Est. total {n}", hdrSubError:"Couldn't load shop data", errorText:"Connection is temporarily unavailable. Please try again shortly.", emptyText:"No stores with data found nearby", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { hdrPageTitle:"我附近的幸运网点", hdrTitle:"这里有中过一等奖的销售点", hdrSubTpl:"找到附近{n}家网点", hdrSubLoading:"正在查找附近网点...", hdrSubEmpty:"附近未找到网点", mapBadgeGeo:"📍 基于我的位置", mapBadgeFallback:"📍 基于首尔(无位置权限)", segDist:"按距离", segCount:"按中奖次数", segAmount:"按中奖金额", navLink:"导航 ›", ctaGuide:"中奖了该怎么办? ›", badgeNote:"* 基于官方当选销售点数据(近100期)。中奖金额为按等级平均奖金估算值", rank1Tag:"1等x{n}", rank2Tag:"2等x{n}", amountTag:"预估累计{n}", hdrSubError:"无法加载销售点信息", errorText:"连接暂时不稳定，请稍后再试", emptyText:"附近没有找到有数据的网点", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { hdrPageTitle:"Điểm may mắn gần tôi", hdrTitle:"Có cửa hàng từng trúng giải nhất ở đây", hdrSubTpl:"Tìm thấy {n} cửa hàng gần đây", hdrSubLoading:"Đang tìm cửa hàng gần đây...", hdrSubEmpty:"Không tìm thấy cửa hàng gần đây", mapBadgeGeo:"📍 Dựa trên vị trí của tôi", mapBadgeFallback:"📍 Dựa trên Seoul (không có quyền vị trí)", segDist:"Theo khoảng cách", segCount:"Theo số lần trúng", segAmount:"Theo số tiền trúng", navLink:"Chỉ đường ›", ctaGuide:"Nếu trúng thưởng thì làm gì? ›", badgeNote:"* Dựa trên dữ liệu cửa hàng trúng thưởng chính thức (100 kỳ gần nhất). Số tiền trúng thưởng là ước tính theo giải trung bình", rank1Tag:"Giải 1 x{n}", rank2Tag:"Giải 2 x{n}", amountTag:"Ước tính {n}", hdrSubError:"Không tải được dữ liệu điểm bán", errorText:"Kết nối tạm thời không ổn định. Vui lòng thử lại sau.", emptyText:"Không tìm thấy cửa hàng có dữ liệu gần đây", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { hdrPageTitle:"จุดขายมงคลใกล้ฉัน", hdrTitle:"มีร้านที่เคยถูกรางวัลที่ 1 อยู่ตรงนี้", hdrSubTpl:"พบร้านใกล้เคียง {n} ร้าน", hdrSubLoading:"กำลังค้นหาร้านใกล้เคียง...", hdrSubEmpty:"ไม่พบร้านใกล้เคียง", mapBadgeGeo:"📍 อ้างอิงตำแหน่งของฉัน", mapBadgeFallback:"📍 อ้างอิงกรุงโซล (ไม่ได้รับอนุญาตตำแหน่ง)", segDist:"ตามระยะทาง", segCount:"ตามจำนวนครั้งที่ถูกรางวัล", segAmount:"ตามจำนวนเงินรางวัล", navLink:"นำทาง ›", ctaGuide:"ถ้าถูกรางวัลต้องทำอย่างไร? ›", badgeNote:"* อ้างอิงข้อมูลร้านถูกรางวัลจริง (100 งวดล่าสุด) ยอดเงินรางวัลเป็นค่าประมาณจากรางวัลเฉลี่ยแต่ละอันดับ", rank1Tag:"รางวัลที่1 x{n}", rank2Tag:"รางวัลที่2 x{n}", amountTag:"ประมาณรวม {n}", hdrSubError:"โหลดข้อมูลจุดจำหน่ายไม่สำเร็จ", errorText:"การเชื่อมต่อขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง", emptyText:"ไม่พบร้านที่มีข้อมูลใกล้เคียง", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { hdrPageTitle:"Yaqin atrofdagi baxtli joylar", hdrTitle:"Bu yerda 1-mukofot yutgan doʻkonlar bor", hdrSubTpl:"Yaqin atrofda {n} ta doʻkon topildi", hdrSubLoading:"Yaqin atrofdagi doʻkonlar qidirilmoqda...", hdrSubEmpty:"Yaqin atrofda doʻkon topilmadi", mapBadgeGeo:"📍 Mening joylashuvim asosida", mapBadgeFallback:"📍 Seul asosida (joylashuv ruxsati yoʻq)", segDist:"Masofa boʻyicha", segCount:"Yutuq soni boʻyicha", segAmount:"Yutuq summasi boʻyicha", navLink:"Yoʻnalish ›", ctaGuide:"Yutib olsam nima qilaman? ›", badgeNote:"* Rasmiy yutuq doʻkonlari maʼlumotlariga asoslangan (oxirgi 100 tur). Yutuq summasi daraja boʻyicha oʻrtacha mukofot asosida taxminiy", rank1Tag:"1-mukofot x{n}", rank2Tag:"2-mukofot x{n}", amountTag:"Taxminiy jami {n}", hdrSubError:"Sotuvchilar maʼlumoti yuklanmadi", errorText:"Aloqa vaqtincha mavjud emas. Birozdan soʻng qayta urinib koʻring.", emptyText:"Yaqin atrofda maʼlumotli doʻkon topilmadi", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { hdrPageTitle:"내 근처 로또 명당", hdrTitle:"1등 당첨 판매점이 여기 있어요", hdrSubTpl:"내 근처 판매점 {n}곳 찾음", hdrSubLoading:"내 근처 판매점 찾는 중...", hdrSubEmpty:"근처에서 판매점을 찾지 못했어요", mapBadgeGeo:"📍 내 위치 기준", mapBadgeFallback:"📍 서울 기준(위치 권한 없음)", segDist:"거리순", segCount:"당첨횟수순", segAmount:"당첨금액순", navLink:"길찾기 ›", ctaGuide:"당첨되면 어떻게 하나요? ›", badgeNote:"* 동행복권 당첨판매점 데이터(최근 100회차) 기준. 당첨금액은 등수별 평균 당첨금으로 추정한 값입니다", rank1Tag:"1등 {n}회", rank2Tag:"2등 {n}회", amountTag:"추정 누적 {n}", hdrSubError:"판매점 정보를 불러오지 못했어요", errorText:"일시적으로 연결이 원활하지 않아요. 잠시 후 다시 시도해주세요", radiusLabel:"검색 반경", radiusOption:"{n}km 이내", scopeBoth:"1·2등 합산", scopeR1:"1등만", scopeR2:"2등만", btnMore:"더보기", btnMoreTpl:"{n}곳 더보기", emptyInRadius:"이 반경 안에는 조건에 맞는 판매점이 없어요", emptyText:"근처에 데이터가 있는 판매점이 없어요", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { hdrPageTitle:"Lucky Spots Near Me", hdrTitle:"1st-prize winning stores are here", hdrSubTpl:"Found {n} nearby stores", hdrSubLoading:"Finding nearby stores...", hdrSubEmpty:"No nearby stores found", mapBadgeGeo:"📍 Based on my location", mapBadgeFallback:"📍 Based on Seoul (no location access)", segDist:"By Distance", segCount:"By Win Count", segAmount:"By Prize Amount", navLink:"Directions ›", ctaGuide:"What to do if I win? ›", badgeNote:"* Based on official winning-store data (last 100 draws). Prize amounts are estimated using average per-rank prize.", rank1Tag:"1st x{n}", rank2Tag:"2nd x{n}", amountTag:"Est. total {n}", hdrSubError:"Couldn't load shop data", errorText:"Connection is temporarily unavailable. Please try again shortly.", radiusLabel:"Radius", radiusOption:"Within {n}km", scopeBoth:"1st + 2nd", scopeR1:"1st only", scopeR2:"2nd only", btnMore:"Show more", btnMoreTpl:"Show {n} more", emptyInRadius:"No matching shops within this radius", emptyText:"No stores with data found nearby", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { hdrPageTitle:"我附近的幸运网点", hdrTitle:"这里有中过一等奖的销售点", hdrSubTpl:"找到附近{n}家网点", hdrSubLoading:"正在查找附近网点...", hdrSubEmpty:"附近未找到网点", mapBadgeGeo:"📍 基于我的位置", mapBadgeFallback:"📍 基于首尔(无位置权限)", segDist:"按距离", segCount:"按中奖次数", segAmount:"按中奖金额", navLink:"导航 ›", ctaGuide:"中奖了该怎么办? ›", badgeNote:"* 基于官方当选销售点数据(近100期)。中奖金额为按等级平均奖金估算值", rank1Tag:"1等x{n}", rank2Tag:"2等x{n}", amountTag:"预估累计{n}", hdrSubError:"无法加载销售点信息", errorText:"连接暂时不稳定，请稍后再试", radiusLabel:"搜索半径", radiusOption:"{n}km 以内", scopeBoth:"一·二等合计", scopeR1:"仅一等奖", scopeR2:"仅二等奖", btnMore:"查看更多", btnMoreTpl:"再看{n}个", emptyInRadius:"该半径内没有符合条件的销售点", emptyText:"附近没有找到有数据的网点", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { hdrPageTitle:"Điểm may mắn gần tôi", hdrTitle:"Có cửa hàng từng trúng giải nhất ở đây", hdrSubTpl:"Tìm thấy {n} cửa hàng gần đây", hdrSubLoading:"Đang tìm cửa hàng gần đây...", hdrSubEmpty:"Không tìm thấy cửa hàng gần đây", mapBadgeGeo:"📍 Dựa trên vị trí của tôi", mapBadgeFallback:"📍 Dựa trên Seoul (không có quyền vị trí)", segDist:"Theo khoảng cách", segCount:"Theo số lần trúng", segAmount:"Theo số tiền trúng", navLink:"Chỉ đường ›", ctaGuide:"Nếu trúng thưởng thì làm gì? ›", badgeNote:"* Dựa trên dữ liệu cửa hàng trúng thưởng chính thức (100 kỳ gần nhất). Số tiền trúng thưởng là ước tính theo giải trung bình", rank1Tag:"Giải 1 x{n}", rank2Tag:"Giải 2 x{n}", amountTag:"Ước tính {n}", hdrSubError:"Không tải được dữ liệu điểm bán", errorText:"Kết nối tạm thời không ổn định. Vui lòng thử lại sau.", radiusLabel:"Bán kính", radiusOption:"Trong {n}km", scopeBoth:"Giải 1+2", scopeR1:"Chỉ giải 1", scopeR2:"Chỉ giải 2", btnMore:"Xem thêm", btnMoreTpl:"Xem thêm {n}", emptyInRadius:"Không có điểm bán phù hợp trong bán kính này", emptyText:"Không tìm thấy cửa hàng có dữ liệu gần đây", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { hdrPageTitle:"จุดขายมงคลใกล้ฉัน", hdrTitle:"มีร้านที่เคยถูกรางวัลที่ 1 อยู่ตรงนี้", hdrSubTpl:"พบร้านใกล้เคียง {n} ร้าน", hdrSubLoading:"กำลังค้นหาร้านใกล้เคียง...", hdrSubEmpty:"ไม่พบร้านใกล้เคียง", mapBadgeGeo:"📍 อ้างอิงตำแหน่งของฉัน", mapBadgeFallback:"📍 อ้างอิงกรุงโซล (ไม่ได้รับอนุญาตตำแหน่ง)", segDist:"ตามระยะทาง", segCount:"ตามจำนวนครั้งที่ถูกรางวัล", segAmount:"ตามจำนวนเงินรางวัล", navLink:"นำทาง ›", ctaGuide:"ถ้าถูกรางวัลต้องทำอย่างไร? ›", badgeNote:"* อ้างอิงข้อมูลร้านถูกรางวัลจริง (100 งวดล่าสุด) ยอดเงินรางวัลเป็นค่าประมาณจากรางวัลเฉลี่ยแต่ละอันดับ", rank1Tag:"รางวัลที่1 x{n}", rank2Tag:"รางวัลที่2 x{n}", amountTag:"ประมาณรวม {n}", hdrSubError:"โหลดข้อมูลจุดจำหน่ายไม่สำเร็จ", errorText:"การเชื่อมต่อขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง", radiusLabel:"รัศมี", radiusOption:"ภายใน {n}km", scopeBoth:"รางวัลที่ 1+2", scopeR1:"เฉพาะที่ 1", scopeR2:"เฉพาะที่ 2", btnMore:"ดูเพิ่มเติม", btnMoreTpl:"ดูเพิ่ม {n} แห่ง", emptyInRadius:"ไม่มีจุดจำหน่ายที่ตรงเงื่อนไขในรัศมีนี้", emptyText:"ไม่พบร้านที่มีข้อมูลใกล้เคียง", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { hdrPageTitle:"Yaqin atrofdagi baxtli joylar", hdrTitle:"Bu yerda 1-mukofot yutgan doʻkonlar bor", hdrSubTpl:"Yaqin atrofda {n} ta doʻkon topildi", hdrSubLoading:"Yaqin atrofdagi doʻkonlar qidirilmoqda...", hdrSubEmpty:"Yaqin atrofda doʻkon topilmadi", mapBadgeGeo:"📍 Mening joylashuvim asosida", mapBadgeFallback:"📍 Seul asosida (joylashuv ruxsati yoʻq)", segDist:"Masofa boʻyicha", segCount:"Yutuq soni boʻyicha", segAmount:"Yutuq summasi boʻyicha", navLink:"Yoʻnalish ›", ctaGuide:"Yutib olsam nima qilaman? ›", badgeNote:"* Rasmiy yutuq doʻkonlari maʼlumotlariga asoslangan (oxirgi 100 tur). Yutuq summasi daraja boʻyicha oʻrtacha mukofot asosida taxminiy", rank1Tag:"1-mukofot x{n}", rank2Tag:"2-mukofot x{n}", amountTag:"Taxminiy jami {n}", hdrSubError:"Sotuvchilar maʼlumoti yuklanmadi", errorText:"Aloqa vaqtincha mavjud emas. Birozdan soʻng qayta urinib koʻring.", radiusLabel:"Radius", radiusOption:"{n}km ichida", scopeBoth:"1+2-mukofot", scopeR1:"Faqat 1-", scopeR2:"Faqat 2-", btnMore:"Koʻproq", btnMoreTpl:"Yana {n} ta", emptyInRadius:"Bu radiusda mos sotuvchi yoʻq", emptyText:"Yaqin atrofda maʼlumotli doʻkon topilmadi", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
 
 function currentLang(){
@@ -221,25 +263,42 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // 위치 권한이 없을 때 쓰는 기본 위치: 서울시청
 const FALLBACK_LAT = 37.5665;
 const FALLBACK_LON = 126.9780;
-const SEARCH_DELTA = 0.5; // 위경도 ±0.5도 (대략 반경 50~100km권) 바운딩 박스로 1차 조회
+const SEARCH_DELTA = 1.0; // 위경도 ±1.0도(약 111km) 바운딩 박스로 1차 조회 — 최대 반경 100km 선택까지 커버
 
+/**
+ * 바운딩 박스 안의 판매점을 모두 가져온다.
+ * Supabase(PostgREST)는 limit을 크게 줘도 요청당 1000행에서 끊기므로,
+ * 100km 반경처럼 박스 안에 1000곳이 넘는 경우를 위해 Range 헤더로 이어받는다.
+ */
 async function fetchNearbyShops(lat, lon){
-  const url = `${SUPABASE_URL}/rest/v1/winning_shops?select=lt_shp_id,shp_nm,addr,region,lat,lon,rank1_count,rank2_count` +
+  const base = `${SUPABASE_URL}/rest/v1/winning_shops?select=lt_shp_id,shp_nm,addr,region,lat,lon,rank1_count,rank2_count` +
     `&lat=gte.${lat - SEARCH_DELTA}&lat=lte.${lat + SEARCH_DELTA}` +
     `&lon=gte.${lon - SEARCH_DELTA}&lon=lte.${lon + SEARCH_DELTA}` +
-    `&limit=300`;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15000);
-  try {
-    const res = await fetch(url, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-      signal: controller.signal,
-    });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.json();
-  } finally {
-    clearTimeout(timer);
+    `&order=lt_shp_id.asc`;
+  const PAGE = 1000;
+  const all = [];
+
+  for(let offset = 0; offset < 10000; offset += PAGE){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    try {
+      const res = await fetch(base, {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          Range: `${offset}-${offset + PAGE - 1}`,
+        },
+        signal: controller.signal,
+      });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      all.push(...rows);
+      if(rows.length < PAGE) break;
+    } finally {
+      clearTimeout(timer);
+    }
   }
+  return all;
 }
 
 function getUserLocation(){
@@ -315,33 +374,70 @@ function formatWon(amount){
   return Math.round(amount / 10000) + '만원';
 }
 
+const RADIUS_OPTIONS = [3, 5, 10, 30, 50, 100];
+const PAGE_SIZE = 10;
+
 let ALL_SHOPS = [];
 let AVG_PRIZE = FALLBACK_AVG;
 let currentMode = 'dist';
+let rankScope = 'both'; // both | r1 | r2 — 당첨횟수순·당첨금액순에서만 쓰임
+let radiusKm = 10;
+let shownCount = PAGE_SIZE;
 let loadFailed = false;
 
-function renderShops(mode){
-  currentMode = mode;
+/** 선택한 등수 범위 기준의 당첨 횟수 */
+function scopedCount(shop){
+  if(rankScope === 'r1') return shop.rank1_count;
+  if(rankScope === 'r2') return shop.rank2_count;
+  return shop.rank1_count + shop.rank2_count;
+}
+/** 선택한 등수 범위 기준의 추정 누적 당첨금 */
+function scopedAmount(shop){
+  const a1 = shop.rank1_count * AVG_PRIZE.rank1;
+  const a2 = shop.rank2_count * AVG_PRIZE.rank2;
+  if(rankScope === 'r1') return a1;
+  if(rankScope === 'r2') return a2;
+  return a1 + a2;
+}
+
+function visibleShops(){
+  return ALL_SHOPS
+    .filter(s => s.distKm <= radiusKm)
+    .filter(s => currentMode === 'dist' || scopedCount(s) > 0)
+    .sort((a, b) => {
+      if(currentMode === 'count') return scopedCount(b) - scopedCount(a) || a.distKm - b.distKm;
+      if(currentMode === 'amount') return scopedAmount(b) - scopedAmount(a) || a.distKm - b.distKm;
+      return a.distKm - b.distKm;
+    });
+}
+
+function renderShops(){
   const wrap = document.getElementById('shopList');
+  const moreBtn = document.getElementById('btnMoreShops');
+  document.getElementById('rankScope').style.display = currentMode === 'dist' ? 'none' : '';
+
   if(ALL_SHOPS.length === 0){
     wrap.innerHTML = `<div class="status-text">${t(loadFailed ? 'errorText' : 'emptyText')}</div>`;
+    moreBtn.style.display = 'none';
     return;
   }
 
-  const sorted = ALL_SHOPS.slice().sort((a, b) => {
-    if(mode === 'count') {
-      if(b.rank1_count !== a.rank1_count) return b.rank1_count - a.rank1_count;
-      return b.rank2_count - a.rank2_count;
-    }
-    if(mode === 'amount') return b.estAmount - a.estAmount;
-    return a.distKm - b.distKm;
-  }).slice(0, 15);
+  const list = visibleShops();
+  document.getElementById('hdrSub').textContent = list.length
+    ? t('hdrSubTpl', { n: list.length })
+    : t('hdrSubEmpty');
 
-  wrap.innerHTML = sorted.map((shop, i) => {
+  if(list.length === 0){
+    wrap.innerHTML = `<div class="status-text">${t('emptyInRadius')}</div>`;
+    moreBtn.style.display = 'none';
+    return;
+  }
+
+  wrap.innerHTML = list.slice(0, shownCount).map((shop, i) => {
     const tags = [];
-    if(shop.rank1_count > 0) tags.push(`<span class="tag win1">${t('rank1Tag', { n: shop.rank1_count })}</span>`);
-    if(shop.rank2_count > 0) tags.push(`<span class="tag win2">${t('rank2Tag', { n: shop.rank2_count })}</span>`);
-    if(mode === 'amount') tags.push(`<span class="tag win2">${t('amountTag', { n: formatWon(shop.estAmount) })}</span>`);
+    if(shop.rank1_count > 0 && rankScope !== 'r2') tags.push(`<span class="tag win1">${t('rank1Tag', { n: shop.rank1_count })}</span>`);
+    if(shop.rank2_count > 0 && rankScope !== 'r1') tags.push(`<span class="tag win2">${t('rank2Tag', { n: shop.rank2_count })}</span>`);
+    if(currentMode === 'amount') tags.push(`<span class="tag win2">${t('amountTag', { n: formatWon(scopedAmount(shop)) })}</span>`);
     return `
       <div class="shop-card">
         <div class="rank-num">${i + 1}</div>
@@ -357,14 +453,40 @@ function renderShops(mode){
       </div>
     `;
   }).join('');
+
+  moreBtn.style.display = shownCount < list.length ? '' : 'none';
+  moreBtn.textContent = t('btnMoreTpl', { n: Math.min(PAGE_SIZE, list.length - shownCount) });
 }
 
 document.querySelectorAll('.segment div').forEach(el => {
   el.addEventListener('click', () => {
     document.querySelectorAll('.segment div').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
-    renderShops(el.getAttribute('data-mode'));
+    currentMode = el.getAttribute('data-mode');
+    shownCount = PAGE_SIZE;
+    renderShops();
   });
+});
+
+document.querySelectorAll('#rankScope button').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#rankScope button').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    rankScope = el.getAttribute('data-scope');
+    shownCount = PAGE_SIZE;
+    renderShops();
+  });
+});
+
+document.getElementById('radiusSelect').addEventListener('change', e => {
+  radiusKm = Number(e.target.value);
+  shownCount = PAGE_SIZE;
+  renderShops();
+});
+
+document.getElementById('btnMoreShops').addEventListener('click', () => {
+  shownCount += PAGE_SIZE;
+  renderShops();
 });
 
 async function init(){
@@ -373,25 +495,22 @@ async function init(){
 
   document.getElementById('mapBadge').textContent = isFallback ? t('mapBadgeFallback') : t('mapBadgeGeo');
 
+  const radiusSel = document.getElementById('radiusSelect');
+  radiusSel.innerHTML = RADIUS_OPTIONS.map(v => `<option value="${v}">${t('radiusOption', { n: v })}</option>`).join('');
+  radiusSel.value = String(radiusKm);
+
   try {
     const rows = await fetchNearbyShops(lat, lon);
     ALL_SHOPS = rows
       .filter(s => s.lat != null && s.lon != null)
-      .map(s => ({
-        ...s,
-        distKm: haversineKm(lat, lon, s.lat, s.lon),
-        estAmount: s.rank1_count * AVG_PRIZE.rank1 + s.rank2_count * AVG_PRIZE.rank2,
-      }));
-    document.getElementById('hdrSub').textContent = ALL_SHOPS.length
-      ? t('hdrSubTpl', { n: ALL_SHOPS.length })
-      : t('hdrSubEmpty');
+      .map(s => ({ ...s, distKm: haversineKm(lat, lon, s.lat, s.lon) }));
   } catch(e) {
     console.warn('명당 데이터 조회 실패:', e);
     loadFailed = true;
     document.getElementById('hdrSub').textContent = t('hdrSubError');
   }
 
-  renderShops(currentMode);
+  renderShops();
 }
 
 init();

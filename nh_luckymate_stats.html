@@ -58,11 +58,17 @@
   }
   .header .top .back { font-size:18px; }
   .header .top .title { font-size:16px; font-weight:700; }
-  .header .top .dots { font-size:18px; letter-spacing:2px; }
+  .header .top .dots { font-size:17px; line-height:1; }
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
-  .content { padding: 16px; background:var(--bg-content); }
+  /* 실제 휴대폰처럼 콘텐츠 영역만 스크롤시킨다.
+     이렇게 해야 "내 번호" 카드를 position:sticky로 상단에 고정할 수 있다
+     (.phone의 overflow:hidden 때문에 페이지 스크롤 기준 sticky는 동작하지 않음). */
+  .content {
+    padding: 16px; background:var(--bg-content);
+    height: 600px; overflow-y: auto;
+  }
 
   .card {
     background:var(--bg-card); border-radius:16px; padding:16px;
@@ -80,8 +86,10 @@
 
   /* ===== 내 번호 고정 카드 ===== */
   .mynum-card {
-    background: linear-gradient(135deg,var(--primary-light2),var(--primary-light));
-    border:1px solid var(--primary-border); box-shadow:none;
+    background: linear-gradient(135deg,#EAF7F0,var(--primary-light));
+    border:1px solid var(--primary-border);
+    position: sticky; top: -16px; z-index: 30;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
   }
   .mynum-head {
     display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;
@@ -233,11 +241,66 @@
   .ch-chart .bar.now { background:var(--primary); }
   .ch-chart .lb { font-size:8.5px; color:var(--text-faint); margin-top:4px; }
 
+  /* ===== 3등 챌린지: 내 번호 기준 아쉬움 ===== */
+  .near-box {
+    background:#FFF8E8; border:1px solid #F2DFAE; border-radius:12px;
+    padding:13px 14px; margin-bottom:14px;
+  }
+  .near-t { font-size:13.5px; font-weight:800; color:#8A6200; margin-bottom:10px; }
+  .near-t b { color:#C8410B; }
+  .near-balls { display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin-bottom:9px; }
+  .near-balls .mini {
+    width:24px; height:24px; border-radius:50%; font-size:10.5px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; color:#fff; flex:none;
+  }
+  .near-balls .mini.target { box-shadow:0 0 0 2px #fff, 0 0 0 4px #C8410B; }
+  .near-balls .sep { font-size:11px; color:#8A6200; font-weight:700; margin:0 2px; }
+  .near-p { font-size:11.5px; color:var(--text-sub); line-height:1.55; }
+  .near-p b { color:#C8410B; font-size:13px; }
+
+  /* ===== 3등 챌린지: NH 상품 비교 ===== */
+  .invest-box {
+    background:linear-gradient(135deg,#F2FBF5,var(--primary-light));
+    border:1px solid var(--primary-border); border-radius:14px; padding:15px; margin-top:14px;
+  }
+  .invest-t { font-size:13.5px; font-weight:800; color:var(--text-main); margin-bottom:6px; }
+  .invest-d { font-size:11.5px; color:var(--text-sub); line-height:1.6; margin-bottom:10px; }
+  .invest-cost {
+    font-size:21px; font-weight:800; color:var(--primary-dark); letter-spacing:-0.5px;
+    animation: costIn 0.5s ease-out both;
+  }
+  @keyframes costIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .invest-q { font-size:12px; font-weight:700; color:var(--text-main); margin:12px 0 9px; }
+  .prod-card {
+    background:#fff; border-radius:11px; padding:11px 12px; margin-bottom:8px;
+    border:1px solid var(--primary-border);
+  }
+  .prod-card:last-child { margin-bottom:0; }
+  .prod-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px; }
+  .prod-name { font-size:12.5px; font-weight:800; color:var(--text-main); }
+  .prod-rate { font-size:12.5px; font-weight:800; color:var(--primary-dark); white-space:nowrap; }
+  .prod-cond { font-size:10.5px; color:var(--text-mute); margin-bottom:6px; }
+  .prod-earn { font-size:12px; font-weight:700; color:var(--text-main); display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .prod-earn .pre { color:var(--primary-dark); }
+  .prod-earn .post { color:var(--text-sub); }
+
+  .info-mark {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:14px; height:14px; border-radius:50%; background:#C3CBD2; color:#fff;
+    font-size:9.5px; font-weight:800; cursor:pointer; flex:none; font-style:normal;
+  }
+  .info-pop {
+    position:absolute; left:0; top:0; transform:translate(-50%, calc(-100% - 8px));
+    background:rgba(20,20,20,0.93); color:#fff; font-size:10.5px; font-weight:500;
+    padding:8px 10px; border-radius:8px; width:230px; line-height:1.5; pointer-events:none;
+    opacity:0; transition:opacity 0.12s ease; z-index:90;
+  }
+  .info-pop.show { opacity:1; }
+
   .cta {
     display:block; margin-top:4px; background:var(--primary); color:#fff; text-align:center;
     padding:13px; border-radius:12px; font-size:14px; font-weight:700;
   }
-  .cta.outline { background:var(--bg-card); color:var(--primary); border:1.5px solid var(--primary); margin-top:12px; }
 
   .tabbar {
     display:flex; border-top:1px solid var(--border-light); background:var(--bg-card); padding: 8px 0 14px;
@@ -258,7 +321,7 @@
     <div class="top">
       <a class="back" href="nh_luckymate_mockup.html">‹</a>
       <span class="title" data-i18n="hdrPageTitle">재미로 보는 통계</span>
-      <a class="dots" href="nh_luckymate_language.html">⋮</a>
+      <a class="dots" href="nh_luckymate_language.html" title="언어 설정">🌐</a>
     </div>
     <div class="sub">
       <span data-i18n="hdrTitle">내 번호로 보는 로또 통계</span>
@@ -352,18 +415,20 @@
       <div class="card-title">
         <span class="ttl"><span class="ico">🏆</span><span data-i18n="secChallengeTitle">3등 챌린지</span></span>
       </div>
-      <div class="card-sub" data-i18n="secChallengeSub">1등보다 현실적인 목표, 3등에 도전해요</div>
+      <div class="card-sub" data-i18n="chSubTitle">1등보다 현실적인 목표, 3등에 도전해요 · 815만분의 1이 아닌 4만분의 1</div>
 
       <div class="ch-hero">
         <div class="t" id="chHeroTitle">-</div>
         <div class="s" id="chHeroSub"></div>
       </div>
 
+      <div id="chNear"></div>
+
       <div class="card-title"><span class="ttl" data-i18n="challengeChartTitle">최근 12주 3등 당첨자 수</span></div>
       <div class="ch-chart" id="chChart" style="margin-top:8px;"></div>
       <div class="stat-row" id="chStats"></div>
 
-      <a class="cta outline" href="nh_luckymate_challenge.html" data-i18n="challengeMore">3등 챌린지 자세히 보기 ›</a>
+      <div class="invest-box" id="chInvest"></div>
     </div>
 
     <a class="cta" href="nh_luckymate_mockup.html" data-i18n="ctaBack">당첨번호 조회하러 가기 ›</a>
@@ -378,16 +443,17 @@
   </div>
 
   <div class="bar-tooltip" id="barTooltip"></div>
+  <div class="info-pop" id="infoPop"></div>
 </div>
 
 <script>
 const I18N = {
-  ko: { hdrPageTitle:"재미로 보는 통계", hdrTitle:"내 번호로 보는 로또 통계", hdrSubTpl:"제 {start}회 ~ {end}회 · 동행복권 실시간 데이터", myNumTitle:"내 번호", btnEdit:"수정", btnDone:"완료", myNumEmpty:"아직 저장된 번호가 없어요", myNumEmptySub:"수정을 눌러 번호 6개를 입력하면 아래 통계가 내 번호 기준으로 바뀌어요", myNumResultTpl:"제 {round}회 기준 · {n}개 일치", noPrize:"당첨금 없음", rank0:"낙첨", rank1:"1등", rank2:"2등", rank3:"3등", rank4:"4등", rank5:"5등", digitPlaceholder:"번호를 입력하세요 (1~45)", allSixSelected:"6개를 모두 선택했어요. 완료를 눌러주세요", alreadySelected:"이미 선택한 번호예요", noMatch:"해당하는 번호가 없어요", needMoreBalls:"{n}개 더 선택해주세요", secMyHistoryTitle:"나의 번호, 과거엔 혹시 당첨?", secMyHistorySub:"내 번호로 과거 전 회차를 전부 채점해봤어요", tabByPrize:"금액(등수)순", tabByRecent:"최근 순", historySummaryTpl:"전체 {total}회차 중 <b>{hits}번</b> 당첨됐어요", historyNone:"아쉽게도 당첨된 회차가 한 번도 없어요", historyNeedNum:"위에서 내 번호를 입력하면<br>과거 당첨 이력을 확인할 수 있어요", btnMore:"더보기", roundFmt:"{r}회", matchTpl:"{n}개 일치", secHotTitle:"최근 많이 뽑힌 번호는?", secHotSub:"선택한 범위에서 번호별 출현 횟수", secColdTitle:"최근 오랫동안 안 보인 번호는?", secColdSub:"마지막으로 나온 뒤 지나간 회차 수", topHotTitle:"최다 출현 번호 TOP 5", topColdTitle:"장기 미출현 번호 TOP 5", legendHot:"최다 출현 TOP5", legendCold:"장기 미출현 TOP5", legendNormal:"그 외 번호", statMostNum:"최다출현 번호", statMostCnt:"최다 출현 횟수", statAvgCnt:"번호당 평균 출현", statLongestNum:"최장 미출현 번호", statLongestGap:"미출현 회차", statAvgGap:"평균 미출현", secChallengeTitle:"3등 챌린지", secChallengeSub:"1등보다 현실적인 목표, 3등에 도전해요", challengeHeroTpl:"제 {round}회 3등 당첨 도전", challengeDdayTpl:"다음 추첨 {date} · D-{days}", challengeChartTitle:"최근 12주 3등 당첨자 수", statAvgPrize:"3등 평균 당첨금", statOdds:"3등 당첨 확률", statAvgWinners:"3등 평균 당첨자", challengeMore:"3등 챌린지 자세히 보기 ›", rangeOption:"최근 {n}회", rangeOptionAll:"전체", tooltipFreq:"{n}번 · {v}회", tooltipGap:"{n}번 · {v}회째 미출현", unitTimes:"회", unitTimesUp:"회↑", unitPeople:"명", wonFmt:"{v}원", ctaBack:"당첨번호 조회하러 가기 ›", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabBonus:"우대금리", tabGuide:"당첨가이드" },
-  en: { hdrPageTitle:"Fun Stats", hdrTitle:"Lottery stats through my numbers", hdrSubTpl:"Rounds {start}–{end} · Live Lottery data", myNumTitle:"My Numbers", btnEdit:"Edit", btnDone:"Done", myNumEmpty:"No numbers saved yet", myNumEmptySub:"Tap Edit and enter 6 numbers to personalize the stats below", myNumResultTpl:"Round {round} · {n} matched", noPrize:"No Prize", rank0:"Not a Winner", rank1:"1st Prize", rank2:"2nd Prize", rank3:"3rd Prize", rank4:"4th Prize", rank5:"5th Prize", digitPlaceholder:"Enter a number (1-45)", allSixSelected:"All 6 selected. Tap Done.", alreadySelected:"Already selected", noMatch:"No matching number", needMoreBalls:"Select {n} more number(s)", secMyHistoryTitle:"Would my numbers have won?", secMyHistorySub:"We checked your numbers against every past draw", tabByPrize:"By Prize", tabByRecent:"Most Recent", historySummaryTpl:"Won <b>{hits} times</b> out of {total} draws", historyNone:"No winning rounds found", historyNeedNum:"Enter your numbers above<br>to see past winning history", btnMore:"Show more", roundFmt:"Round {r}", matchTpl:"{n} matched", secHotTitle:"Most drawn numbers lately", secHotSub:"Appearance count per number in the selected range", secColdTitle:"Longest missing numbers", secColdSub:"Draws passed since each number last appeared", topHotTitle:"Top 5 Most Frequent", topColdTitle:"Top 5 Longest Missing", legendHot:"Top 5 Frequent", legendCold:"Top 5 Missing", legendNormal:"Others", statMostNum:"Most Frequent", statMostCnt:"Top Count", statAvgCnt:"Avg per Number", statLongestNum:"Longest Missing", statLongestGap:"Draws Missing", statAvgGap:"Avg Missing", secChallengeTitle:"3rd Prize Challenge", secChallengeSub:"A more realistic goal than 1st prize", challengeHeroTpl:"Round {round} · 3rd Prize Challenge", challengeDdayTpl:"Next draw {date} · D-{days}", challengeChartTitle:"3rd-Prize Winners (Last 12 Weeks)", statAvgPrize:"Avg 3rd Prize", statOdds:"3rd Prize Odds", statAvgWinners:"Avg Winners", challengeMore:"See the full challenge ›", rangeOption:"Last {n}", rangeOptionAll:"All", tooltipFreq:"No.{n} · {v} times", tooltipGap:"No.{n} · missing {v} draws", unitTimes:"x", unitTimesUp:"x+", unitPeople:"", wonFmt:"₩{v}", ctaBack:"Check winning numbers ›", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabBonus:"Bonus Rate", tabGuide:"Winner Guide" },
-  zh: { hdrPageTitle:"趣味统计", hdrTitle:"用我的号码看彩票统计", hdrSubTpl:"第{start}期~第{end}期 · 实时彩票数据", myNumTitle:"我的号码", btnEdit:"修改", btnDone:"完成", myNumEmpty:"尚未保存号码", myNumEmptySub:"点击修改并输入6个号码，下方统计将以我的号码为准", myNumResultTpl:"第{round}期 · 命中{n}个", noPrize:"无奖金", rank0:"未中奖", rank1:"1等奖", rank2:"2等奖", rank3:"3等奖", rank4:"4等奖", rank5:"5等奖", digitPlaceholder:"请输入号码 (1~45)", allSixSelected:"已选择全部6个号码，请点击完成", alreadySelected:"已选择该号码", noMatch:"没有匹配的号码", needMoreBalls:"还需选择{n}个号码", secMyHistoryTitle:"我的号码，过去中过奖吗?", secMyHistorySub:"用我的号码对过去所有期数进行了核对", tabByPrize:"按金额(等级)", tabByRecent:"按最近", historySummaryTpl:"全部{total}期中 <b>中奖{hits}次</b>", historyNone:"很遗憾，没有中奖的期数", historyNeedNum:"在上方输入我的号码<br>即可查看过去中奖记录", btnMore:"查看更多", roundFmt:"第{r}期", matchTpl:"命中{n}个", secHotTitle:"最近常出的号码?", secHotSub:"所选范围内各号码出现次数", secColdTitle:"最近很久没出的号码?", secColdSub:"自最后一次出现以来经过的期数", topHotTitle:"最多出现号码TOP5", topColdTitle:"长期未出现号码TOP5", legendHot:"最多出现TOP5", legendCold:"长期未出现TOP5", legendNormal:"其他号码", statMostNum:"最多出现号码", statMostCnt:"最多出现次数", statAvgCnt:"每号平均出现", statLongestNum:"最久未出号码", statLongestGap:"未出期数", statAvgGap:"平均未出", secChallengeTitle:"三等奖挑战", secChallengeSub:"比一等奖更现实的目标", challengeHeroTpl:"第{round}期 三等奖挑战", challengeDdayTpl:"下次开奖 {date} · D-{days}", challengeChartTitle:"近12周三等奖中奖人数", statAvgPrize:"三等奖平均奖金", statOdds:"三等奖概率", statAvgWinners:"三等奖平均人数", challengeMore:"查看三等奖挑战详情 ›", rangeOption:"近{n}期", rangeOptionAll:"全部", tooltipFreq:"{n}号 · {v}次", tooltipGap:"{n}号 · 已{v}期未出现", unitTimes:"次", unitTimesUp:"期↑", unitPeople:"人", wonFmt:"{v}韩元", ctaBack:"去查询中奖号码 ›", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabBonus:"优惠利率", tabGuide:"中奖指南" },
-  vi: { hdrPageTitle:"Thống kê vui", hdrTitle:"Thống kê xổ số theo số của tôi", hdrSubTpl:"Kỳ {start}–{end} · Dữ liệu xổ số thời gian thực", myNumTitle:"Số của tôi", btnEdit:"Sửa", btnDone:"Xong", myNumEmpty:"Chưa lưu số nào", myNumEmptySub:"Nhấn Sửa và nhập 6 số để thống kê bên dưới theo số của bạn", myNumResultTpl:"Kỳ {round} · trùng {n} số", noPrize:"Không có thưởng", rank0:"Không trúng", rank1:"Giải 1", rank2:"Giải 2", rank3:"Giải 3", rank4:"Giải 4", rank5:"Giải 5", digitPlaceholder:"Nhập số (1~45)", allSixSelected:"Đã chọn đủ 6 số. Nhấn Xong.", alreadySelected:"Số này đã được chọn", noMatch:"Không có số phù hợp", needMoreBalls:"Chọn thêm {n} số nữa", secMyHistoryTitle:"Số của tôi từng trúng chưa?", secMyHistorySub:"Đã đối chiếu số của bạn với toàn bộ kỳ quay trước đây", tabByPrize:"Theo giải thưởng", tabByRecent:"Gần đây nhất", historySummaryTpl:"Trúng <b>{hits} lần</b> trong {total} kỳ", historyNone:"Tiếc quá, chưa có kỳ nào trúng", historyNeedNum:"Nhập số của bạn ở trên<br>để xem lịch sử trúng thưởng", btnMore:"Xem thêm", roundFmt:"Kỳ {r}", matchTpl:"trùng {n}", secHotTitle:"Số ra nhiều gần đây?", secHotSub:"Số lần xuất hiện của từng số trong phạm vi đã chọn", secColdTitle:"Số lâu chưa ra nhất?", secColdSub:"Số kỳ đã trôi qua kể từ lần xuất hiện gần nhất", topHotTitle:"Top 5 xuất hiện nhiều nhất", topColdTitle:"Top 5 lâu chưa ra nhất", legendHot:"Top 5 nhiều nhất", legendCold:"Top 5 lâu nhất", legendNormal:"Số khác", statMostNum:"Số ra nhiều nhất", statMostCnt:"Số lần nhiều nhất", statAvgCnt:"TB mỗi số", statLongestNum:"Số lâu chưa ra", statLongestGap:"Số kỳ chưa ra", statAvgGap:"TB chưa ra", secChallengeTitle:"Thử thách giải Ba", secChallengeSub:"Mục tiêu thực tế hơn giải nhất", challengeHeroTpl:"Thử thách giải Ba kỳ {round}", challengeDdayTpl:"Quay số tiếp theo {date} · D-{days}", challengeChartTitle:"Người trúng giải Ba (12 tuần gần nhất)", statAvgPrize:"Giải Ba trung bình", statOdds:"Tỷ lệ trúng giải Ba", statAvgWinners:"TB người trúng", challengeMore:"Xem chi tiết thử thách ›", rangeOption:"{n} kỳ gần nhất", rangeOptionAll:"Tất cả", tooltipFreq:"Số {n} · {v} lần", tooltipGap:"Số {n} · chưa ra {v} kỳ", unitTimes:" lần", unitTimesUp:" kỳ↑", unitPeople:" người", wonFmt:"{v} won", ctaBack:"Đi tra cứu số trúng thưởng ›", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabBonus:"Lãi suất ưu đãi", tabGuide:"Hướng dẫn" },
-  th: { hdrPageTitle:"สถิติสนุก", hdrTitle:"สถิติสลากจากเลขของฉัน", hdrSubTpl:"งวดที่ {start}–{end} · ข้อมูลสลากแบบเรียลไทม์", myNumTitle:"เลขของฉัน", btnEdit:"แก้ไข", btnDone:"เสร็จ", myNumEmpty:"ยังไม่ได้บันทึกเลข", myNumEmptySub:"กดแก้ไขแล้วกรอกเลข 6 ตัว สถิติด้านล่างจะอิงเลขของคุณ", myNumResultTpl:"งวดที่ {round} · ตรง {n} ตัว", noPrize:"ไม่มีเงินรางวัล", rank0:"ไม่ถูกรางวัล", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3:"รางวัลที่ 3", rank4:"รางวัลที่ 4", rank5:"รางวัลที่ 5", digitPlaceholder:"กรอกเลข (1~45)", allSixSelected:"เลือกครบ 6 ตัวแล้ว กดเสร็จได้เลย", alreadySelected:"เลขนี้ถูกเลือกแล้ว", noMatch:"ไม่มีเลขที่ตรงกัน", needMoreBalls:"เลือกเพิ่มอีก {n} ตัว", secMyHistoryTitle:"เลขของฉันเคยถูกรางวัลไหม?", secMyHistorySub:"ตรวจเลขของคุณกับทุกงวดที่ผ่านมาแล้ว", tabByPrize:"ตามเงินรางวัล", tabByRecent:"ล่าสุด", historySummaryTpl:"ถูกรางวัล <b>{hits} ครั้ง</b> จาก {total} งวด", historyNone:"น่าเสียดาย ยังไม่มีงวดที่ถูกรางวัล", historyNeedNum:"กรอกเลขของคุณด้านบน<br>เพื่อดูประวัติการถูกรางวัล", btnMore:"ดูเพิ่มเติม", roundFmt:"งวดที่ {r}", matchTpl:"ตรง {n} ตัว", secHotTitle:"เลขที่ออกบ่อยล่าสุด?", secHotSub:"จำนวนครั้งที่ออกของแต่ละเลขในช่วงที่เลือก", secColdTitle:"เลขที่ไม่ออกนานที่สุด?", secColdSub:"จำนวนงวดนับจากออกครั้งล่าสุด", topHotTitle:"เลขออกบ่อย 5 อันดับ", topColdTitle:"เลขไม่ออกนาน 5 อันดับ", legendHot:"ออกบ่อย 5 อันดับ", legendCold:"ไม่ออกนาน 5 อันดับ", legendNormal:"เลขอื่น", statMostNum:"เลขออกบ่อยสุด", statMostCnt:"จำนวนครั้งสูงสุด", statAvgCnt:"เฉลี่ยต่อเลข", statLongestNum:"เลขไม่ออกนานสุด", statLongestGap:"งวดที่ไม่ออก", statAvgGap:"เฉลี่ยไม่ออก", secChallengeTitle:"ท้าทายรางวัลที่ 3", secChallengeSub:"เป้าหมายที่เป็นจริงกว่ารางวัลที่ 1", challengeHeroTpl:"ท้าทายรางวัลที่ 3 งวดที่ {round}", challengeDdayTpl:"จับรางวัลครั้งถัดไป {date} · D-{days}", challengeChartTitle:"ผู้ถูกรางวัลที่ 3 (12 สัปดาห์ล่าสุด)", statAvgPrize:"รางวัลที่ 3 เฉลี่ย", statOdds:"โอกาสถูกรางวัลที่ 3", statAvgWinners:"ผู้ถูกรางวัลเฉลี่ย", challengeMore:"ดูรายละเอียดการท้าทาย ›", rangeOption:"{n} งวดล่าสุด", rangeOptionAll:"ทั้งหมด", tooltipFreq:"เลข {n} · {v} ครั้ง", tooltipGap:"เลข {n} · ไม่ออกมา {v} งวด", unitTimes:" ครั้ง", unitTimesUp:" งวด↑", unitPeople:" คน", wonFmt:"{v} วอน", ctaBack:"ไปตรวจเลขที่ถูกรางวัล ›", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabBonus:"ดอกเบี้ยพิเศษ", tabGuide:"คู่มือผู้ถูกรางวัล" },
-  uz: { hdrPageTitle:"Statistika", hdrTitle:"Mening raqamlarim boʻyicha statistika", hdrSubTpl:"{start}–{end} turlar · Jonli lotereya maʼlumotlari", myNumTitle:"Mening raqamlarim", btnEdit:"Tahrirlash", btnDone:"Tayyor", myNumEmpty:"Hali raqamlar saqlanmagan", myNumEmptySub:"Tahrirlashni bosing va 6 ta raqam kiriting — quyidagi statistika shunga moslashadi", myNumResultTpl:"{round}-tur · {n} ta mos", noPrize:"Mukofot yoʻq", rank0:"Yutuq yoʻq", rank1:"1-mukofot", rank2:"2-mukofot", rank3:"3-mukofot", rank4:"4-mukofot", rank5:"5-mukofot", digitPlaceholder:"Raqam kiriting (1~45)", allSixSelected:"6 ta raqam tanlandi. Tayyorni bosing.", alreadySelected:"Bu raqam allaqachon tanlangan", noMatch:"Mos raqam yoʻq", needMoreBalls:"Yana {n} ta raqam tanlang", secMyHistoryTitle:"Raqamlarim ilgari yutganmi?", secMyHistorySub:"Raqamlaringiz barcha oʻtgan turlar boʻyicha tekshirildi", tabByPrize:"Mukofot boʻyicha", tabByRecent:"Eng yangi", historySummaryTpl:"{total} turdan <b>{hits} marta</b> yutgan", historyNone:"Afsuski, yutgan tur topilmadi", historyNeedNum:"Yuqorida raqamlaringizni kiriting<br>va yutuq tarixini koʻring", btnMore:"Koʻproq", roundFmt:"{r}-tur", matchTpl:"{n} ta mos", secHotTitle:"Soʻnggi paytda koʻp chiqqan raqamlar", secHotSub:"Tanlangan oraliqda har bir raqamning chiqish soni", secColdTitle:"Uzoq vaqt chiqmagan raqamlar", secColdSub:"Oxirgi chiqishdan beri oʻtgan turlar soni", topHotTitle:"Eng koʻp chiqqan TOP 5", topColdTitle:"Eng uzoq chiqmagan TOP 5", legendHot:"Koʻp chiqqan TOP5", legendCold:"Chiqmagan TOP5", legendNormal:"Boshqalar", statMostNum:"Eng koʻp chiqqan", statMostCnt:"Eng yuqori son", statAvgCnt:"Raqamga oʻrtacha", statLongestNum:"Eng uzoq chiqmagan", statLongestGap:"Chiqmagan turlar", statAvgGap:"Oʻrtacha chiqmagan", secChallengeTitle:"3-mukofot chellenji", secChallengeSub:"1-mukofotdan koʻra real maqsad", challengeHeroTpl:"{round}-tur 3-mukofot chellenji", challengeDdayTpl:"Keyingi qurʼa {date} · D-{days}", challengeChartTitle:"3-mukofot gʻoliblari (oxirgi 12 hafta)", statAvgPrize:"Oʻrtacha 3-mukofot", statOdds:"3-mukofot ehtimoli", statAvgWinners:"Oʻrtacha gʻoliblar", challengeMore:"Chellenj tafsilotlari ›", rangeOption:"Oxirgi {n}", rangeOptionAll:"Barchasi", tooltipFreq:"{n}-raqam · {v} marta", tooltipGap:"{n}-raqam · {v} turdan beri chiqmagan", unitTimes:" marta", unitTimesUp:" tur↑", unitPeople:" kishi", wonFmt:"{v} won", ctaBack:"Yutuq raqamlarini tekshirish ›", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabBonus:"Imtiyozli foiz", tabGuide:"Yutuvchi qoʻllanmasi" },
+  ko: { hdrPageTitle:"재미로 보는 통계", hdrTitle:"내 번호로 보는 로또 통계", hdrSubTpl:"제 {start}회 ~ {end}회 · 동행복권 실시간 데이터", myNumTitle:"내 번호", btnEdit:"수정", btnDone:"완료", myNumEmpty:"아직 저장된 번호가 없어요", myNumEmptySub:"수정을 눌러 번호 6개를 입력하면 아래 통계가 내 번호 기준으로 바뀌어요", myNumResultTpl:"제 {round}회 기준 · {n}개 일치", noPrize:"당첨금 없음", rank0:"낙첨", rank1:"1등", rank2:"2등", rank3:"3등", rank4:"4등", rank5:"5등", digitPlaceholder:"번호를 입력하세요 (1~45)", allSixSelected:"6개를 모두 선택했어요. 완료를 눌러주세요", alreadySelected:"이미 선택한 번호예요", noMatch:"해당하는 번호가 없어요", needMoreBalls:"{n}개 더 선택해주세요", secMyHistoryTitle:"나의 번호, 과거엔 혹시 당첨?", secMyHistorySub:"내 번호로 과거 전 회차를 전부 채점해봤어요", tabByPrize:"금액(등수)순", tabByRecent:"최근 순", historySummaryTpl:"전체 {total}회차 중 <b>{hits}번</b> 당첨됐어요", historyNone:"아쉽게도 당첨된 회차가 한 번도 없어요", historyNeedNum:"위에서 내 번호를 입력하면<br>과거 당첨 이력을 확인할 수 있어요", btnMore:"더보기", roundFmt:"{r}회", matchTpl:"{n}개 일치", secHotTitle:"최근 많이 뽑힌 번호는?", secHotSub:"선택한 범위에서 번호별 출현 횟수", secColdTitle:"최근 오랫동안 안 보인 번호는?", secColdSub:"마지막으로 나온 뒤 지나간 회차 수", topHotTitle:"최다 출현 번호 TOP 5", topColdTitle:"장기 미출현 번호 TOP 5", legendHot:"최다 출현 TOP5", legendCold:"장기 미출현 TOP5", legendNormal:"그 외 번호", statMostNum:"최다출현 번호", statMostCnt:"최다 출현 횟수", statAvgCnt:"번호당 평균 출현", statLongestNum:"최장 미출현 번호", statLongestGap:"미출현 회차", statAvgGap:"평균 미출현", secChallengeTitle:"3등 챌린지", secChallengeSub:"1등보다 현실적인 목표, 3등에 도전해요", challengeHeroTpl:"제 {round}회 3등 당첨 도전", challengeDdayTpl:"다음 추첨 {date} · D-{days}", challengeChartTitle:"최근 12주 3등 당첨자 수", statAvgPrize:"3등 평균 당첨금", statOdds:"3등 당첨 확률", statAvgWinners:"3등 평균 당첨자", nearNoNum:"위에서 내 번호를 입력하면, 3등에서 얼마나 아쉬웠는지 알려드려요", nearWin:"축하해요! 이번 회차는 {rank}이에요 🎉", nearFar:"이번엔 아쉬웠어요. 3등은 6개 중 5개를 맞춰야 해요", nearTitleTpl:"아쉬워요! {n}개만 더 맞췄다면 3등!", nearProbTpl:"맞춘 {k}개는 그대로 두고 나머지를 다시 골랐다면, {p} 확률로 3등이었어요", investTitle:"사실 3등도 쉽지 않아요", investDescTpl:"3등에 당첨되려면 평균 {n}번을 사야 해요. 그만큼 사려면", investQ:"차라리 이 돈을 NH 상품에 넣는다면?", investDepositCond:"{amount}을 1년 예치하면", investSavingCond:"월 {amount}원씩 1년 납입하면 (월 납입 한도)", rateTpl:"연 {r}%", monthlyPreTpl:"월 {v}원(세전)", monthlyPostTpl:"/ {v}원(세후)", yearPreTpl:"만기 이자 {v}원(세전)", yearPostTpl:"/ {v}원(세후)", taxTooltip:"금융소득 종합과세 대상이 아닐 때의 일반과세(이자소득세 15.4%) 기준이에요. 종합과세 대상이면 실제 세후 금액이 달라질 수 있어요.", rateNote:"* 금리는 2026-09-23 공시 기준(세전, 12개월)이며 변동될 수 있어요", chSubTitle:"1등보다 현실적인 목표, 3등에 도전해요 · 815만분의 1이 아닌 4만분의 1", challengeMore:"3등 챌린지 자세히 보기 ›", rangeOption:"최근 {n}회", rangeOptionAll:"전체", tooltipFreq:"{n}번 · {v}회", tooltipGap:"{n}번 · {v}회째 미출현", unitTimes:"회", unitTimesUp:"회↑", unitPeople:"명", wonFmt:"{v}원", ctaBack:"당첨번호 조회하러 가기 ›", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabBonus:"우대금리", tabGuide:"당첨가이드" },
+  en: { hdrPageTitle:"Fun Stats", hdrTitle:"Lottery stats through my numbers", hdrSubTpl:"Rounds {start}–{end} · Live Lottery data", myNumTitle:"My Numbers", btnEdit:"Edit", btnDone:"Done", myNumEmpty:"No numbers saved yet", myNumEmptySub:"Tap Edit and enter 6 numbers to personalize the stats below", myNumResultTpl:"Round {round} · {n} matched", noPrize:"No Prize", rank0:"Not a Winner", rank1:"1st Prize", rank2:"2nd Prize", rank3:"3rd Prize", rank4:"4th Prize", rank5:"5th Prize", digitPlaceholder:"Enter a number (1-45)", allSixSelected:"All 6 selected. Tap Done.", alreadySelected:"Already selected", noMatch:"No matching number", needMoreBalls:"Select {n} more number(s)", secMyHistoryTitle:"Would my numbers have won?", secMyHistorySub:"We checked your numbers against every past draw", tabByPrize:"By Prize", tabByRecent:"Most Recent", historySummaryTpl:"Won <b>{hits} times</b> out of {total} draws", historyNone:"No winning rounds found", historyNeedNum:"Enter your numbers above<br>to see past winning history", btnMore:"Show more", roundFmt:"Round {r}", matchTpl:"{n} matched", secHotTitle:"Most drawn numbers lately", secHotSub:"Appearance count per number in the selected range", secColdTitle:"Longest missing numbers", secColdSub:"Draws passed since each number last appeared", topHotTitle:"Top 5 Most Frequent", topColdTitle:"Top 5 Longest Missing", legendHot:"Top 5 Frequent", legendCold:"Top 5 Missing", legendNormal:"Others", statMostNum:"Most Frequent", statMostCnt:"Top Count", statAvgCnt:"Avg per Number", statLongestNum:"Longest Missing", statLongestGap:"Draws Missing", statAvgGap:"Avg Missing", secChallengeTitle:"3rd Prize Challenge", secChallengeSub:"A more realistic goal than 1st prize", challengeHeroTpl:"Round {round} · 3rd Prize Challenge", challengeDdayTpl:"Next draw {date} · D-{days}", challengeChartTitle:"3rd-Prize Winners (Last 12 Weeks)", statAvgPrize:"Avg 3rd Prize", statOdds:"3rd Prize Odds", statAvgWinners:"Avg Winners", nearNoNum:"Enter your numbers above to see how close you were to 3rd prize", nearWin:"Congratulations! This round you got {rank} 🎉", nearFar:"Not this time. 3rd prize needs 5 of 6 numbers", nearTitleTpl:"So close! Just {n} more for 3rd prize!", nearProbTpl:"Keeping your {k} correct picks and redrawing the rest, you had a {p} chance at 3rd prize", investTitle:"3rd prize is not easy either", investDescTpl:"On average you would need {n} tickets to win 3rd prize. That costs", investQ:"What if you put that money into an NH product instead?", investDepositCond:"Deposit {amount} for 1 year", investSavingCond:"Save {amount} KRW a month for 1 year (monthly cap)", rateTpl:"{r}% p.a.", monthlyPreTpl:"{v} KRW/month (pre-tax)", monthlyPostTpl:"/ {v} KRW (after tax)", yearPreTpl:"Interest at maturity {v} KRW (pre-tax)", yearPostTpl:"/ {v} KRW (after tax)", taxTooltip:"Based on standard interest income tax (15.4%), assuming you are not subject to comprehensive financial income taxation. Your actual after-tax amount may differ if you are.", rateNote:"* Rates as published on 2026-09-23 (pre-tax, 12 months) and subject to change", chSubTitle:"A more realistic goal than 1st prize - 1 in 41K, not 1 in 8.15M", challengeMore:"See the full challenge ›", rangeOption:"Last {n}", rangeOptionAll:"All", tooltipFreq:"No.{n} · {v} times", tooltipGap:"No.{n} · missing {v} draws", unitTimes:"x", unitTimesUp:"x+", unitPeople:"", wonFmt:"₩{v}", ctaBack:"Check winning numbers ›", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabBonus:"Bonus Rate", tabGuide:"Winner Guide" },
+  zh: { hdrPageTitle:"趣味统计", hdrTitle:"用我的号码看彩票统计", hdrSubTpl:"第{start}期~第{end}期 · 实时彩票数据", myNumTitle:"我的号码", btnEdit:"修改", btnDone:"完成", myNumEmpty:"尚未保存号码", myNumEmptySub:"点击修改并输入6个号码，下方统计将以我的号码为准", myNumResultTpl:"第{round}期 · 命中{n}个", noPrize:"无奖金", rank0:"未中奖", rank1:"1等奖", rank2:"2等奖", rank3:"3等奖", rank4:"4等奖", rank5:"5等奖", digitPlaceholder:"请输入号码 (1~45)", allSixSelected:"已选择全部6个号码，请点击完成", alreadySelected:"已选择该号码", noMatch:"没有匹配的号码", needMoreBalls:"还需选择{n}个号码", secMyHistoryTitle:"我的号码，过去中过奖吗?", secMyHistorySub:"用我的号码对过去所有期数进行了核对", tabByPrize:"按金额(等级)", tabByRecent:"按最近", historySummaryTpl:"全部{total}期中 <b>中奖{hits}次</b>", historyNone:"很遗憾，没有中奖的期数", historyNeedNum:"在上方输入我的号码<br>即可查看过去中奖记录", btnMore:"查看更多", roundFmt:"第{r}期", matchTpl:"命中{n}个", secHotTitle:"最近常出的号码?", secHotSub:"所选范围内各号码出现次数", secColdTitle:"最近很久没出的号码?", secColdSub:"自最后一次出现以来经过的期数", topHotTitle:"最多出现号码TOP5", topColdTitle:"长期未出现号码TOP5", legendHot:"最多出现TOP5", legendCold:"长期未出现TOP5", legendNormal:"其他号码", statMostNum:"最多出现号码", statMostCnt:"最多出现次数", statAvgCnt:"每号平均出现", statLongestNum:"最久未出号码", statLongestGap:"未出期数", statAvgGap:"平均未出", secChallengeTitle:"三等奖挑战", secChallengeSub:"比一等奖更现实的目标", challengeHeroTpl:"第{round}期 三等奖挑战", challengeDdayTpl:"下次开奖 {date} · D-{days}", challengeChartTitle:"近12周三等奖中奖人数", statAvgPrize:"三等奖平均奖金", statOdds:"三等奖概率", statAvgWinners:"三等奖平均人数", nearNoNum:"在上方输入我的号码，即可查看距离三等奖有多近", nearWin:"恭喜！本期您中了{rank} 🎉", nearFar:"这次有点可惜。三等奖需要命中6个号码中的5个", nearTitleTpl:"太可惜了！再中{n}个就是三等奖！", nearProbTpl:"保留已命中的{k}个号码、重新选择其余号码的话，有{p}的概率中三等奖", investTitle:"其实三等奖也不容易", investDescTpl:"平均要买{n}次才能中三等奖。买这么多需要", investQ:"不如把这笔钱放进NH产品？", investDepositCond:"将{amount}存入1年", investSavingCond:"每月存{amount}韩元、存满1年（每月存款上限）", rateTpl:"年 {r}%", monthlyPreTpl:"每月{v}韩元（税前）", monthlyPostTpl:"/ {v}韩元（税后）", yearPreTpl:"到期利息 {v}韩元（税前）", yearPostTpl:"/ {v}韩元（税后）", taxTooltip:"以非金融所得综合征税对象时的一般征税（利息所得税15.4%）为准。若属于综合征税对象，实际税后金额可能有所不同。", rateNote:"* 利率为2026-09-23公示基准（税前，12个月），可能变动", chSubTitle:"比一等奖更现实的目标 · 不是815万分之一，而是4万分之一", challengeMore:"查看三等奖挑战详情 ›", rangeOption:"近{n}期", rangeOptionAll:"全部", tooltipFreq:"{n}号 · {v}次", tooltipGap:"{n}号 · 已{v}期未出现", unitTimes:"次", unitTimesUp:"期↑", unitPeople:"人", wonFmt:"{v}韩元", ctaBack:"去查询中奖号码 ›", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabBonus:"优惠利率", tabGuide:"中奖指南" },
+  vi: { hdrPageTitle:"Thống kê vui", hdrTitle:"Thống kê xổ số theo số của tôi", hdrSubTpl:"Kỳ {start}–{end} · Dữ liệu xổ số thời gian thực", myNumTitle:"Số của tôi", btnEdit:"Sửa", btnDone:"Xong", myNumEmpty:"Chưa lưu số nào", myNumEmptySub:"Nhấn Sửa và nhập 6 số để thống kê bên dưới theo số của bạn", myNumResultTpl:"Kỳ {round} · trùng {n} số", noPrize:"Không có thưởng", rank0:"Không trúng", rank1:"Giải 1", rank2:"Giải 2", rank3:"Giải 3", rank4:"Giải 4", rank5:"Giải 5", digitPlaceholder:"Nhập số (1~45)", allSixSelected:"Đã chọn đủ 6 số. Nhấn Xong.", alreadySelected:"Số này đã được chọn", noMatch:"Không có số phù hợp", needMoreBalls:"Chọn thêm {n} số nữa", secMyHistoryTitle:"Số của tôi từng trúng chưa?", secMyHistorySub:"Đã đối chiếu số của bạn với toàn bộ kỳ quay trước đây", tabByPrize:"Theo giải thưởng", tabByRecent:"Gần đây nhất", historySummaryTpl:"Trúng <b>{hits} lần</b> trong {total} kỳ", historyNone:"Tiếc quá, chưa có kỳ nào trúng", historyNeedNum:"Nhập số của bạn ở trên<br>để xem lịch sử trúng thưởng", btnMore:"Xem thêm", roundFmt:"Kỳ {r}", matchTpl:"trùng {n}", secHotTitle:"Số ra nhiều gần đây?", secHotSub:"Số lần xuất hiện của từng số trong phạm vi đã chọn", secColdTitle:"Số lâu chưa ra nhất?", secColdSub:"Số kỳ đã trôi qua kể từ lần xuất hiện gần nhất", topHotTitle:"Top 5 xuất hiện nhiều nhất", topColdTitle:"Top 5 lâu chưa ra nhất", legendHot:"Top 5 nhiều nhất", legendCold:"Top 5 lâu nhất", legendNormal:"Số khác", statMostNum:"Số ra nhiều nhất", statMostCnt:"Số lần nhiều nhất", statAvgCnt:"TB mỗi số", statLongestNum:"Số lâu chưa ra", statLongestGap:"Số kỳ chưa ra", statAvgGap:"TB chưa ra", secChallengeTitle:"Thử thách giải Ba", secChallengeSub:"Mục tiêu thực tế hơn giải nhất", challengeHeroTpl:"Thử thách giải Ba kỳ {round}", challengeDdayTpl:"Quay số tiếp theo {date} · D-{days}", challengeChartTitle:"Người trúng giải Ba (12 tuần gần nhất)", statAvgPrize:"Giải Ba trung bình", statOdds:"Tỷ lệ trúng giải Ba", statAvgWinners:"TB người trúng", nearNoNum:"Nhập số của bạn ở trên để xem bạn đã suýt trúng giải Ba đến mức nào", nearWin:"Chúc mừng! Kỳ này bạn trúng {rank} 🎉", nearFar:"Lần này chưa được. Giải Ba cần trúng 5 trong 6 số", nearTitleTpl:"Tiếc quá! Chỉ cần thêm {n} số nữa là giải Ba!", nearProbTpl:"Giữ nguyên {k} số đã trúng và chọn lại phần còn lại, bạn có {p} cơ hội trúng giải Ba", investTitle:"Thật ra giải Ba cũng không dễ", investDescTpl:"Trung bình cần mua {n} lần mới trúng giải Ba. Số tiền đó là", investQ:"Thay vào đó, gửi số tiền này vào sản phẩm NH thì sao?", investDepositCond:"Gửi {amount} trong 1 năm", investSavingCond:"Gửi {amount} won mỗi tháng trong 1 năm (hạn mức tháng)", rateTpl:"{r}%/năm", monthlyPreTpl:"{v} won/tháng (trước thuế)", monthlyPostTpl:"/ {v} won (sau thuế)", yearPreTpl:"Lãi đáo hạn {v} won (trước thuế)", yearPostTpl:"/ {v} won (sau thuế)", taxTooltip:"Tính theo thuế thu nhập lãi thông thường (15,4%), giả định bạn không thuộc diện đánh thuế thu nhập tài chính tổng hợp. Nếu thuộc diện đó, số tiền sau thuế thực tế có thể khác.", rateNote:"* Lãi suất theo công bố ngày 2026-09-23 (trước thuế, 12 tháng) và có thể thay đổi", chSubTitle:"Mục tiêu thực tế hơn giải nhất · 1/41 nghìn thay vì 1/8,15 triệu", challengeMore:"Xem chi tiết thử thách ›", rangeOption:"{n} kỳ gần nhất", rangeOptionAll:"Tất cả", tooltipFreq:"Số {n} · {v} lần", tooltipGap:"Số {n} · chưa ra {v} kỳ", unitTimes:" lần", unitTimesUp:" kỳ↑", unitPeople:" người", wonFmt:"{v} won", ctaBack:"Đi tra cứu số trúng thưởng ›", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabBonus:"Lãi suất ưu đãi", tabGuide:"Hướng dẫn" },
+  th: { hdrPageTitle:"สถิติสนุก", hdrTitle:"สถิติสลากจากเลขของฉัน", hdrSubTpl:"งวดที่ {start}–{end} · ข้อมูลสลากแบบเรียลไทม์", myNumTitle:"เลขของฉัน", btnEdit:"แก้ไข", btnDone:"เสร็จ", myNumEmpty:"ยังไม่ได้บันทึกเลข", myNumEmptySub:"กดแก้ไขแล้วกรอกเลข 6 ตัว สถิติด้านล่างจะอิงเลขของคุณ", myNumResultTpl:"งวดที่ {round} · ตรง {n} ตัว", noPrize:"ไม่มีเงินรางวัล", rank0:"ไม่ถูกรางวัล", rank1:"รางวัลที่ 1", rank2:"รางวัลที่ 2", rank3:"รางวัลที่ 3", rank4:"รางวัลที่ 4", rank5:"รางวัลที่ 5", digitPlaceholder:"กรอกเลข (1~45)", allSixSelected:"เลือกครบ 6 ตัวแล้ว กดเสร็จได้เลย", alreadySelected:"เลขนี้ถูกเลือกแล้ว", noMatch:"ไม่มีเลขที่ตรงกัน", needMoreBalls:"เลือกเพิ่มอีก {n} ตัว", secMyHistoryTitle:"เลขของฉันเคยถูกรางวัลไหม?", secMyHistorySub:"ตรวจเลขของคุณกับทุกงวดที่ผ่านมาแล้ว", tabByPrize:"ตามเงินรางวัล", tabByRecent:"ล่าสุด", historySummaryTpl:"ถูกรางวัล <b>{hits} ครั้ง</b> จาก {total} งวด", historyNone:"น่าเสียดาย ยังไม่มีงวดที่ถูกรางวัล", historyNeedNum:"กรอกเลขของคุณด้านบน<br>เพื่อดูประวัติการถูกรางวัล", btnMore:"ดูเพิ่มเติม", roundFmt:"งวดที่ {r}", matchTpl:"ตรง {n} ตัว", secHotTitle:"เลขที่ออกบ่อยล่าสุด?", secHotSub:"จำนวนครั้งที่ออกของแต่ละเลขในช่วงที่เลือก", secColdTitle:"เลขที่ไม่ออกนานที่สุด?", secColdSub:"จำนวนงวดนับจากออกครั้งล่าสุด", topHotTitle:"เลขออกบ่อย 5 อันดับ", topColdTitle:"เลขไม่ออกนาน 5 อันดับ", legendHot:"ออกบ่อย 5 อันดับ", legendCold:"ไม่ออกนาน 5 อันดับ", legendNormal:"เลขอื่น", statMostNum:"เลขออกบ่อยสุด", statMostCnt:"จำนวนครั้งสูงสุด", statAvgCnt:"เฉลี่ยต่อเลข", statLongestNum:"เลขไม่ออกนานสุด", statLongestGap:"งวดที่ไม่ออก", statAvgGap:"เฉลี่ยไม่ออก", secChallengeTitle:"ท้าทายรางวัลที่ 3", secChallengeSub:"เป้าหมายที่เป็นจริงกว่ารางวัลที่ 1", challengeHeroTpl:"ท้าทายรางวัลที่ 3 งวดที่ {round}", challengeDdayTpl:"จับรางวัลครั้งถัดไป {date} · D-{days}", challengeChartTitle:"ผู้ถูกรางวัลที่ 3 (12 สัปดาห์ล่าสุด)", statAvgPrize:"รางวัลที่ 3 เฉลี่ย", statOdds:"โอกาสถูกรางวัลที่ 3", statAvgWinners:"ผู้ถูกรางวัลเฉลี่ย", nearNoNum:"กรอกเลขของคุณด้านบน เพื่อดูว่าใกล้รางวัลที่ 3 แค่ไหน", nearWin:"ยินดีด้วย! งวดนี้คุณได้{rank} 🎉", nearFar:"งวดนี้ยังไม่ได้ รางวัลที่ 3 ต้องถูก 5 จาก 6 ตัว", nearTitleTpl:"น่าเสียดาย! ถูกอีกแค่ {n} ตัวก็ได้รางวัลที่ 3!", nearProbTpl:"ถ้าเก็บ {k} ตัวที่ถูกไว้แล้วสุ่มที่เหลือใหม่ คุณมีโอกาส {p} ที่จะได้รางวัลที่ 3", investTitle:"จริง ๆ รางวัลที่ 3 ก็ไม่ง่าย", investDescTpl:"โดยเฉลี่ยต้องซื้อ {n} ครั้งจึงจะถูกรางวัลที่ 3 ซึ่งเป็นเงิน", investQ:"ถ้าเอาเงินก้อนนี้ไปลงผลิตภัณฑ์ NH แทนล่ะ?", investDepositCond:"ฝาก {amount} เป็นเวลา 1 ปี", investSavingCond:"ฝากเดือนละ {amount} วอน เป็นเวลา 1 ปี (วงเงินต่อเดือน)", rateTpl:"ต่อปี {r}%", monthlyPreTpl:"เดือนละ {v} วอน (ก่อนภาษี)", monthlyPostTpl:"/ {v} วอน (หลังภาษี)", yearPreTpl:"ดอกเบี้ยครบกำหนด {v} วอน (ก่อนภาษี)", yearPostTpl:"/ {v} วอน (หลังภาษี)", taxTooltip:"คำนวณตามภาษีดอกเบี้ยมาตรฐาน (15.4%) โดยถือว่าคุณไม่อยู่ในเกณฑ์ภาษีรายได้ทางการเงินแบบรวม หากอยู่ในเกณฑ์ ยอดหลังภาษีจริงอาจต่างออกไป", rateNote:"* อัตราดอกเบี้ยตามประกาศวันที่ 2026-09-23 (ก่อนภาษี, 12 เดือน) อาจเปลี่ยนแปลงได้", chSubTitle:"เป้าหมายที่เป็นจริงกว่ารางวัลที่ 1 · 1 ใน 41,000 ไม่ใช่ 1 ใน 8.15 ล้าน", challengeMore:"ดูรายละเอียดการท้าทาย ›", rangeOption:"{n} งวดล่าสุด", rangeOptionAll:"ทั้งหมด", tooltipFreq:"เลข {n} · {v} ครั้ง", tooltipGap:"เลข {n} · ไม่ออกมา {v} งวด", unitTimes:" ครั้ง", unitTimesUp:" งวด↑", unitPeople:" คน", wonFmt:"{v} วอน", ctaBack:"ไปตรวจเลขที่ถูกรางวัล ›", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabBonus:"ดอกเบี้ยพิเศษ", tabGuide:"คู่มือผู้ถูกรางวัล" },
+  uz: { hdrPageTitle:"Statistika", hdrTitle:"Mening raqamlarim boʻyicha statistika", hdrSubTpl:"{start}–{end} turlar · Jonli lotereya maʼlumotlari", myNumTitle:"Mening raqamlarim", btnEdit:"Tahrirlash", btnDone:"Tayyor", myNumEmpty:"Hali raqamlar saqlanmagan", myNumEmptySub:"Tahrirlashni bosing va 6 ta raqam kiriting — quyidagi statistika shunga moslashadi", myNumResultTpl:"{round}-tur · {n} ta mos", noPrize:"Mukofot yoʻq", rank0:"Yutuq yoʻq", rank1:"1-mukofot", rank2:"2-mukofot", rank3:"3-mukofot", rank4:"4-mukofot", rank5:"5-mukofot", digitPlaceholder:"Raqam kiriting (1~45)", allSixSelected:"6 ta raqam tanlandi. Tayyorni bosing.", alreadySelected:"Bu raqam allaqachon tanlangan", noMatch:"Mos raqam yoʻq", needMoreBalls:"Yana {n} ta raqam tanlang", secMyHistoryTitle:"Raqamlarim ilgari yutganmi?", secMyHistorySub:"Raqamlaringiz barcha oʻtgan turlar boʻyicha tekshirildi", tabByPrize:"Mukofot boʻyicha", tabByRecent:"Eng yangi", historySummaryTpl:"{total} turdan <b>{hits} marta</b> yutgan", historyNone:"Afsuski, yutgan tur topilmadi", historyNeedNum:"Yuqorida raqamlaringizni kiriting<br>va yutuq tarixini koʻring", btnMore:"Koʻproq", roundFmt:"{r}-tur", matchTpl:"{n} ta mos", secHotTitle:"Soʻnggi paytda koʻp chiqqan raqamlar", secHotSub:"Tanlangan oraliqda har bir raqamning chiqish soni", secColdTitle:"Uzoq vaqt chiqmagan raqamlar", secColdSub:"Oxirgi chiqishdan beri oʻtgan turlar soni", topHotTitle:"Eng koʻp chiqqan TOP 5", topColdTitle:"Eng uzoq chiqmagan TOP 5", legendHot:"Koʻp chiqqan TOP5", legendCold:"Chiqmagan TOP5", legendNormal:"Boshqalar", statMostNum:"Eng koʻp chiqqan", statMostCnt:"Eng yuqori son", statAvgCnt:"Raqamga oʻrtacha", statLongestNum:"Eng uzoq chiqmagan", statLongestGap:"Chiqmagan turlar", statAvgGap:"Oʻrtacha chiqmagan", secChallengeTitle:"3-mukofot chellenji", secChallengeSub:"1-mukofotdan koʻra real maqsad", challengeHeroTpl:"{round}-tur 3-mukofot chellenji", challengeDdayTpl:"Keyingi qurʼa {date} · D-{days}", challengeChartTitle:"3-mukofot gʻoliblari (oxirgi 12 hafta)", statAvgPrize:"Oʻrtacha 3-mukofot", statOdds:"3-mukofot ehtimoli", statAvgWinners:"Oʻrtacha gʻoliblar", nearNoNum:"Yuqorida raqamlaringizni kiriting - 3-mukofotga qanchalik yaqin boʻlganingizni koʻrsatamiz", nearWin:"Tabriklaymiz! Bu turda siz {rank} oldingiz 🎉", nearFar:"Bu safar boʻlmadi. 3-mukofot uchun 6 tadan 5 tasi mos kelishi kerak", nearTitleTpl:"Afsus! Yana {n} ta toʻgʻri boʻlsa 3-mukofot edi!", nearProbTpl:"Toʻgʻri topgan {k} tani qoldirib qolganini qayta tanlaganingizda, 3-mukofot ehtimoli {p} edi", investTitle:"Aslida 3-mukofot ham oson emas", investDescTpl:"3-mukofotni yutish uchun oʻrtacha {n} marta sotib olish kerak. Bu esa", investQ:"Shu pulni NH mahsulotiga qoʻysangiz-chi?", investDepositCond:"{amount} ni 1 yilga qoʻysangiz", investSavingCond:"Oyiga {amount} von, 1 yil davomida (oylik limit)", rateTpl:"Yiliga {r}%", monthlyPreTpl:"Oyiga {v} von (soliqqacha)", monthlyPostTpl:"/ {v} von (soliqdan keyin)", yearPreTpl:"Muddat oxiridagi foiz {v} von (soliqqacha)", yearPostTpl:"/ {v} von (soliqdan keyin)", taxTooltip:"Umumiy moliyaviy daromad soligʻiga tortilmaslik sharti bilan, standart foiz daromadi soligʻi (15,4%) asosida. Agar tortilsangiz, haqiqiy summa farq qilishi mumkin.", rateNote:"* Foiz stavkalari 2026-09-23 holatiga koʻra (soliqqacha, 12 oy) va oʻzgarishi mumkin", chSubTitle:"1-mukofotdan koʻra real maqsad · 8,15 milliondan emas, 41 mingdan bir", challengeMore:"Chellenj tafsilotlari ›", rangeOption:"Oxirgi {n}", rangeOptionAll:"Barchasi", tooltipFreq:"{n}-raqam · {v} marta", tooltipGap:"{n}-raqam · {v} turdan beri chiqmagan", unitTimes:" marta", unitTimesUp:" tur↑", unitPeople:" kishi", wonFmt:"{v} won", ctaBack:"Yutuq raqamlarini tekshirish ›", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabBonus:"Imtiyozli foiz", tabGuide:"Yutuvchi qoʻllanmasi" },
 };
 
 const LOCALE_MAP = { ko:'ko-KR', en:'en-US', zh:'zh-CN', vi:'vi-VN', th:'th-TH', uz:'uz-UZ' };
@@ -416,8 +482,14 @@ applyStaticI18n();
 
 function formatWon(v){ return t('wonFmt', { v: v.toLocaleString(LOCALE_MAP[LANG] || 'ko-KR') }); }
 function formatWonCompact(v){
+  // 한국어는 Intl compact가 "4140.4만"처럼 어색하게 나와서 억/만 단위로 직접 끊는다
+  if(LANG === 'ko'){
+    if(v >= 1e8) return t('wonFmt', { v: (v / 1e8).toFixed(1).replace(/\.0$/, '') + '억' });
+    if(v >= 1e4) return t('wonFmt', { v: Math.round(v / 1e4).toLocaleString('ko-KR') + '만' });
+    return t('wonFmt', { v: Math.round(v).toLocaleString('ko-KR') });
+  }
   let s;
-  try { s = new Intl.NumberFormat(LOCALE_MAP[LANG] || 'ko-KR', { notation:'compact', maximumFractionDigits:1 }).format(v); }
+  try { s = new Intl.NumberFormat(LOCALE_MAP[LANG] || 'en-US', { notation:'compact', maximumFractionDigits:1 }).format(v); }
   catch(e) { s = v.toLocaleString(); }
   return t('wonFmt', { v: s });
 }
@@ -831,7 +903,149 @@ function renderChallenge(){
   document.getElementById('chHeroSub').innerHTML = t('challengeDdayTpl', {
     date: formatDrawDate(nextYmd), days: '<b>' + daysLeft + '</b>',
   });
+
+  renderNearMiss(latest);
+  renderInvest();
 }
+
+/* ===== 내 번호가 3등에서 얼마나 아쉬웠는지 ===== */
+const RANK3_NEED = 5; // 3등 = 6개 중 5개 일치
+
+function comb(n, k){
+  if(k < 0 || k > n) return 0;
+  let r = 1;
+  for(let i = 1; i <= k; i++) r = r * (n - k + i) / i;
+  return r;
+}
+
+/**
+ * 이미 맞춘 k개는 그대로 두고 나머지 (6-k)개만 다시 골랐을 때,
+ * 그 중 정확히 (5-k)개가 당첨번호여서 3등이 될 확률.
+ * 후보 풀은 45-k개, 그 안에 남은 당첨번호가 6-k개, 나머지 39개가 비당첨.
+ */
+function rank3Probability(k){
+  const need = RANK3_NEED - k;
+  return comb(6 - k, need) * comb(39, (6 - k) - need) / comb(45 - k, 6 - k);
+}
+
+function renderNearMiss(latest){
+  const box = document.getElementById('chNear');
+  if(myNumbers.length !== 6){
+    box.innerHTML = `<div class="near-box"><div class="near-p">${t('nearNoNum')}</div></div>`;
+    return;
+  }
+
+  const { matched, rank } = computeRank(myNumbers, latest);
+  const k = matched.length;
+
+  if(rank >= 1 && rank <= 3){
+    box.innerHTML = `<div class="near-box"><div class="near-t">${t('nearWin', { rank: t('rank' + rank) })}</div></div>`;
+    return;
+  }
+  if(k < 2){
+    box.innerHTML = `<div class="near-box"><div class="near-p">${t('nearFar')}</div></div>`;
+    return;
+  }
+
+  const missing = latest.n.filter(n => !myNumbers.includes(n));
+  const need = RANK3_NEED - k;
+  const p = rank3Probability(k) * 100;
+
+  box.innerHTML = `
+    <div class="near-box">
+      <div class="near-t">${t('nearTitleTpl', { n: `<b>${need}</b>` })}</div>
+      <div class="near-balls">
+        ${matched.slice().sort((a, b) => a - b).map(n => `<div class="mini ${ballColorClass(n)}">${n}</div>`).join('')}
+        <span class="sep">+</span>
+        ${missing.slice(0, need).map(n => `<div class="mini target ${ballColorClass(n)}">${n}</div>`).join('')}
+      </div>
+      <div class="near-p">${t('nearProbTpl', { k, n: need, p: `<b>${p.toFixed(2)}%</b>` })}</div>
+    </div>`;
+}
+
+/* ===== 3등에 쓸 기대 금액 vs NH 상품 =====
+   금리는 2026-09-23 은행연합회 비교공시·NH금융상품몰 기준(세전, 12개월).
+   실제 공시값이 바뀔 수 있으므로 화면에도 기준일을 명시한다. */
+const RANK3_ODDS = 41404;      // 3등 당첨 확률 1/41,404
+const TICKET_PRICE = 1000;
+const TAX_RATE = 0.154;        // 이자소득세 14% + 지방소득세 1.4%
+const NH_PRODUCTS = {
+  deposit: { name: 'NH올원e예금', rate: 0.0355, cap: null },
+  saving:  { name: 'NH올원e적금', rate: 0.0355, cap: 300000 }, // 월 납입 한도 30만원
+};
+
+function renderInvest(){
+  const cost = TICKET_PRICE * RANK3_ODDS;
+
+  // 정기예금: 기대 금액을 1년 예치했을 때의 월 이자
+  const dPre = cost * NH_PRODUCTS.deposit.rate / 12;
+  const dPost = dPre * (1 - TAX_RATE);
+
+  // 적금: 매월 납입이라 월 한도를 넘지 못한다. 한도까지 1년 납입했을 때의 만기 이자
+  //       (1회차는 12개월, 2회차는 11개월... → 평균 6.5개월치 이자)
+  const monthly = Math.min(Math.floor(cost / 12), NH_PRODUCTS.saving.cap);
+  const sPre = monthly * NH_PRODUCTS.saving.rate * 6.5;
+  const sPost = sPre * (1 - TAX_RATE);
+
+  const won = (v) => Math.round(v).toLocaleString(LOCALE_MAP[LANG] || 'ko-KR');
+  const info = `<i class="info-mark" data-tip="${t('taxTooltip')}">i</i>`;
+
+  document.getElementById('chInvest').innerHTML = `
+    <div class="invest-t">${t('investTitle')}</div>
+    <div class="invest-d">${t('investDescTpl', { n: RANK3_ODDS.toLocaleString() })}</div>
+    <div class="invest-cost">${formatWonCompact(cost)}</div>
+    <div class="invest-q">${t('investQ')}</div>
+
+    <div class="prod-card">
+      <div class="prod-head">
+        <span class="prod-name">${NH_PRODUCTS.deposit.name}</span>
+        <span class="prod-rate">${t('rateTpl', { r: (NH_PRODUCTS.deposit.rate * 100).toFixed(2) })}</span>
+      </div>
+      <div class="prod-cond">${t('investDepositCond', { amount: formatWonCompact(cost) })}</div>
+      <div class="prod-earn">
+        <span class="pre">${t('monthlyPreTpl', { v: won(dPre) })}</span>
+        <span class="post">${t('monthlyPostTpl', { v: won(dPost) })}</span>${info}
+      </div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-head">
+        <span class="prod-name">${NH_PRODUCTS.saving.name}</span>
+        <span class="prod-rate">${t('rateTpl', { r: (NH_PRODUCTS.saving.rate * 100).toFixed(2) })}</span>
+      </div>
+      <div class="prod-cond">${t('investSavingCond', { amount: won(monthly) })}</div>
+      <div class="prod-earn">
+        <span class="pre">${t('yearPreTpl', { v: won(sPre) })}</span>
+        <span class="post">${t('yearPostTpl', { v: won(sPost) })}</span>${info}
+      </div>
+    </div>
+
+    <div class="card-sub" style="margin:9px 0 0;">${t('rateNote')}</div>`;
+
+  bindInfoMarks();
+}
+
+/* 세후 기준 안내 툴팁 */
+const infoPop = document.getElementById('infoPop');
+function bindInfoMarks(){
+  document.querySelectorAll('.info-mark').forEach(el => {
+    const show = () => {
+      const phoneRect = document.querySelector('.phone').getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      infoPop.textContent = el.getAttribute('data-tip');
+      let x = r.left + r.width / 2 - phoneRect.left;
+      x = Math.max(125, Math.min(phoneRect.width - 125, x));
+      infoPop.style.left = x + 'px';
+      infoPop.style.top = (r.top - phoneRect.top) + 'px';
+      infoPop.classList.add('show');
+    };
+    const hide = () => infoPop.classList.remove('show');
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('click', (e) => { e.stopPropagation(); infoPop.classList.contains('show') ? hide() : show(); });
+  });
+}
+document.addEventListener('click', () => infoPop.classList.remove('show'));
 
 /* ===== 초기화 ===== */
 function renderRangeOptions(sel, initial){

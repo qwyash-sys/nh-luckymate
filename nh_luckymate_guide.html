@@ -405,6 +405,9 @@ function renderRank(idx){
   document.getElementById('btnMap').href =
     'https://map.kakao.com/link/search/' + encodeURIComponent(r.map);
 
+  document.getElementById('fundTitle').textContent = r.fund.t;
+  document.getElementById('fundSub').textContent = r.fund.s;
+
   renderProducts(idx);
 }
 

@@ -177,8 +177,20 @@
     .phone {
       width: 100%; min-height: 100vh;
       border: none; border-radius: 0; box-shadow: none;
+      /* overflow:hidden(데스크톱 목업 틀의 둥근 모서리 클리핑용)을 그대로 두면
+         스크롤이 이 안에서 다시 갇혀버려, 실제 페이지 스크롤과 어긋나
+         position:sticky가 전혀 고정되지 않는 문제가 생긴다(하단 참고). */
+      overflow: visible;
     }
-    .content { flex: 1 1 auto; height: auto; }
+    /* 데스크톱에서는 .content 자체가 내부 스크롤 패널(height:600px)이라
+       overflow-y:auto가 스크롤 컨테이너 역할을 한다. 모바일에서 height:auto로
+       내용에 맞춰 늘어나면 .content 안에서는 아무것도 스크롤할 게 없어지고
+       실제 스크롤은 문서(페이지) 레벨에서 일어나는데, overflow-y:auto가 남아있으면
+       CSS 스펙상 .content가 여전히 "가장 가까운 스크롤 컨테이너"로 잡혀 sticky의
+       기준점이 되어버린다. 그 컨테이너 자체는 스크롤되지 않으니 sticky가 고정되지
+       않고 페이지와 함께 그냥 흘러가버렸다(실제 발견된 버그). overflow를 visible로
+       풀어야 sticky가 진짜 스크롤 주체인 문서를 기준으로 고정된다. */
+    .content { flex: 1 1 auto; height: auto; overflow-y: visible; }
   }
 </style>
 </head>

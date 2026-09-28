@@ -75,7 +75,8 @@
   .map-box .badge {
     position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.9);
     font-size:10px; color:var(--text-mute); padding:4px 8px; border-radius:20px; font-weight:600;
-    pointer-events:none;
+    cursor:pointer; max-width:calc(100% - 20px); overflow:hidden; text-overflow:ellipsis;
+    white-space:nowrap;
   }
 
   .segment {
@@ -92,7 +93,9 @@
     background:var(--bg-card); border-radius:16px; padding:14px 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px;
     display:flex; justify-content:space-between; align-items:center; gap:10px;
+    cursor:pointer; border:1.5px solid transparent;
   }
+  .shop-card.selected { border-color:var(--primary); background:var(--primary-light); }
   .shop-card .rank-num {
     width:26px; height:26px; border-radius:50%; background:var(--primary-light);
     color:var(--primary-dark); font-size:12px; font-weight:800;
@@ -552,13 +555,14 @@ function renderShops(){
     return;
   }
 
-  wrap.innerHTML = list.slice(0, shownCount).map((shop, i) => {
+  const shown = list.slice(0, shownCount);
+  wrap.innerHTML = shown.map((shop, i) => {
     const tags = [];
     if(shop.rank1_count > 0 && rankScope !== 'r2') tags.push(`<span class="tag win1">${t('rank1Tag', { n: shop.rank1_count })}</span>`);
     if(shop.rank2_count > 0 && rankScope !== 'r1') tags.push(`<span class="tag win2">${t('rank2Tag', { n: shop.rank2_count })}</span>`);
     if(currentMode === 'amount') tags.push(`<span class="tag win2">${t('amountTag', { n: formatWon(scopedAmount(shop)) })}</span>`);
     return `
-      <div class="shop-card">
+      <div class="shop-card" data-idx="${i}">
         <div class="rank-num">${i + 1}</div>
         <div class="shop-info">
           <div class="name">${shop.shp_nm}</div>
@@ -572,6 +576,18 @@ function renderShops(){
       </div>
     `;
   }).join('');
+
+  // 목록에서 판매점을 고르면 위 작은 지도가 그 위치로 이동해서 보여준다
+  wrap.querySelectorAll('.shop-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if(e.target.closest('.go')) return; // 길찾기 링크는 그대로 새 탭으로 보낸다
+      const shop = shown[Number(card.getAttribute('data-idx'))];
+      if(shop.lat == null || shop.lon == null) return;
+      wrap.querySelectorAll('.shop-card.selected').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      focusMap({ lat: shop.lat, lon: shop.lon }, shop.shp_nm);
+    });
+  });
 
   moreBtn.style.display = shownCount < list.length ? '' : 'none';
   moreBtn.textContent = t('btnMoreTpl', { n: Math.min(PAGE_SIZE, list.length - shownCount) });
@@ -613,27 +629,43 @@ document.getElementById('btnMoreShops').addEventListener('click', () => {
    카카오맵 SDK는 앱키 발급이 필요해 이 프로토타입 단계에서는 쓸 수 없다.
    그 대신 앱키 없이 임베드 가능한 OpenStreetMap으로 내 위치 주변의 실제 지도를
    보여준다(장식용 좌표가 아니라 실제 위경도 기준). 선택한 검색 반경만큼
-   화면에 보이는 범위(bbox)도 함께 넓어지도록 반경이 바뀔 때마다 다시 그린다. */
+   화면에 보이는 범위(bbox)도 함께 넓어지도록 반경이 바뀔 때마다 다시 그린다.
+   목록에서 판매점을 고르면 그 판매점 좌표로 지도를 확대 이동해서(focusMap)
+   실제로 어디인지 보여주고, 배지를 다시 누르면 내 위치 기준으로 돌아온다. */
 let mapCenter = null;
+let mapIsFallback = false;
 
-function renderMap(radiusKm){
-  if(!mapCenter) return;
-  const { lat, lon } = mapCenter;
+function setMapView(lat, lon, spanKm){
   // 위도 1도 ≈ 111km, 경도 1도는 위도가 높을수록 좁아지므로 cos(lat) 보정
-  const latSpan = radiusKm / 111;
-  const lonSpan = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
+  const latSpan = spanKm / 111;
+  const lonSpan = spanKm / (111 * Math.cos(lat * Math.PI / 180));
   const bbox = [lon - lonSpan, lat - latSpan, lon + lonSpan, lat + latSpan].join(',');
   document.getElementById('mapFrame').src =
     `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
 }
 
+function renderMap(radiusKm){
+  if(!mapCenter) return;
+  setMapView(mapCenter.lat, mapCenter.lon, radiusKm);
+  document.getElementById('mapBadge').textContent = mapIsFallback ? t('mapBadgeFallback') : t('mapBadgeGeo');
+}
+
+function focusMap(point, label){
+  setMapView(point.lat, point.lon, 0.8); // 판매점을 고르면 1km 안쪽으로 바짝 확대해서 보여준다
+  document.getElementById('mapBadge').textContent = '📍 ' + label;
+}
+
+document.getElementById('mapBadge').addEventListener('click', () => {
+  document.querySelectorAll('.shop-card.selected').forEach(c => c.classList.remove('selected'));
+  renderMap(radiusKm);
+});
+
 async function init(){
   const [{ lat, lon, isFallback }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
   AVG_PRIZE = avg;
   mapCenter = { lat, lon };
+  mapIsFallback = isFallback;
   renderMap(radiusKm);
-
-  document.getElementById('mapBadge').textContent = isFallback ? t('mapBadgeFallback') : t('mapBadgeGeo');
 
   const radiusSel = document.getElementById('radiusSelect');
   radiusSel.innerHTML = RADIUS_OPTIONS.map(v => `<option value="${v}">${t('radiusOption', { n: v })}</option>`).join('');

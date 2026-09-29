@@ -197,10 +197,16 @@
   }
   .hist-hint { font-size:10px; color:var(--text-faint); margin-left:4px; }
   .empty-msg { font-size:11.5px; color:var(--text-mute); text-align:center; padding:18px 6px; line-height:1.6; }
+  .hist-more-row { display:flex; gap:8px; margin-top:10px; }
   .btn-more {
-    display:block; width:100%; text-align:center; margin-top:10px;
+    display:block; flex:1; text-align:center;
     font-size:12px; font-weight:700; color:var(--primary-dark);
     background:var(--bg-content); border-radius:10px; padding:10px;
+  }
+  .btn-collapse-hist {
+    display:block; flex:none; text-align:center;
+    font-size:12px; font-weight:700; color:var(--text-mute);
+    background:#fff; border:1px solid var(--border-light); border-radius:10px; padding:10px 16px;
   }
 
   /* ===== 차트 ===== */
@@ -284,7 +290,7 @@
   .chat-fab:hover .tip { opacity:1; }
 
   .chat-overlay {
-    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+    position:fixed; inset:0; background:rgba(0,0,0,0.45);
     display:none; z-index:130; padding:10px;
   }
   .chat-overlay.show { display:block; }
@@ -387,7 +393,10 @@
 
       <div id="histSummary"></div>
       <div id="histList"></div>
-      <button class="btn-more" id="btnMoreHist" style="display:none;" data-i18n="btnMore">더보기</button>
+      <div class="hist-more-row" id="histMoreRow" style="display:none;">
+        <button class="btn-more" id="btnMoreHist" data-i18n="btnMore">더보기</button>
+        <button class="btn-collapse-hist" id="btnCollapseHist" style="display:none;" data-i18n="btnCollapse">접기</button>
+      </div>
     </div>
 
     <!-- ===== 2. 최근 많이 뽑힌 번호는? ===== -->
@@ -736,14 +745,16 @@ function computeHistory(){
 function renderHistory(){
   const summaryEl = document.getElementById('histSummary');
   const listEl = document.getElementById('histList');
+  const moreRow = document.getElementById('histMoreRow');
   const moreBtn = document.getElementById('btnMoreHist');
+  const collapseBtn = document.getElementById('btnCollapseHist');
   const segEl = document.getElementById('histSeg');
 
   if(myNumbers.length !== 6){
     segEl.style.display = 'none';
     summaryEl.innerHTML = '';
     listEl.innerHTML = '<div class="empty-msg">' + t('historyNeedNum') + '</div>';
-    moreBtn.style.display = 'none';
+    moreRow.style.display = 'none';
     return;
   }
   segEl.style.display = '';
@@ -754,7 +765,7 @@ function renderHistory(){
 
   if(!hits.length){
     listEl.innerHTML = '<div class="empty-msg">' + t('historyNone') + '</div>';
-    moreBtn.style.display = 'none';
+    moreRow.style.display = 'none';
     return;
   }
 
@@ -777,18 +788,13 @@ function renderHistory(){
       </div>
     </div>`).join('');
 
-  if(histShown < sorted.length){
-    moreBtn.style.display = '';
-    moreBtn.textContent = t('btnMore');
-    moreBtn.classList.remove('collapse');
-  } else if(sorted.length > HIST_PAGE){
-    // 더보기를 끝까지 눌러 전부 펼친 상태 — 계속 늘어나기만 하지 않도록 접기를 제공한다
-    moreBtn.style.display = '';
-    moreBtn.textContent = t('btnCollapse');
-    moreBtn.classList.add('collapse');
-  } else {
-    moreBtn.style.display = 'none';
-  }
+  // "더보기"는 더 불러올 게 있을 때만, "접기"는 한 번이라도 펼쳐졌다면 계속 보여준다
+  // (끝까지 눌러야만 접을 수 있던 걸, 펼친 즉시 바로 접을 수 있도록 개선)
+  const hasMore = histShown < sorted.length;
+  const isExpanded = histShown > HIST_PAGE;
+  moreBtn.style.display = hasMore ? '' : 'none';
+  collapseBtn.style.display = isExpanded ? '' : 'none';
+  moreRow.style.display = (hasMore || isExpanded) ? 'flex' : 'none';
 }
 
 /* ===== 2·3. 출현 빈도 / 미출현 기간 ===== */
@@ -953,14 +959,14 @@ document.querySelectorAll('#histSeg button').forEach(btn => {
     renderHistory();
   });
 });
-document.getElementById('btnMoreHist').addEventListener('click', (e) => {
-  if(e.currentTarget.classList.contains('collapse')){
-    histShown = HIST_PAGE;
-    document.getElementById('secMyHistory').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    histShown += HIST_PAGE;
-  }
+document.getElementById('btnMoreHist').addEventListener('click', () => {
+  histShown += HIST_PAGE;
   renderHistory();
+});
+document.getElementById('btnCollapseHist').addEventListener('click', () => {
+  histShown = HIST_PAGE;
+  renderHistory();
+  document.getElementById('secMyHistory').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 document.getElementById('hotRange').addEventListener('change', renderHot);
 document.getElementById('coldRange').addEventListener('change', renderCold);

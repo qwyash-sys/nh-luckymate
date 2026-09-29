@@ -3,118 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>NH행운메이트 - 화면 목록</title>
+<title>NH행운메이트</title>
 <style>
   :root {
     --primary: #00A651;
     --primary-dark: #007A3D;
     --primary-light: #E7F7EE;
-    --bg-page: #EDEFF1;
-    --text-main: #111;
-    --text-sub: #555;
-    --text-mute: #999;
+    --ball-yellow: #FBC400;
+    --ball-blue: #69C8F2;
+    --ball-red: #FF7272;
+    --ball-gray: #AAAAAA;
+    --ball-green: #B0D840;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
-    background: var(--bg-page);
-    padding: 40px 20px 60px;
+    background: #EDEFF1;
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 40px 0;
   }
   a { text-decoration:none; color:inherit; }
-  .wrap { max-width: 760px; margin: 0 auto; }
-  .top-title { font-size:22px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
-  .top-sub { font-size:13px; color:var(--text-mute); margin-bottom:28px; }
-  .top-sub b { color:var(--primary-dark); }
+  button { all:unset; box-sizing:border-box; cursor:pointer; }
 
-  .grid {
-    display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
-    gap:14px;
+  .phone {
+    width: 390px;
+    background: #fff;
+    border-radius: 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 8px solid #1c1c1e;
+    position: relative;
   }
-  .screen-card {
-    background:#fff; border-radius:16px; padding:18px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    border:1px solid #eee;
-    transition: transform .15s ease, box-shadow .15s ease;
+  .statusbar {
+    width:100%; height: 30px;
+    background: transparent;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0 22px;
+    font-size: 12px; font-weight:600; color:#fff;
+    position:absolute; top:0; left:0; z-index:2;
   }
-  .screen-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
-  .screen-card .num {
-    display:inline-flex; width:26px; height:26px; border-radius:50%;
-    background:var(--primary-light); color:var(--primary-dark);
-    font-size:12px; font-weight:800; align-items:center; justify-content:center;
-    margin-bottom:10px;
-  }
-  .screen-card .name { font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:4px; }
-  .screen-card .desc { font-size:12px; color:var(--text-sub); line-height:1.5; margin-bottom:10px; }
-  .screen-card .file { font-size:10.5px; color:var(--text-mute); font-family:monospace; }
-  .tag-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
-  .tag { font-size:10px; font-weight:700; background:var(--primary-light); color:var(--primary-dark); padding:3px 8px; border-radius:20px; }
-  .tag.sub { background:#f2f2f2; color:var(--text-mute); }
 
-  .section-title { font-size:13px; font-weight:700; color:var(--text-mute); margin:28px 0 12px; }
+  .hero {
+    position:relative; overflow:hidden;
+    height: 700px; padding-bottom:44px;
+    background: radial-gradient(120% 90% at 50% -10%, #14C879 0%, var(--primary) 42%, var(--primary-dark) 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+
+  /* 은은하게 떠다니는 로또볼 — 브랜드 모티프를 과하지 않게 배경에 녹여낸다 */
+  .drift-ball {
+    position:absolute; border-radius:50%; opacity:0.22;
+    animation: drift 7s ease-in-out infinite;
+  }
+  @keyframes drift {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-16px) rotate(12deg); }
+  }
+
+  .hero-badge {
+    font-size:11px; font-weight:700; color:rgba(255,255,255,0.85);
+    background:rgba(255,255,255,0.14); padding:6px 14px; border-radius:20px;
+    letter-spacing:0.3px; position:relative; z-index:2;
+  }
+
+  .hero-emblem {
+    margin-top:34px; width:88px; height:88px; border-radius:50%;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:40px; box-shadow:0 12px 30px rgba(0,0,0,0.22);
+    position:relative; z-index:2;
+  }
+
+  .hero-title {
+    margin-top:22px; font-size:26px; font-weight:800; color:#fff;
+    letter-spacing:-0.3px; position:relative; z-index:2;
+  }
+  .hero-tagline {
+    margin-top:10px; font-size:13.5px; font-weight:500; color:rgba(255,255,255,0.88);
+    line-height:1.6; text-align:center; position:relative; z-index:2;
+  }
+
+  .hero-feature-row {
+    margin-top:32px; display:flex; gap:10px; position:relative; z-index:2;
+  }
+  .hero-feature {
+    background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22);
+    border-radius:14px; padding:10px 13px; text-align:center; width:78px;
+  }
+  .hero-feature .ico { font-size:18px; display:block; margin-bottom:5px; }
+  .hero-feature .lb { font-size:9.5px; font-weight:700; color:#fff; line-height:1.35; }
+
+  .hero-actions {
+    margin-top:44px; width:100%; padding:0 30px;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    position:relative; z-index:2;
+  }
+  .start-btn {
+    display:block; width:100%; text-align:center;
+    background:#fff; color:var(--primary-dark);
+    font-size:15px; font-weight:800; padding:16px; border-radius:16px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.18);
+    transition: transform .15s ease;
+  }
+  .start-btn:active { transform:scale(0.98); }
+  .screens-link {
+    font-size:11.5px; font-weight:700; color:rgba(255,255,255,0.75);
+  }
+  .screens-link:hover { color:#fff; }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width:100%; min-height:100vh; border:none; border-radius:0; box-shadow:none; }
+    .hero { height:100vh; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top-title">NH행운메이트 프로토타입</div>
-  <div class="top-sub"><b>AX Build-up Challenge</b> 제출용 화면 목록 · 각 카드를 클릭하면 실제 화면으로 이동합니다</div>
 
-  <div class="section-title">메인 화면 (하단 탭 6개)</div>
-  <div class="grid">
-    <a class="screen-card" href="nh_luckymate_mockup.html">
-      <div class="num">1</div>
-      <div class="name">🏠 당첨번호 조회</div>
-      <div class="desc">회차별 당첨번호 확인, QR·직접입력 자동 채점, 실수령액·통계 바로가기</div>
-      <div class="file">nh_luckymate_mockup.html</div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_stats.html">
-      <div class="num">2</div>
-      <div class="name">📊 재미로 보는 통계</div>
-      <div class="desc">내 번호 고정 + 과거 당첨이력, 최다출현·장기미출현, 3등 챌린지(NH상품 비교)</div>
-      <div class="file">nh_luckymate_stats.html</div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_spots.html">
-      <div class="num">3</div>
-      <div class="name">📍 내 근처 로또 명당</div>
-      <div class="desc">위치기반 판매점 조회, 거리·당첨횟수·당첨금액 순 정렬 (Supabase 연동)</div>
-      <div class="file">nh_luckymate_spots.html</div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_bonus.html">
-      <div class="num">4</div>
-      <div class="name">💳 낙첨복권 우대금리</div>
-      <div class="desc">낙첨복권 QR 스캔·보관함, 예·적금 우대금리 프로그램</div>
-      <div class="file">nh_luckymate_bonus.html</div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_guide.html">
-      <div class="num">5</div>
-      <div class="name">🎯 당첨자 행동요령 가이드</div>
-      <div class="desc">등수별 지급 절차, 서대문 본점·근처 영업점 안내, 상품 연계</div>
-      <div class="file">nh_luckymate_guide.html</div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_draw.html">
-      <div class="num">6</div>
-      <div class="name">🎱 로또뽑기</div>
-      <div class="desc">고정번호+랜덤 뽑기 기계(게임화), 역대 최다출현 번호 기반 3등 챌린지</div>
-      <div class="file">nh_luckymate_draw.html</div>
-    </a>
-  </div>
+<div class="phone">
+  <div class="hero">
+    <div class="drift-ball" style="width:34px;height:34px;top:12%;left:12%;background:var(--ball-yellow);animation-delay:0s;"></div>
+    <div class="drift-ball" style="width:26px;height:26px;top:20%;right:14%;background:var(--ball-blue);animation-delay:1.2s;"></div>
+    <div class="drift-ball" style="width:22px;height:22px;top:68%;left:9%;background:var(--ball-red);animation-delay:2.4s;"></div>
+    <div class="drift-ball" style="width:30px;height:30px;top:74%;right:10%;background:var(--ball-green);animation-delay:0.8s;"></div>
+    <div class="drift-ball" style="width:18px;height:18px;top:42%;right:22%;background:var(--ball-gray);animation-delay:1.8s;"></div>
 
-  <div class="section-title">서브 화면</div>
-  <div class="grid">
-    <a class="screen-card" href="nh_luckymate_payout.html">
-      <div class="num">1-1</div>
-      <div class="name">💰 실수령액 계산기</div>
-      <div class="desc">등수별 탭, 세금 공제 내역, 예금 이자 연계 계산</div>
-      <div class="file">nh_luckymate_payout.html</div>
-      <div class="tag-row"><span class="tag sub">당첨조회 하위</span></div>
-    </a>
-    <a class="screen-card" href="nh_luckymate_language.html">
-      <div class="num">7</div>
-      <div class="name">🌐 다국어 지원 (언어 설정)</div>
-      <div class="desc">한국어 기본 + 영어·중국어·베트남어·태국어·우즈베크어 5개국어</div>
-      <div class="file">nh_luckymate_language.html</div>
-      <div class="tag-row"><span class="tag">전 화면 공통</span></div>
-    </a>
+    <div class="statusbar">
+      <span>9:41</span><span>NH농협은행 · 올원뱅크</span><span>100%</span>
+    </div>
+
+    <div class="hero-badge">NH농협은행 미니앱</div>
+    <div class="hero-emblem">🍀</div>
+    <div class="hero-title">NH행운메이트</div>
+    <div class="hero-tagline">당첨 확인부터 세금 계산, 명당 찾기까지<br>행운의 순간을 스마트하게 챙겨드려요</div>
+
+    <div class="hero-feature-row">
+      <div class="hero-feature"><span class="ico">🎯</span><span class="lb">당첨<br>조회</span></div>
+      <div class="hero-feature"><span class="ico">💰</span><span class="lb">실수령액<br>계산</span></div>
+      <div class="hero-feature"><span class="ico">📍</span><span class="lb">로또<br>명당</span></div>
+      <div class="hero-feature"><span class="ico">🎱</span><span class="lb">번호<br>뽑기</span></div>
+    </div>
+
+    <div class="hero-actions">
+      <a class="start-btn" href="nh_luckymate_mockup.html">시작하기 ›</a>
+      <a class="screens-link" href="nh_luckymate_screens.html">전체 화면 살펴보기</a>
+    </div>
   </div>
 </div>
+
 </body>
 </html>

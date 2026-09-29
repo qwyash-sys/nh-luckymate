@@ -89,6 +89,15 @@
     cursor:pointer; max-width:calc(100% - 20px); overflow:hidden; text-overflow:ellipsis;
     white-space:nowrap;
   }
+  .my-loc-btn {
+    all:unset; box-sizing:border-box; cursor:pointer;
+    position:absolute; right:10px; bottom:10px; z-index:5;
+    width:30px; height:30px; border-radius:50%; background:#fff;
+    color:var(--primary-dark); box-shadow:0 2px 8px rgba(0,0,0,0.18);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .my-loc-btn svg { width:17px; height:17px; display:block; }
+  .my-loc-btn.loading { opacity:0.6; pointer-events:none; }
 
   .segment {
     display:flex; background:var(--bg-card); border-radius:12px; padding:4px;
@@ -271,6 +280,9 @@
     <div class="map-box">
       <div class="badge" id="mapBadge">📍 위치 확인 중...</div>
       <iframe id="mapFrame" class="map-frame" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <button class="my-loc-btn" id="myLocBtn" aria-label="내 위치">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      </button>
     </div>
 
     <div class="filter-row">
@@ -672,29 +684,50 @@ document.getElementById('mapBadge').addEventListener('click', () => {
   renderMap(radiusKm);
 });
 
-async function init(){
-  const [{ lat, lon, isFallback }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
-  AVG_PRIZE = avg;
+/* 위치가 (재)확인될 때마다 지도 중심과 근처 판매점 목록을 함께 갱신한다.
+   init()에서도, "내 위치" 버튼을 다시 눌렀을 때도 이 흐름을 그대로 재사용한다. */
+async function applyLocation(lat, lon, isFallback){
   mapCenter = { lat, lon };
   mapIsFallback = isFallback;
+  document.querySelectorAll('.shop-card.selected').forEach(c => c.classList.remove('selected'));
   renderMap(radiusKm);
-
-  const radiusSel = document.getElementById('radiusSelect');
-  radiusSel.innerHTML = RADIUS_OPTIONS.map(v => `<option value="${v}">${t('radiusOption', { n: v })}</option>`).join('');
-  radiusSel.value = String(radiusKm);
 
   try {
     const rows = await fetchNearbyShops(lat, lon);
     ALL_SHOPS = rows
       .filter(s => s.lat != null && s.lon != null)
       .map(s => ({ ...s, distKm: haversineKm(lat, lon, s.lat, s.lon) }));
+    loadFailed = false;
   } catch(e) {
     console.warn('명당 데이터 조회 실패:', e);
     loadFailed = true;
     document.getElementById('hdrSub').textContent = t('hdrSubError');
   }
 
+  shownCount = PAGE_SIZE;
   renderShops();
+}
+
+async function goToMyLocation(){
+  // 거부된 상태라면 getUserLocation() 내부에서 권한 안내 팝업을 띄워준다.
+  // 이미 허용된 상태라면 실제 좌표로 지도·목록을 다시 그린다.
+  const btn = document.getElementById('myLocBtn');
+  btn.classList.add('loading');
+  const { lat, lon, isFallback } = await getUserLocation();
+  btn.classList.remove('loading');
+  await applyLocation(lat, lon, isFallback);
+}
+document.getElementById('myLocBtn').addEventListener('click', goToMyLocation);
+
+async function init(){
+  const [{ lat, lon, isFallback }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
+  AVG_PRIZE = avg;
+
+  const radiusSel = document.getElementById('radiusSelect');
+  radiusSel.innerHTML = RADIUS_OPTIONS.map(v => `<option value="${v}">${t('radiusOption', { n: v })}</option>`).join('');
+  radiusSel.value = String(radiusKm);
+
+  await applyLocation(lat, lon, isFallback);
 }
 
 document.getElementById('locPermConfirm').addEventListener('click', () => {

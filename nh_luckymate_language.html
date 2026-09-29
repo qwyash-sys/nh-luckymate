@@ -56,6 +56,17 @@
   .header .top .back { font-size:18px; }
   .header .top .title { font-size:16px; font-weight:700; }
   .header .top .spacer { width:18px; }
+  .header .top .top-actions { display:flex; align-items:center; gap:10px; }
+  .fontsize-btn {
+    all:unset; box-sizing:border-box; cursor:pointer;
+    width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.75);
+    font-size:11px; font-weight:800; color:#fff; opacity:0.92;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .fontsize-btn.active { background:#fff; color:var(--primary-dark); opacity:1; border-color:#fff; }
+  /* 4060세대 접근성: 본문 영역 전체를 확대(zoom)해서 폰트/버튼/여백을 함께 키운다.
+     헤더·상태바·탭바는 고정 UI 톤 유지를 위해 그대로 둔다. */
+  body.large-text .content { zoom: 1.18; }
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 
@@ -176,7 +187,7 @@
     <div class="top">
       <a class="back" href="nh_luckymate_mockup.html">‹</a>
       <span class="title">언어 설정 · Language</span>
-      <span class="spacer"></span>
+      <div class="top-actions"><button class="fontsize-btn" id="fontSizeBtn" aria-label="큰 글씨 보기">가</button></div>
     </div>
     <div class="sub">
       <span data-i18n="hdrTitle">원하는 언어를 선택해주세요</span>
@@ -280,17 +291,18 @@
     <a class="tab" href="nh_luckymate_spots.html"><span class="icon">📍</span><span data-i18n="tabSpots">명당찾기</span></a>
     <a class="tab" href="nh_luckymate_bonus.html"><span class="icon">💳</span><span data-i18n="tabBonus">우대금리</span></a>
     <a class="tab" href="nh_luckymate_guide.html"><span class="icon">🎯</span><span data-i18n="tabGuide">당첨가이드</span></a>
+    <a class="tab" href="nh_luckymate_draw.html"><span class="icon">🎱</span><span data-i18n="tabDraw">로또뽑기</span></a>
   </div>
 </div>
 
 <script>
 const I18N = {
-  ko: { chatbotLabel:"세금상담 AI챗봇", chatbotPlaceholder:"세금상담 AI챗봇을 연결할 자리예요<br>챗봇 주소가 준비되면 이 화면에 바로 열립니다", hdrTitle:"원하는 언어를 선택해주세요", hdrSub:"농어촌 지역 다문화 비중 상위 5개 언어 지원", noteText:"농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.", ctaSave:"저장하고 돌아가기", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
-  en: { chatbotLabel:"Tax Advice AI Chatbot", chatbotPlaceholder:"This is where the tax advice chatbot will live<br>It will open right here once the URL is ready", hdrTitle:"Please select your language", hdrSub:"Supporting the top 5 languages among multicultural rural residents", noteText:"These 5 languages were selected for foreign workers and international students living in rural areas. Selecting one translates all screen text.", ctaSave:"Save and Go Back", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
-  zh: { chatbotLabel:"税务咨询AI聊天机器人", chatbotPlaceholder:"此处将接入税务咨询AI聊天机器人<br>地址准备好后将直接在此打开", hdrTitle:"请选择您想使用的语言", hdrSub:"支持农渔村地区多元文化人口占比最高的5种语言", noteText:"这5种语言是为居住在农渔村地区的外国劳动者、留学生用户而选定的。选择后画面全部文字将被翻译显示。", ctaSave:"保存并返回", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
-  vi: { chatbotLabel:"Chatbot AI tư vấn thuế", chatbotPlaceholder:"Đây là nơi chatbot tư vấn thuế sẽ hiển thị<br>Sẽ mở ngay tại đây khi có đường dẫn", hdrTitle:"Vui lòng chọn ngôn ngữ", hdrSub:"Hỗ trợ 5 ngôn ngữ phổ biến nhất tại vùng nông ngư thôn đa văn hóa", noteText:"5 ngôn ngữ này được chọn dành cho lao động nước ngoài và du học sinh sống ở vùng nông thôn. Khi chọn, toàn bộ văn bản trên màn hình sẽ được dịch.", ctaSave:"Lưu và quay lại", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
-  th: { chatbotLabel:"แชทบอท AI ปรึกษาภาษี", chatbotPlaceholder:"ตรงนี้จะเป็นที่อยู่ของแชทบอทปรึกษาภาษี<br>จะเปิดที่นี่ทันทีเมื่อมีลิงก์พร้อม", hdrTitle:"กรุณาเลือกภาษาที่ต้องการ", hdrSub:"รองรับ 5 ภาษาที่มีสัดส่วนสูงสุดในพื้นที่ชนบทที่มีความหลากหลายทางวัฒนธรรม", noteText:"5 ภาษานี้ถูกเลือกมาสำหรับแรงงานต่างชาติและนักเรียนต่างชาติที่อาศัยในพื้นที่ชนบท เมื่อเลือกแล้วข้อความทั้งหมดบนหน้าจอจะถูกแปล", ctaSave:"บันทึกและย้อนกลับ", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
-  uz: { chatbotLabel:"Soliq bo‘yicha AI chatbot", chatbotPlaceholder:"Bu yerda soliq bo‘yicha AI chatbot ochiladi<br>Manzil tayyor bo‘lgach shu yerda ishga tushadi", hdrTitle:"Kerakli tilni tanlang", hdrSub:"Qishloq xoʻjaligi hududlaridagi koʻp millatli aholi orasida eng koʻp tarqalgan 5 til", noteText:"Ushbu 5 til qishloq hududlarida yashovchi xorijiy ishchilar va xalqaro talabalar uchun tanlangan. Tanlanganda ekrandagi barcha matn tarjima qilinadi.", ctaSave:"Saqlash va ortga qaytish", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
+  ko: { chatbotLabel:"세금상담 AI챗봇", chatbotPlaceholder:"세금상담 AI챗봇을 연결할 자리예요<br>챗봇 주소가 준비되면 이 화면에 바로 열립니다", hdrTitle:"원하는 언어를 선택해주세요", hdrSub:"농어촌 지역 다문화 비중 상위 5개 언어 지원", noteText:"농어촌 지역 거주 외국인 근로자·유학생 이용자를 고려해 선정된 5개 언어입니다. 선택 시 화면 전체 텍스트가 번역되어 표시됩니다.", ctaSave:"저장하고 돌아가기", tabHome:"당첨조회", tabStats:"재미로보는통계", tabSpots:"명당찾기", tabGuide:"당첨가이드", tabDraw:"로또뽑기", tabBonus:"우대금리", tabChallenge:"3등챌린지" },
+  en: { chatbotLabel:"Tax Advice AI Chatbot", chatbotPlaceholder:"This is where the tax advice chatbot will live<br>It will open right here once the URL is ready", hdrTitle:"Please select your language", hdrSub:"Supporting the top 5 languages among multicultural rural residents", noteText:"These 5 languages were selected for foreign workers and international students living in rural areas. Selecting one translates all screen text.", ctaSave:"Save and Go Back", tabHome:"Winning Numbers", tabStats:"Fun Stats", tabSpots:"Lucky Spots", tabGuide:"Winner Guide", tabDraw:"Number Draw", tabBonus:"Bonus Rate", tabChallenge:"3rd Prize" },
+  zh: { chatbotLabel:"税务咨询AI聊天机器人", chatbotPlaceholder:"此处将接入税务咨询AI聊天机器人<br>地址准备好后将直接在此打开", hdrTitle:"请选择您想使用的语言", hdrSub:"支持农渔村地区多元文化人口占比最高的5种语言", noteText:"这5种语言是为居住在农渔村地区的外国劳动者、留学生用户而选定的。选择后画面全部文字将被翻译显示。", ctaSave:"保存并返回", tabHome:"中奖查询", tabStats:"趣味统计", tabSpots:"幸运网点", tabGuide:"中奖指南", tabDraw:"抽号", tabBonus:"优惠利率", tabChallenge:"三等奖挑战" },
+  vi: { chatbotLabel:"Chatbot AI tư vấn thuế", chatbotPlaceholder:"Đây là nơi chatbot tư vấn thuế sẽ hiển thị<br>Sẽ mở ngay tại đây khi có đường dẫn", hdrTitle:"Vui lòng chọn ngôn ngữ", hdrSub:"Hỗ trợ 5 ngôn ngữ phổ biến nhất tại vùng nông ngư thôn đa văn hóa", noteText:"5 ngôn ngữ này được chọn dành cho lao động nước ngoài và du học sinh sống ở vùng nông thôn. Khi chọn, toàn bộ văn bản trên màn hình sẽ được dịch.", ctaSave:"Lưu và quay lại", tabHome:"Tra cứu số", tabStats:"Thống kê vui", tabSpots:"Điểm may mắn", tabGuide:"Hướng dẫn", tabDraw:"Quay số", tabBonus:"Lãi suất ưu đãi", tabChallenge:"Thử thách giải 3" },
+  th: { chatbotLabel:"แชทบอท AI ปรึกษาภาษี", chatbotPlaceholder:"ตรงนี้จะเป็นที่อยู่ของแชทบอทปรึกษาภาษี<br>จะเปิดที่นี่ทันทีเมื่อมีลิงก์พร้อม", hdrTitle:"กรุณาเลือกภาษาที่ต้องการ", hdrSub:"รองรับ 5 ภาษาที่มีสัดส่วนสูงสุดในพื้นที่ชนบทที่มีความหลากหลายทางวัฒนธรรม", noteText:"5 ภาษานี้ถูกเลือกมาสำหรับแรงงานต่างชาติและนักเรียนต่างชาติที่อาศัยในพื้นที่ชนบท เมื่อเลือกแล้วข้อความทั้งหมดบนหน้าจอจะถูกแปล", ctaSave:"บันทึกและย้อนกลับ", tabHome:"ตรวจผลรางวัล", tabStats:"สถิติสนุก", tabSpots:"จุดขายมงคล", tabGuide:"คู่มือผู้ถูกรางวัล", tabDraw:"สุ่มเลข", tabBonus:"ดอกเบี้ยพิเศษ", tabChallenge:"ท้าทายรางวัลที่3" },
+  uz: { chatbotLabel:"Soliq bo‘yicha AI chatbot", chatbotPlaceholder:"Bu yerda soliq bo‘yicha AI chatbot ochiladi<br>Manzil tayyor bo‘lgach shu yerda ishga tushadi", hdrTitle:"Kerakli tilni tanlang", hdrSub:"Qishloq xoʻjaligi hududlaridagi koʻp millatli aholi orasida eng koʻp tarqalgan 5 til", noteText:"Ushbu 5 til qishloq hududlarida yashovchi xorijiy ishchilar va xalqaro talabalar uchun tanlangan. Tanlanganda ekrandagi barcha matn tarjima qilinadi.", ctaSave:"Saqlash va ortga qaytish", tabHome:"Yutuq raqamlari", tabStats:"Statistika", tabSpots:"Baxtli joylar", tabGuide:"Yutuvchi qoʻllanmasi", tabDraw:"Raqam tortish", tabBonus:"Imtiyozli foiz", tabChallenge:"3-mukofot" },
 };
 const LANG_KEY = 'nh_lang';
 
@@ -362,5 +374,28 @@ const CHATBOT_URL = '';
 })();
 </script>
 
+<script>
+/* ===== 큰글씨 보기(4060세대 접근성) — 전 화면 공통, localStorage로 유지 ===== */
+(function(){
+  var FONT_KEY = 'nh_fontsize';
+  function isLarge(){ try { return localStorage.getItem(FONT_KEY) === 'large'; } catch(e){ return false; } }
+  function applyFontSize(){
+    var on = isLarge();
+    document.body.classList.toggle('large-text', on);
+    var btn = document.getElementById('fontSizeBtn');
+    if(btn) btn.classList.toggle('active', on);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    applyFontSize();
+    var btn = document.getElementById('fontSizeBtn');
+    if(btn){
+      btn.addEventListener('click', function(){
+        try { localStorage.setItem(FONT_KEY, isLarge() ? 'normal' : 'large'); } catch(e){}
+        applyFontSize();
+      });
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -332,7 +332,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="secFund">
       <div class="card-title" id="fundTitle">6개월, 어디에 둘까요?</div>
       <div class="tips-sub" id="fundSub">큰 결정을 미루는 동안 예금·적금 같은 안전한 곳에 맡겨두세요</div>
       <div id="productList"></div>
@@ -781,6 +781,20 @@ renderRank(currentRankIdx);
 
 /* 방문 예약하기: 확인 팝업만 띄우던 걸 실제 NH농협 영업점 찾기 페이지로
    바로 연결되는 링크로 교체했다(위 btnMap과 동일한 방식). */
+
+/* 다른 화면(실수령액 계산기 등)에서 #secFund로 들어오면 "6개월, 어디에 둘까요?"
+   카드로 스크롤한다. 헤더가 position:sticky라 그 높이만큼 더 내려서 카드가
+   헤더 밑에 가려지지 않게 보정한다. */
+if(location.hash){
+  const target = document.querySelector(location.hash);
+  if(target){
+    requestAnimationFrame(() => {
+      const headerH = document.querySelector('.header')?.offsetHeight || 0;
+      const y = target.getBoundingClientRect().top + window.scrollY - headerH - 12;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  }
+}
 </script>
 
 

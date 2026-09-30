@@ -71,6 +71,10 @@
   /* 4060세대 접근성: 본문 영역 전체를 확대(zoom)해서 폰트/버튼/여백을 함께 키운다.
      헤더·상태바·탭바는 고정 UI 톤 유지를 위해 그대로 둔다. */
   body.large-text .content { zoom: 1.18; }
+  /* 막대그래프(chart-wrap)는 가로폭이 카드에 딱 맞게 짜여 있어서 같이 확대하면
+     오른쪽으로 튀어나와 잘린다. 부모의 확대 배율을 상쇄(1 ÷ 1.18)해서 그래프만
+     원래 크기로 유지하고, 주변 제목·설명 텍스트는 그대로 커지게 둔다. */
+  body.large-text .chart-wrap { zoom: 0.8475; }
   .header .sub { font-size: 18px; font-weight:800; line-height:1.35; }
   .header .sub span { font-weight:400; font-size:12.5px; display:block; margin-top:4px; opacity:0.9;}
 

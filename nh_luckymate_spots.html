@@ -458,14 +458,51 @@ function getUserLocation(){
         }
       } catch(e) { /* 위치 권한 조회를 지원하지 않는 브라우저는 그냥 getCurrentPosition으로 진행 */ }
     }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude, isFallback: false }),
-      (err) => {
-        if(err && err.code === 1) showLocPermModal(); // PERMISSION_DENIED일 때만 안내(타임아웃 등은 제외)
-        resolve({ lat: FALLBACK_LAT, lon: FALLBACK_LON, isFallback: true });
+    const ok = (pos) => resolve({
+      lat: pos.coords.latitude, lon: pos.coords.longitude,
+      accuracy: pos.coords.accuracy, isFallback: false,
+    });
+    const fallback = () => resolve({ lat: FALLBACK_LAT, lon: FALLBACK_LON, isFallback: true });
+
+    try {
+      ok(await getBestPosition());
+    } catch(err) {
+      if(err && err.code === 1){ // PERMISSION_DENIED일 때만 안내(타임아웃 등은 제외)
+        showLocPermModal();
+        fallback();
+        return;
+      }
+      // GPS가 안 잡히는 실내 등: 대략적인 위치(Wi-Fi/기지국)로라도 한 번 더 시도하고, 그래도 안 되면 서울 기준으로 보여준다.
+      navigator.geolocation.getCurrentPosition(ok, fallback,
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 });
+    }
+  });
+}
+
+/* 위치 정확도 개선:
+   기본 설정(enableHighAccuracy 꺼짐)은 Wi-Fi/기지국 기반의 대략적인 위치(수백 m~수 km 오차)를 주고,
+   maximumAge가 길면 몇 분 전 위치를 재사용한다. 그래서 GPS를 켠 고정밀 모드 + 캐시 없이 요청하고,
+   첫 값이 거칠 수 있어 watchPosition으로 몇 초간 더 정확한 값이 나오기를 기다렸다가 가장 정확한 값을 쓴다. */
+const GOOD_ACCURACY_M = 50;
+function getBestPosition(){
+  return new Promise((resolve, reject) => {
+    let best = null, done = false, watchId = null, timer = null;
+    const finish = (err) => {
+      if(done) return;
+      done = true;
+      navigator.geolocation.clearWatch(watchId);
+      clearTimeout(timer);
+      if(best) resolve(best); else reject(err || { code: 3 });
+    };
+    watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        if(!best || pos.coords.accuracy < best.coords.accuracy) best = pos;
+        if(pos.coords.accuracy <= GOOD_ACCURACY_M) finish();
       },
-      { timeout: 5000, maximumAge: 300000 }
+      (err) => { if(err.code === 1 || !best) finish(err); },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
+    timer = setTimeout(() => finish(), 8000);
   });
 }
 
@@ -666,6 +703,7 @@ document.getElementById('btnMoreShops').addEventListener('click', () => {
    실제로 어디인지 보여주고, 배지를 다시 누르면 내 위치 기준으로 돌아온다. */
 let mapCenter = null;
 let mapIsFallback = false;
+let mapAccuracyM = null; // 이번에 잡힌 위치의 오차 반경(m). 대략 위치/서울 기준일 땐 null
 
 function setMapView(lat, lon, spanKm){
   // 위도 1도 ≈ 111km, 경도 1도는 위도가 높을수록 좁아지므로 cos(lat) 보정
@@ -679,7 +717,8 @@ function setMapView(lat, lon, spanKm){
 function renderMap(radiusKm){
   if(!mapCenter) return;
   setMapView(mapCenter.lat, mapCenter.lon, radiusKm);
-  document.getElementById('mapBadge').textContent = mapIsFallback ? t('mapBadgeFallback') : t('mapBadgeGeo');
+  document.getElementById('mapBadge').textContent = mapIsFallback ? t('mapBadgeFallback')
+    : t('mapBadgeGeo') + (mapAccuracyM != null ? ' ±' + Math.round(mapAccuracyM) + 'm' : '');
 }
 
 function focusMap(point, label){
@@ -694,9 +733,10 @@ document.getElementById('mapBadge').addEventListener('click', () => {
 
 /* 위치가 (재)확인될 때마다 지도 중심과 근처 판매점 목록을 함께 갱신한다.
    init()에서도, "내 위치" 버튼을 다시 눌렀을 때도 이 흐름을 그대로 재사용한다. */
-async function applyLocation(lat, lon, isFallback){
+async function applyLocation(lat, lon, isFallback, accuracy){
   mapCenter = { lat, lon };
   mapIsFallback = isFallback;
+  mapAccuracyM = isFallback ? null : (accuracy ?? null);
   document.querySelectorAll('.shop-card.selected').forEach(c => c.classList.remove('selected'));
   renderMap(radiusKm);
 
@@ -721,21 +761,21 @@ async function goToMyLocation(){
   // 이미 허용된 상태라면 실제 좌표로 지도·목록을 다시 그린다.
   const btn = document.getElementById('myLocBtn');
   btn.classList.add('loading');
-  const { lat, lon, isFallback } = await getUserLocation();
+  const { lat, lon, isFallback, accuracy } = await getUserLocation();
   btn.classList.remove('loading');
-  await applyLocation(lat, lon, isFallback);
+  await applyLocation(lat, lon, isFallback, accuracy);
 }
 document.getElementById('myLocBtn').addEventListener('click', goToMyLocation);
 
 async function init(){
-  const [{ lat, lon, isFallback }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
+  const [{ lat, lon, isFallback, accuracy }, avg] = await Promise.all([getUserLocation(), loadAvgPrizeAmounts()]);
   AVG_PRIZE = avg;
 
   const radiusSel = document.getElementById('radiusSelect');
   radiusSel.innerHTML = RADIUS_OPTIONS.map(v => `<option value="${v}">${t('radiusOption', { n: v })}</option>`).join('');
   radiusSel.value = String(radiusKm);
 
-  await applyLocation(lat, lon, isFallback);
+  await applyLocation(lat, lon, isFallback, accuracy);
 }
 
 document.getElementById('locPermConfirm').addEventListener('click', () => {
